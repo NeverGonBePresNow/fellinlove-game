@@ -1,0 +1,3605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>第二个手机</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --wallpaper: url('张函瑞壁纸.jpg');
+  --wechat-green: #07c160;
+}
+
+body {
+  background: #1f1f1f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100svh;
+  min-height: 100svh;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+               "SF Pro Display", "Helvetica Neue", "PingFang SC",
+               "Microsoft YaHei", sans-serif;
+  user-select: none;
+}
+
+.phone {
+  width: min(390px, calc(100vw - 16px));
+  height: min(844px, calc(100svh - 16px));
+  aspect-ratio: 390 / 844;
+  background: #000;
+  border-radius: 55px;
+  padding: 10px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+}
+
+.screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 45px;
+  overflow: hidden;
+}
+
+.screen::after {
+  content: "@刮刮乐特等奖";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-18deg);
+
+  z-index: 9999;
+  pointer-events: none;
+
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  white-space: nowrap;
+
+  color: rgba(255, 255, 255, 0.16);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.wallpaper {
+  position: absolute;
+  inset: 0;
+  background-image: var(--wallpaper);
+  background-size: cover;
+  background-position: center;
+}
+
+.wallpaper.blur {
+  filter: blur(36px) brightness(0.65);
+  transform: scale(1.15);
+}
+
+.status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 26px 0;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  z-index: 10;
+}
+
+.status-left,
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.signal {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.signal span {
+  display: inline-block;
+  width: 3px;
+  background: #fff;
+  border-radius: 1px;
+}
+
+.battery {
+  width: 24px;
+  height: 12px;
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: 3px;
+  position: relative;
+  margin-left: 2px;
+}
+
+.battery::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 3px;
+  width: 2px;
+  height: 6px;
+  background: #fff;
+  border-radius: 0 1px 1px 0;
+}
+
+.battery-fill {
+  height: 100%;
+  width: 57%;
+  background: #fff;
+  border-radius: 2px;
+}
+
+.status-bar.dark {
+  color: #111;
+}
+
+.status-bar.dark .signal span {
+  background: #111;
+}
+
+.status-bar.dark .battery {
+  border-color: #111;
+}
+
+.status-bar.dark .battery::after,
+.status-bar.dark .battery-fill {
+  background: #111;
+}
+
+.easter-egg-message {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+  width: 260px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.82);
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.5;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.lock-screen {
+  z-index: 3;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+  cursor: grab;
+  touch-action: none;
+}
+
+.lock-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 90px;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.date {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.time {
+  font-size: 92px;
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.swipe-hint {
+  position: absolute;
+  bottom: 55px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(255,255,255,0.85);
+  font-size: 17px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.passcode-screen {
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.passcode-content {
+  position: relative;
+  z-index: 5;
+  margin-top: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+}
+
+.passcode-title {
+  font-size: 21px;
+  font-weight: 400;
+  margin-bottom: 28px;
+}
+
+.dots {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.passcode-hint {
+  font-size: 14px;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 36px;
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 50%;
+}
+
+.dot.filled {
+  background: #fff;
+}
+
+.keypad {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(3, 76px);
+  gap: 14px 34px;
+  margin-top: auto;
+  margin-bottom: 80px;
+}
+
+.key {
+  width: 76px;
+  height: 76px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+  font-size: 34px;
+  font-weight: 400;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.key:active {
+  background: rgba(255,255,255,0.35);
+}
+
+.key small {
+  font-size: 10px;
+  letter-spacing: 1px;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+.bottom-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  padding: 55px 30px 30px;
+  color: #fff;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-12px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-8px); }
+  80% { transform: translateX(6px); }
+}
+
+.shake {
+  animation: shake 0.5s;
+}
+
+.progress-panel {
+  position: absolute;
+  left: 50%;
+  bottom: 105px;
+  transform: translateX(-50%);
+  z-index: 8;
+  width: 220px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.7;
+  backdrop-filter: blur(10px);
+}
+
+.home-screen {
+  z-index: 10;
+  display: none;
+}
+
+.home-screen.show {
+  display: block;
+  animation: fadein 0.6s ease;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.app-grid {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(4, 62px);
+  gap: 22px;
+  justify-content: center;
+  margin-top: 140px;
+}
+
+.app {
+  width: 74px;
+  height: 90px;
+  border-radius: 14px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+.app-icon-img {
+  width: 58px;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 13px;
+  margin-bottom: 6px;
+}
+
+.placeholder-screen {
+  z-index: 14;
+  background: #f8f8f8;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.ios-status-spacer {
+  height: 44px;
+  background: #f8f8f8;
+}
+
+.ios-nav {
+  height: 46px;
+  background: #f8f8f8;
+  border-bottom: 1px solid #dcdcdc;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ios-back {
+  position: absolute;
+  left: 14px;
+  top: -2px;
+  font-size: 40px;
+  font-weight: 300;
+  cursor: pointer;
+  color: #007aff;
+}
+
+.ios-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.placeholder-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 16px;
+}
+
+.ledger-screen {
+  z-index: 14;
+  background: #f5f5f5;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.ledger-header {
+  height: 118px;
+  padding: 50px 18px 0;
+  background: #f5f5f5;
+  position: relative;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+
+.ledger-back {
+  position: absolute;
+  left: 14px;
+  top: 40px;
+  font-size: 40px;
+  font-weight: 300;
+  color: #111;
+  cursor: pointer;
+}
+
+.ledger-title {
+  font-size: 26px;
+  font-weight: 800;
+  margin-left: 34px;
+  line-height: 1.15;
+}
+
+.ledger-book-line {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 7px;
+  margin-left: 36px;
+  color: #8a8a8a;
+  font-size: 13px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.ledger-book-arrow {
+  width: 6px;
+  height: 6px;
+  margin-left: 6px;
+  border-right: 1.5px solid #aaa;
+  border-bottom: 1.5px solid #aaa;
+  transform: rotate(45deg) translateY(-2px);
+  display: inline-block;
+}
+
+.ledger-summary {
+  margin: 14px 16px 12px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+.ledger-summary-date {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.ledger-summary-total {
+  color: #666;
+  font-size: 14px;
+}
+
+.ledger-total-money {
+  color: #d64545;
+  font-weight: 700;
+}
+
+.ledger-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px 24px;
+}
+
+.ledger-item {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 15px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+  cursor: pointer;
+}
+
+.ledger-category {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.ledger-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.ledger-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.ledger-note-preview {
+  color: #888;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ledger-money {
+  color: #d64545;
+  font-size: 16px;
+  font-weight: 700;
+  margin-left: 10px;
+}
+
+.ledger-books-screen {
+  z-index: 15;
+  background: #f5f5f5;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.ledger-books-list {
+  flex: 1;
+  padding: 10px 16px 24px;
+  overflow-y: auto;
+}
+
+.ledger-book-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+  cursor: pointer;
+}
+
+.ledger-book-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.ledger-book-balance {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.ledger-book-meta {
+  font-size: 13px;
+  color: #999;
+}
+
+.ledger-note-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ledger-note-box {
+  width: 300px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 18px;
+  color: #111;
+}
+
+.ledger-note-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.ledger-note-money {
+  color: #d64545;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.ledger-note-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #444;
+  white-space: pre-line;
+}
+
+.ledger-note-close {
+  margin-top: 16px;
+  height: 42px;
+  border-top: 1px solid #eee;
+  color: #007aff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.voice-memos-screen {
+  z-index: 14;
+  background: #f2f2f7;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.voice-header {
+  height: 104px;
+  padding: 54px 18px 0;
+  background: #f2f2f7;
+  position: relative;
+}
+
+.voice-edit {
+  position: absolute;
+  left: 18px;
+  top: 54px;
+  color: #ff3b30;
+  font-size: 16px;
+}
+
+.voice-title {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-top: 22px;
+  margin-left: 2px;
+}
+
+
+.voice-back {
+  position: absolute;
+  left: 14px;
+  top: 40px;
+  font-size: 40px;
+  font-weight: 300;
+  color: #ff3b30;
+  cursor: pointer;
+}
+
+.voice-folder-title {
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+  padding-top: 52px;
+  height: 90px;
+  background: #f2f2f7;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+}
+
+.voice-folder-title .voice-back {
+  top: 36px;
+}
+
+.voice-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 14px 28px;
+  background: #f2f2f7;
+}
+
+.voice-section-label {
+  font-size: 13px;
+  color: #8e8e93;
+  margin: 8px 4px 8px;
+}
+
+.voice-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.voice-folder-row,
+.voice-record-row {
+  min-height: 58px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.voice-folder-row:last-child,
+.voice-record-row:last-child {
+  border-bottom: none;
+}
+
+.voice-folder-icon {
+  width: 28px;
+  font-size: 22px;
+  margin-right: 10px;
+}
+
+.voice-folder-name,
+.voice-record-name {
+  flex: 1;
+  font-size: 17px;
+}
+
+.voice-folder-count {
+  color: #8e8e93;
+  font-size: 15px;
+  margin-right: 8px;
+}
+
+.voice-arrow {
+  color: #c7c7cc;
+  font-size: 24px;
+}
+
+.voice-record-info {
+  flex: 1;
+}
+
+.voice-record-name {
+  font-size: 17px;
+  margin-bottom: 5px;
+}
+
+.voice-record-meta {
+  color: #8e8e93;
+  font-size: 13px;
+}
+
+.voice-play {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #ff3b30;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  margin-left: 10px;
+}
+
+.voice-password-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voice-password-box {
+  width: 280px;
+  background: rgba(248,248,248,0.96);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  color: #111;
+}
+
+.voice-password-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.voice-password-hint {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 14px;
+}
+
+.voice-password-input {
+  width: 120px;
+  height: 36px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+
+.voice-password-actions {
+  display: flex;
+  border-top: 1px solid #ddd;
+  margin: 0 -18px -18px;
+}
+
+.voice-password-actions button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  height: 44px;
+  font-size: 16px;
+  color: #ff3b30;
+  cursor: pointer;
+}
+
+.voice-password-actions button:first-child {
+  border-right: 1px solid #ddd;
+}
+
+.anniversary-screen {
+  z-index: 14;
+  background: #fffdf3;
+  color: #3a2a2f;
+  display: flex;
+  flex-direction: column;
+}
+
+.anniv-header {
+  height: 100px;
+  padding: 52px 18px 0;
+  position: relative;
+  background: linear-gradient(180deg, #fff4c7, #fffdf3);
+}
+
+.anniv-back {
+  position: absolute;
+  left: 14px;
+  top: 40px;
+  font-size: 40px;
+  font-weight: 300;
+  color: #e6a800;
+  cursor: pointer;
+}
+
+.anniv-title {
+  font-size: 30px;
+  font-weight: 800;
+  margin-left: 24px;
+}
+
+.anniv-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px 28px;
+}
+
+.anniv-card {
+  position: relative;
+  background: #fff;
+  border-radius: 18px;
+  padding: 15px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 5px 16px rgba(230, 168, 0, 0.10);
+  border: 1px solid rgba(230, 190, 80, 0.18);
+  cursor: pointer;
+}
+
+.anniv-card.pinned {
+  border: 2px solid #f3d36b;
+  background: linear-gradient(180deg, #fff, #fff9df);
+}
+
+.anniv-pin {
+  display: inline-block;
+  font-size: 12px;
+  color: #fff;
+  background: #e6b800;
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-bottom: 8px;
+}
+
+.anniv-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.anniv-date {
+  font-size: 14px;
+  color: #9b8750;
+}
+
+.anniv-days {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: right;
+  color: #d8a300;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.anniv-days small {
+  font-size: 13px;
+  font-weight: 500;
+  color: #9b8750;
+}
+
+.anniv-detail-screen {
+  z-index: 16;
+  background: #fffdf3;
+  color: #3a2a2f;
+  display: flex;
+  flex-direction: column;
+}
+
+.anniv-detail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 22px 30px;
+}
+
+.anniv-detail-date {
+  color: #9b8750;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.anniv-detail-title {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+
+.anniv-detail-note {
+  background: #fff;
+  border-radius: 18px;
+  padding: 18px;
+  font-size: 16px;
+  line-height: 1.75;
+  white-space: pre-line;
+  box-shadow: 0 5px 16px rgba(230, 168, 0, 0.10);
+}
+
+.anniv-password-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.anniv-password-box {
+  width: 280px;
+  background: rgba(248,248,248,0.96);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  color: #111;
+}
+
+.anniv-password-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.anniv-password-hint {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 14px;
+}
+
+.anniv-password-input {
+  width: 120px;
+  height: 36px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+
+.anniv-password-actions {
+  display: flex;
+  border-top: 1px solid #ddd;
+  margin: 0 -18px -18px;
+}
+
+.anniv-password-actions button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  height: 44px;
+  font-size: 16px;
+  color: #d8a300;
+  cursor: pointer;
+}
+
+.anniv-password-actions button:first-child {
+  border-right: 1px solid #ddd;
+}
+
+.wechat-screen {
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  background: #ededed;
+  color: #111;
+}
+
+.wechat-header {
+  position: relative;
+  padding-top: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ededed;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.wechat-header .back-btn {
+  position: absolute;
+  left: 16px;
+  top: 48px;
+  font-size: 28px;
+  cursor: pointer;
+  color: #111;
+}
+
+.wechat-header .plus {
+  position: absolute;
+  right: 16px;
+  top: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #111;
+}
+
+.wechat-search {
+  margin: 10px 16px;
+  background: #e1e1e1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #888;
+  text-align: center;
+}
+
+.wechat-panel {
+  flex: 1;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.chat-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+}
+
+.chat-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 6px;
+  background-color: #d8d8d8;
+  background-size: cover;
+  background-position: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.chat-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-name {
+  font-size: 17px;
+  font-weight: 500;
+  color: #111;
+}
+
+.chat-preview {
+  font-size: 13px;
+  color: #999;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-time {
+  font-size: 12px;
+  color: #bbb;
+  margin-left: 8px;
+}
+
+.discover-list {
+  background: #ededed;
+  padding-top: 10px;
+  min-height: 100%;
+}
+
+.discover-group {
+  background: #fff;
+  margin-bottom: 8px;
+}
+
+.discover-item {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 17px;
+  color: #111;
+  cursor: pointer;
+}
+
+.discover-icon {
+  width: 30px;
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.discover-text {
+  flex: 1;
+}
+
+.discover-arrow {
+  color: #c7c7cc;
+  font-size: 24px;
+}
+
+.me-page {
+  background: #ededed;
+  min-height: 100%;
+  padding-top: 55px;
+}
+
+.me-card {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 24px 16px 22px;
+  margin-bottom: 8px;
+}
+
+.me-avatar {
+  width: 66px;
+  height: 66px;
+  border-radius: 8px;
+  background-color: #d8d8d8;
+  background-size: cover;
+  background-position: center;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.me-main {
+  flex: 1;
+}
+
+.me-name {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.me-id {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.me-status {
+  font-size: 14px;
+  color: #555;
+}
+
+.me-arrow {
+  color: #c7c7cc;
+  font-size: 26px;
+}
+
+.me-list {
+  background: #fff;
+  margin-bottom: 8px;
+}
+
+.me-item {
+  height: 52px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 17px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.me-item span {
+  color: #c7c7cc;
+  font-size: 24px;
+}
+
+.wechat-tab-bar {
+  display: flex;
+  background: #f9f9f9;
+  border-top: 1px solid #e5e5e5;
+  padding: 8px 0 25px;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  cursor: pointer;
+}
+
+.tab-item .tab-icon {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.tab-item.active {
+  color: var(--wechat-green);
+}
+
+.disabled-tab {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.chat-detail {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: #ededed;
+  display: flex;
+  flex-direction: column;
+  color: #111;
+}
+
+.chat-status-placeholder {
+  height: 34px;
+  background: #ededed;
+}
+
+.chat-detail-header {
+  height: 54px;
+  background: #ededed;
+  border-bottom: 1px solid #dcdcdc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.chat-back {
+  position: absolute;
+  left: 14px;
+  top: 3px;
+  font-size: 40px;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.chat-more {
+  position: absolute;
+  right: 18px;
+  top: 12px;
+  font-size: 24px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 12px 14px;
+  background: #ededed;
+}
+
+.msg-time,
+.msg-system {
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  margin: 10px 0 14px;
+}
+
+.msg-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.msg-row.other {
+  justify-content: flex-start;
+}
+
+.msg-row.me {
+  justify-content: flex-end;
+}
+
+.msg-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 5px;
+  background-color: #cfcfcf;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.msg-row.other .msg-avatar {
+  margin-right: 8px;
+}
+
+.msg-row.me .msg-avatar {
+  margin-left: 8px;
+}
+
+.msg-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 240px;
+}
+
+.msg-row.me .msg-content {
+  align-items: flex-end;
+}
+
+.msg-row.other .msg-content {
+  align-items: flex-start;
+}
+
+.msg-sender-name {
+  font-size: 12px;
+  color: #888;
+  margin-top: -6px;
+  margin-bottom: 3px;
+  margin-left: 2px;
+}
+
+.msg-bubble {
+  max-width: 230px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  line-height: 1.45;
+  word-break: break-word;
+  position: relative;
+  white-space: pre-wrap;
+}
+
+.msg-row.other .msg-bubble {
+  background: #fff;
+  color: #111;
+}
+
+.msg-row.me .msg-bubble {
+  background: #95ec69;
+  color: #111;
+}
+
+.msg-row.other .msg-bubble::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 12px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 6px solid #fff;
+}
+
+.msg-row.me .msg-bubble::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 12px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 6px solid #95ec69;
+}
+
+.msg-image {
+  max-width: 170px;
+  border-radius: 6px;
+  display: block;
+  cursor: pointer;
+}
+
+.chat-input-bar {
+  min-height: 58px;
+  background: #f7f7f7;
+  border-top: 1px solid #dcdcdc;
+  display: flex;
+  align-items: center;
+  padding: 8px 10px 22px;
+  gap: 8px;
+}
+
+.input-icon {
+  font-size: 21px;
+  color: #333;
+}
+
+.fake-input {
+  flex: 1;
+  height: 34px;
+  background: #fff;
+  border-radius: 5px;
+}
+
+.voice-box {
+  min-width: 95px;
+  max-width: 190px;
+  height: 38px;
+  border-radius: 5px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.msg-row.me .voice-box {
+  background: #95ec69;
+  justify-content: flex-end;
+}
+
+.msg-row.other .voice-box {
+  background: #fff;
+  justify-content: flex-start;
+}
+
+.voice-wave {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  display: inline-block;
+}
+
+.voice-wave span {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  border: 2px solid #111;
+  border-left: none;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.voice-wave span:nth-child(1) {
+  width: 6px;
+  height: 6px;
+}
+
+.voice-wave span:nth-child(2) {
+  width: 11px;
+  height: 11px;
+}
+
+.voice-wave span:nth-child(3) {
+  width: 16px;
+  height: 16px;
+}
+
+.msg-row.me .voice-wave {
+  transform: scaleX(-1);
+}
+
+.voice-seconds {
+  font-size: 14px;
+  color: #111;
+}
+
+.voice-transcript {
+  margin-top: 5px;
+  background: #fff;
+  color: #111;
+  font-size: 14px;
+  line-height: 1.45;
+  padding: 8px 10px;
+  border-radius: 5px;
+  max-width: 230px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.04);
+}
+
+.moments-page {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  color: #111;
+}
+
+.moments-header {
+  height: 88px;
+  padding-top: 42px;
+  background: rgba(237,237,237,0.96);
+  border-bottom: 1px solid #ddd;
+  position: relative;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.moments-back {
+  position: absolute;
+  left: 14px;
+  top: 34px;
+  font-size: 40px;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.moments-camera {
+  position: absolute;
+  right: 18px;
+  top: 45px;
+  font-size: 20px;
+}
+
+.moments-scroll {
+  flex: 1;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.moments-cover {
+  height: 220px;
+  position: relative;
+  background: #ddd;
+}
+
+.moments-cover-img {
+  width: 100%;
+  height: 220px;
+  background-image: url('张函瑞背景.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.moments-my-info {
+  position: absolute;
+  right: 16px;
+  bottom: 5px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.moments-my-text {
+  text-align: right;
+  margin-right: 12px;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.moments-my-name {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.moments-my-sign {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.moments-my-avatar {
+  width: 66px;
+  height: 66px;
+  border-radius: 6px;
+  background-color: #ccc;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #fff;
+}
+
+.moment-item {
+  display: flex;
+  padding: 14px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.moment-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 5px;
+  background-color: #ccc;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.moment-body {
+  flex: 1;
+}
+
+.moment-name {
+  color: #576b95;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.moment-text {
+  font-size: 15px;
+  line-height: 1.45;
+  color: #111;
+  margin-bottom: 8px;
+  white-space: pre-line;
+}
+
+.moment-images {
+  display: grid;
+  grid-template-columns: repeat(3, 76px);
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.moment-images.one {
+  display: block;
+}
+
+.moment-img {
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.moment-images.one .moment-img {
+  width: 150px;
+  height: auto;
+  max-height: 190px;
+  object-fit: cover;
+}
+
+.moment-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #888;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.moment-actions {
+  background: #f3f3f3;
+  color: #576b95;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+.moment-social {
+  background: #f3f3f3;
+  margin-top: 8px;
+  padding: 6px 8px;
+  font-size: 13px;
+  color: #111;
+  border-radius: 2px;
+}
+
+.moment-likes {
+  color: #576b95;
+  margin-bottom: 4px;
+}
+
+.moment-comment {
+  line-height: 1.5;
+}
+
+.moment-comment-name {
+  color: #576b95;
+}
+
+.image-viewer {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0,0,0,0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-viewer img {
+  max-width: 96%;
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+@media (max-width: 600px) {
+  .phone {
+    width: min(390px, calc(100vw - 12px));
+    max-height: calc(100dvh - 12px);
+    border-radius: 42px;
+    padding: 8px;
+  }
+
+  .screen {
+    border-radius: 35px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="phone">
+  <div class="screen">
+
+    <div class="layer passcode-screen" id="passcodeScreen">
+      <div class="wallpaper blur"></div>
+
+      <div class="status-bar">
+        <div class="status-left">中国移动</div>
+        <div class="status-right">
+          <div class="signal">
+            <span style="height:5px"></span>
+            <span style="height:8px"></span>
+            <span style="height:11px"></span>
+            <span style="height:14px"></span>
+          </div>
+          <div class="battery"><div class="battery-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="passcode-content">
+        <div class="passcode-title">输入密码</div>
+        <div class="dots" id="dots"></div>
+        <div class="passcode-hint">密码提示：我的生日</div>
+      </div>
+
+      <div class="keypad">
+        <button class="key" onclick="press('1')">1</button>
+        <button class="key" onclick="press('2')">2<small>A B C</small></button>
+        <button class="key" onclick="press('3')">3<small>D E F</small></button>
+        <button class="key" onclick="press('4')">4<small>G H I</small></button>
+        <button class="key" onclick="press('5')">5<small>J K L</small></button>
+        <button class="key" onclick="press('6')">6<small>M N O</small></button>
+        <button class="key" onclick="press('7')">7<small>P Q R S</small></button>
+        <button class="key" onclick="press('8')">8<small>T U V</small></button>
+        <button class="key" onclick="press('9')">9<small>W X Y Z</small></button>
+        <button class="key"></button>
+        <button class="key" onclick="press('0')">0</button>
+        <button class="key" onclick="backspace()">⌫</button>
+      </div>
+
+      <div class="bottom-actions">
+        <span>紧急情况</span>
+        <span>取消</span>
+      </div>
+    </div>
+
+    <div class="layer lock-screen" id="lockScreen">
+      <div class="wallpaper"></div>
+
+      <div class="status-bar">
+        <div class="status-left">中国移动</div>
+        <div class="status-right">
+          <div class="signal">
+            <span style="height:5px"></span>
+            <span style="height:8px"></span>
+            <span style="height:11px"></span>
+            <span style="height:14px"></span>
+          </div>
+          <div class="battery"><div class="battery-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="lock-content">
+        <div class="date">9月18日 周五</div>
+        <div class="time">20:27</div>
+      </div>
+
+      <div class="swipe-hint">向上轻扫解锁</div>
+    </div>
+
+    <div class="layer home-screen" id="homeScreen">
+      <div class="wallpaper blur"></div>
+
+      <div class="status-bar">
+        <div class="status-left">中国移动</div>
+        <div class="status-right">
+          <div class="signal">
+            <span style="height:5px"></span>
+            <span style="height:8px"></span>
+            <span style="height:11px"></span>
+            <span style="height:14px"></span>
+          </div>
+          <div class="battery"><div class="battery-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="app-grid">
+        <div class="app" onclick="openWechat()">
+          <img class="app-icon-img" src="微信图标.jpg" alt="微信">
+          <span>微信</span>
+        </div>
+
+        <div class="app" onclick="openVoiceMemos()">
+  <img class="app-icon-img" src="语音备忘录图标.jpg" alt="语音备忘录">
+  <span>语音备忘录</span>
+</div>
+
+        <div class="app" onclick="openAnniversaryPassword()">
+  <img class="app-icon-img" src="喵喵纪念日图标.jpg" alt="喵喵纪念日">
+  <span>喵喵纪念日</span>
+</div>
+
+       <div class="app" onclick="openLedgerApp()">
+  <img class="app-icon-img" src="记账图标.jpg" alt="喵喵记账">
+  <span>喵喵记账</span>
+</div>
+      <div class="progress-panel">
+        <div id="mainProgressText">主线进度0/10</div>
+        <div id="eggProgressText">发现彩蛋0/3</div>
+      </div>
+      </div>
+    </div>
+
+    <div class="layer placeholder-screen hidden" id="placeholderScreen">
+      <div class="ios-status-spacer"></div>
+      <div class="ios-nav">
+        <span class="ios-back" onclick="backToHomeFromApp()">‹</span>
+        <span class="ios-title" id="placeholderTitle">应用</span>
+      </div>
+      <div class="placeholder-content">该应用内容待制作</div>
+    </div>
+
+<div class="layer voice-memos-screen hidden" id="voiceMemosScreen">
+
+<div class="voice-folder-home" id="voiceFolderHome">
+  <div class="voice-header">
+    <span class="voice-back" onclick="backToHomeFromApp()">‹</span>
+    <div class="voice-title">语音备忘录</div>
+  </div>
+
+  <div class="voice-list">
+    <div class="voice-section-label">我的文件夹</div>
+
+    <div class="voice-card">
+      <div class="voice-folder-row" onclick="openVoiceFolder('recent')">
+        <div class="voice-folder-icon">📁</div>
+        <div class="voice-folder-name">最近项目</div>
+        <div class="voice-folder-count">4</div>
+        <div class="voice-arrow">›</div>
+      </div>
+
+      <div class="voice-folder-row" onclick="openPrivateVoiceFolder()">
+        <div class="voice-folder-icon">🔒</div>
+        <div class="voice-folder-name">私密录音</div>
+        <div class="voice-folder-count">3</div>
+        <div class="voice-arrow">›</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="hidden" id="voiceFolderDetail">
+    <div class="voice-folder-title">
+      <span class="voice-back" onclick="backToVoiceFolders()">‹</span>
+      <span id="voiceFolderTitle">最近项目</span>
+    </div>
+
+    <div class="voice-list" id="voiceRecordList"></div>
+  </div>
+</div>
+
+<div class="voice-password-modal hidden" id="voicePasswordModal">
+  <div class="voice-password-box">
+    <div class="voice-password-title">输入密码</div>
+    <div class="voice-password-hint">密码提示：还记得第一次见到你我的心是怎样波动（四个数字）</div>
+    <input
+      id="voicePasswordInput"
+      class="voice-password-input"
+      maxlength="4"
+      type="password"
+      inputmode="numeric"
+      placeholder="••••"
+    >
+    <div class="voice-password-actions">
+      <button onclick="closeVoicePassword()">取消</button>
+      <button onclick="checkVoicePassword()">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="layer anniversary-screen hidden" id="anniversaryScreen">
+  <div class="anniv-header">
+    <span class="anniv-back" onclick="backToHomeFromApp()">‹</span>
+    <div class="anniv-title">喵喵纪念日</div>
+  </div>
+
+  <div class="anniv-list" id="anniversaryList"></div>
+</div>
+
+<div class="layer anniv-detail-screen hidden" id="anniversaryDetailScreen">
+  <div class="anniv-header">
+    <span class="anniv-back" onclick="backToAnniversaryList()">‹</span>
+    <div class="anniv-title">纪念详情</div>
+  </div>
+
+  <div class="anniv-detail-content">
+    <div class="anniv-detail-date" id="annivDetailDate"></div>
+    <div class="anniv-detail-title" id="annivDetailTitle"></div>
+    <div class="anniv-detail-note" id="annivDetailNote"></div>
+  </div>
+</div>
+
+<div class="anniv-password-modal hidden" id="annivPasswordModal">
+  <div class="anniv-password-box">
+    <div class="anniv-password-title">输入密码</div>
+    <div class="anniv-password-hint">密码提示：我的天使数字（四个数字）</div>
+    <input
+      id="annivPasswordInput"
+      class="anniv-password-input"
+      maxlength="4"
+      type="password"
+      inputmode="numeric"
+      placeholder="••••"
+    >
+    <div class="anniv-password-actions">
+      <button onclick="closeAnniversaryPassword()">取消</button>
+      <button onclick="checkAnniversaryPassword()">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="layer ledger-screen hidden" id="ledgerScreen">
+  <div class="ledger-header">
+    <span class="ledger-back" onclick="backToHomeFromApp()">‹</span>
+    <div class="ledger-title" id="ledgerTitle">09.18 的账目明细</div>
+
+    <div class="ledger-book-line" onclick="openLedgerBooks()">
+      <span id="currentLedgerBookName">最近账本</span>
+      <span class="ledger-book-arrow"></span>
+    </div>
+  </div>
+
+  <div class="ledger-summary">
+    <div class="ledger-summary-date" id="ledgerDateTitle">9.18 星期五</div>
+    <div class="ledger-summary-total">
+  <span id="ledgerSummaryLabel">总支出：</span>
+  <span class="ledger-total-money" id="ledgerTotal">￥786.00</span>
+</div>
+
+  </div>
+
+  <div class="ledger-list" id="ledgerList"></div>
+</div>
+
+<div class="layer ledger-books-screen hidden" id="ledgerBooksScreen">
+  <div class="ledger-header">
+    <span class="ledger-back" onclick="backToLedgerMain()">‹</span>
+    <div class="ledger-title">我的账本</div>
+  </div>
+
+  <div class="ledger-books-list">
+    <div class="ledger-book-card" onclick="openLedgerBook('recent')">
+      <div class="ledger-book-name">最近账本</div>
+      <div class="ledger-book-balance">结余：-￥786.00</div>
+      <div class="ledger-book-meta">已记录：8笔</div>
+    </div>
+
+    <div class="ledger-book-card" onclick="openLedgerBook('private')">
+      <div class="ledger-book-name">张桂源欠我500万</div>
+      <div class="ledger-book-balance">结余：+￥30534.65</div>
+      <div class="ledger-book-meta">已记录：197笔</div>
+    </div>
+  </div>
+</div>
+
+<div class="ledger-note-modal hidden" id="ledgerNoteModal">
+  <div class="ledger-note-box">
+    <div class="ledger-note-title" id="ledgerNoteTitle"></div>
+    <div class="ledger-note-money" id="ledgerNoteMoney"></div>
+    <div class="ledger-note-text" id="ledgerNoteText"></div>
+    <div class="ledger-note-close" onclick="closeLedgerNote()">关闭</div>
+  </div>
+</div>
+
+    <div class="layer wechat-screen hidden" id="wechatScreen">
+      <div class="status-bar dark">
+        <div class="status-left">中国移动</div>
+        <div class="status-right">
+          <div class="signal">
+            <span style="height:5px"></span>
+            <span style="height:8px"></span>
+            <span style="height:11px"></span>
+            <span style="height:14px"></span>
+          </div>
+          <div class="battery"><div class="battery-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="wechat-header">
+        <span class="back-btn" onclick="backToHome()">‹</span>
+        <span id="wechatTitle">微信</span>
+        <span class="plus" id="wechatPlus">＋</span>
+      </div>
+
+      <div class="wechat-search" id="wechatSearch">搜索</div>
+
+      <div class="wechat-panel" id="wechatPanel">
+        <div class="chat-item" onclick="openChat('group1')">
+          <div class="chat-avatar" data-avatar="group1"></div>
+          <div class="chat-info">
+            <div class="chat-name">今天也在当童工</div>
+            <div class="chat-preview">陈思罕：感觉好甜蜜</div>
+          </div>
+          <div class="chat-time">周五</div>
+        </div>
+
+        <div class="chat-item" onclick="openChat('wang')">
+          <div class="chat-avatar" data-avatar="wang"></div>
+          <div class="chat-info">
+            <div class="chat-name">王橹杰</div>
+            <div class="chat-preview">不管他，他想走还是想跟着都随便</div>
+          </div>
+          <div class="chat-time">周五</div>
+        </div>
+
+        <div class="chat-item" onclick="openChat('heng')">
+          <div class="chat-avatar" data-avatar="heng"></div>
+          <div class="chat-info">
+            <div class="chat-name">陈奕恒</div>
+            <div class="chat-preview">我走了，哼！</div>
+          </div>
+          <div class="chat-time">周五</div>
+        </div>
+
+        <div class="chat-item" onclick="openChat('zuo')">
+          <div class="chat-avatar" data-avatar="zuo"></div>
+          <div class="chat-info">
+            <div class="chat-name">左奇函</div>
+            <div class="chat-preview">我保证张函瑞一定会养出全世界……</div>
+          </div>
+          <div class="chat-time">周五</div>
+        </div>
+
+        <div class="chat-item" onclick="openChat('wen')">
+          <div class="chat-avatar" data-avatar="wen"></div>
+          <div class="chat-info">
+            <div class="chat-name">杨博文</div>
+            <div class="chat-preview">好~~~</div>
+          </div>
+          <div class="chat-time">周五</div>
+        </div>
+
+        <div class="chat-item" onclick="openChat('gui')">
+          <div class="chat-avatar" data-avatar="gui"></div>
+          <div class="chat-info">
+            <div class="chat-name">张桂源</div>
+            <div class="chat-preview">我们都会有好运的，你别怕</div>
+          </div>
+          <div class="chat-time">周五</div>
+        </div>
+      </div>
+
+      <div class="wechat-panel hidden" id="contactsPanel">
+        <div class="placeholder-content">暂无查看权限</div>
+      </div>
+
+      <div class="wechat-panel hidden" id="discoverPanel">
+        <div class="discover-list">
+          <div class="discover-group">
+            <div class="discover-item" onclick="openMoments()">
+              <span class="discover-icon">🖼️</span>
+              <span class="discover-text">朋友圈</span>
+              <span class="discover-arrow">›</span>
+            </div>
+          </div>
+
+          <div class="discover-group">
+            <div class="discover-item">
+              <span class="discover-icon">▶️</span>
+              <span class="discover-text">视频号</span>
+              <span class="discover-arrow">›</span>
+            </div>
+            <div class="discover-item">
+              <span class="discover-icon">📺</span>
+              <span class="discover-text">直播</span>
+              <span class="discover-arrow">›</span>
+            </div>
+          </div>
+
+          <div class="discover-group">
+            <div class="discover-item">
+              <span class="discover-icon">🔍</span>
+              <span class="discover-text">扫一扫</span>
+              <span class="discover-arrow">›</span>
+            </div>
+            <div class="discover-item">
+              <span class="discover-icon">🎧</span>
+              <span class="discover-text">听一听</span>
+              <span class="discover-arrow">›</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wechat-panel hidden" id="mePanel">
+        <div class="me-page">
+
+          <div class="me-card">
+            <div class="me-avatar" data-avatar="me"></div>
+            <div class="me-main">
+              <div class="me-name">肉好胀</div>
+              <div class="me-id">微信号：zhr1018</div>
+              <div class="me-status">＋ 状态</div>
+            </div>
+            <div class="me-arrow">›</div>
+          </div>
+
+          <div class="me-list">
+            <div class="me-item">服务 <span>›</span></div>
+          </div>
+
+          <div class="me-list">
+            <div class="me-item">收藏 <span>›</span></div>
+            <div class="me-item">朋友圈 <span>›</span></div>
+            <div class="me-item">作品 <span>›</span></div>
+            <div class="me-item">卡包 <span>›</span></div>
+            <div class="me-item">表情 <span>›</span></div>
+          </div>
+
+          <div class="me-list">
+            <div class="me-item">设置 <span>›</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="moments-page hidden" id="momentsPage">
+        <div class="moments-header">
+          <span class="moments-back" onclick="closeMoments()">‹</span>
+          <span class="moments-title">朋友圈</span>
+          <span class="moments-camera">📷</span>
+        </div>
+
+        <div class="moments-scroll">
+          <div class="moments-cover">
+            <div class="moments-cover-img"></div>
+
+            <div class="moments-my-info">
+              <div class="moments-my-text">
+                <div class="moments-my-name">肉好胀</div>
+                <div class="moments-my-sign">留下一个爪印🐾</div>
+              </div>
+              <div class="moments-my-avatar" data-avatar="me"></div>
+            </div>
+          </div>
+
+          <div class="moments-list" id="momentsList"></div>
+        </div>
+      </div>
+
+      <div class="image-viewer hidden" id="imageViewer" onclick="closeImageViewer()">
+        <img id="viewerImage" src="">
+      </div>
+
+      <div class="chat-detail hidden" id="chatDetail">
+        <div class="chat-status-placeholder"></div>
+
+        <div class="chat-detail-header">
+          <span class="chat-back" onclick="closeChat()">‹</span>
+          <span id="chatTitle">聊天</span>
+          <span class="chat-more">···</span>
+        </div>
+
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <div class="chat-input-bar">
+          <span class="input-icon">🎙</span>
+          <div class="fake-input"></div>
+          <span class="input-icon">😊</span>
+          <span class="input-icon">＋</span>
+        </div>
+      </div>
+
+      <div class="wechat-tab-bar">
+        <div class="tab-item active" data-tab="wechat" onclick="switchTab('wechat')">
+          <div class="tab-icon">💬</div>
+          微信
+        </div>
+        <div class="tab-item disabled-tab" data-tab="contacts">
+          <div class="tab-icon">👥</div>
+          通讯录
+        </div>
+        <div class="tab-item" data-tab="discover" onclick="switchTab('discover')">
+          <div class="tab-icon">🧭</div>
+          发现
+        </div>
+        <div class="tab-item" data-tab="me" onclick="switchTab('me')">
+          <div class="tab-icon">👤</div>
+          我
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<audio id="easterEggBgm2" src="彩蛋2.mp3" preload="auto" loop></audio>
+
+<script>
+const AVATARS = {
+  me: '张函瑞头像.jpg',
+  group1: '大群头像.jpg',
+  zuo: '左奇函头像.jpg',
+  ming: '陈浚铭头像.jpg',
+  wang: '王橹杰头像.jpg',
+  rui: '张函瑞头像.jpg',
+  gui: '张桂源头像.jpg',
+  wen: '杨博文头像.jpg',
+  heng: '陈奕恒头像.jpg',
+  sihan: '陈思罕头像.jpg'
+};
+
+const CHATS = {
+  group1: {
+    name: '今天也在当童工(8)',
+    avatar: 'group1',
+    messages: [
+      { type: 'time', text: '周五 15:10' },
+      { from: 'wang', avatar: 'wang', name: '王橹杰', text: "今天轮到谁俩了？群里到现在好安静啊⌯'⊙'⌯" },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '王哥明知故问，疑似对麻将桌开炮' },
+      { from: 'sihan', avatar: 'sihan', name: '陈思罕', text: '@陈奕恒 哥们儿别哭' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '其实我还好啊' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '@左奇函 为什么这么安静为什么这么安静为什么这么安静为什么这么安静为什么这么安静为什么这么安静为什么这么安静为什么这么安静为什么这么安静为什么这么安静为什么这么安静' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '@杨博文 让左奇函看下消息谢谢！' },
+      { from: 'sihan', avatar: 'sihan', name: '陈思罕', text: '谁给这个大唐飞天神女静音一下' },
+      { from: 'wang', avatar: 'wang', name: '王橹杰', text: '@张函瑞 我家瑞瑞今天也好安静啊(｡í ˰ ì｡)' },
+      { from: 'me', text: '你们知道我现在的心情吗说好听一点是查看宠物监控发现家里的狗在打猫猫在抓鸟鸟在啄马陆' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '说点儿不好听的？' },
+      { from: 'me', text: '不好听的就是感觉很闹麻呀你们' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '不对劲，十二分不对劲' },
+      { from: 'sihan', avatar: 'sihan', name: '陈思罕', text: '我也觉得不对劲' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '为什么为什么为什么为什么为什么左奇函还没回我消息' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '龙哥竟然一直不说话，平时这种时候应该早就蹦出来刷屏了啊' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '天啊我龙哥现在还活着吗' },
+      { from: 'sihan', avatar: 'sihan', name: '陈思罕', text: '难道真被张函瑞杀夫证道了？' },
+      { from: 'wang', avatar: 'wang', name: '王橹杰', text: '这么生猛？瑞瑞好棒꒰˶>ᗜ<˶꒱​' },
+      { from: 'me', text: '……' },
+      { from: 'me', text: '你们忘了他挑的地点吗' },
+      { from: 'me', text: '篮、球、馆、啊！' },
+      { from: 'me', type: 'image', src: '篮球场背影.jpg' },
+      { from: 'me', text: '我请问呢？他一个人倒是打爽了，那我在这坐着干嘛？！' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '我靠，什么校园剧情，好甜' },
+      { from: 'sihan', avatar: 'sihan', name: '陈思罕', text: '马上就要给张桂源送水递毛巾了。。。' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '早说啊你们，打篮球不喊我？哇，真不够意思' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '大哥哥我求你了，当了蓝粉家的小三就别再盯着黄绿了行吗' },
+      { from: 'wang', avatar: 'wang', name: '王橹杰', text: '谁能把他踢了( ⩌ - ⩌ )' },
+      { from: 'sihan', avatar: 'sihan', name: '陈思罕', text: '群主能踢' },
+      { from: 'sihan', avatar: 'sihan', name: '陈思罕', text: '@左奇函 帮你艾特群主了不用谢' },
+      { from: 'wang', avatar: 'wang', name: '王橹杰', text: '陈思罕！⁽⁽(੭ꐦ •̀Д•́ )੭*⁾⁾' },
+      { from: 'zuo', avatar: 'zuo', name: '左奇函', type: 'voice', seconds: 20, transcript: '你们一直在吵什么呢哎哟我真头疼我真心的我头疼我都找不到机会把手机拿出来我只要解锁屏幕杨博文就要露出那种假笑搞得我欠他钱一样还阴阳怪气问我和他出来玩是不是很无聊为什么一直看手机我都我初中之后我妈都没管过我玩手机了啊算了我忍哥们今天真的要断网了他现在去找工作人员盖章了我赶紧' },
+      { from: 'zuo', avatar: 'zuo', name: '左奇函', type: 'voice', seconds: 4, transcript: '他回来了我不说了你们记得干好各自的事啊都老老实实的' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '感觉好甜蜜' },
+      { from: 'sihan', avatar: 'sihan', name: '陈思罕', text: '感觉好甜蜜' }
+    ]
+  },
+
+  wang: {
+    name: '王橹杰',
+    avatar: 'wang',
+    messages: [
+      { type: 'time', text: '周五 15:33' },
+      { from: 'wang', text: '真在打篮球啊？' },
+      { from: 'me', text: '当我跟你开玩笑呢？' },
+      { from: 'wang', text: '张桂源脑子真的有点问题吧' },
+      { from: 'wang', text: '大家都在设计浪漫场景，他这么另辟蹊径，难道是想走搞笑男赛道？' },
+      { from: 'wang', text: '好担心他趁着大家沉淀的这段时间偷偷报名了CBA' },
+      { from: 'me', text: '你放心，首先他没那个水平，其次陈奕恒肯定会撒泼打滚闹着一起报名，那样的话我们肯定能知道' },
+      { from: 'wang', text: '是王橹杰的错觉吗，感觉你很护着他' },
+      { from: 'me', text: '啊，一横很可爱啊~~~~' },
+      { from: 'wang', text: '哦哦，王橹杰说的是陈奕恒吗？' },
+      { from: 'me', text: '哦哦，橹橹说的不是陈奕恒吗？' },
+      { from: 'wang', text: '这个世界上为什么没有装傻大赛啊' },
+      { from: 'wang', text: '王橹杰好想给张函瑞报名参加，一定能拿第一名吧ʚ( º º )ɞ' },
+      { from: 'me', text: '我什么都不知道呀' },
+      { from: 'me', text: '我只知道有的人在昨天夏天就结束了' },
+      { from: 'wang', text: '。。。。。' },
+      { from: 'wang', text: '啊啊啊啊啊啊啊啊啊啊啊啊' },
+      { from: 'wang', text: '张函瑞！！' },
+      { from: 'me', text: '哎呀别生气嘛' },
+      { from: 'me', text: '橹橹' },
+      { from: 'me', text: '宝宝' },
+      { from: 'me', text: '再也不妄加评论我宝宝的文青时刻了' },
+      { from: 'me', text: '待会儿给你买bc的开心果味迪拜软曲奇好不好？' },
+      { from: 'wang', text: '你们不是在篮球馆吗' },
+      { from: 'me', text: '离万象城很近啦，录完素材我可以过去溜达一圈' },
+      { from: 'wang', text: '和张桂源一起？' },
+      { from: 'me', text: '不管他，他想走还是想跟着都随便' }
+    ]
+  },
+
+  heng: {
+    name: '陈奕恒',
+    avatar: 'heng',
+    messages: [
+      { type: 'time', text: '周五 16:02' },
+      { from: 'heng', text: '张函瑞张函瑞，你俩在哪儿，我也要来玩' },
+      { from: 'me', text: '别闹了宝宝' },
+      { from: 'heng', text: '我要来玩嘛' },
+      { from: 'me', text: '乖哈，你的任务不都已经完成了吗' },
+      { from: 'me', text: '是和小明玩得不够开心还是和左奇函玩得不够开心？' },
+      { from: 'heng', text: '都很开心！' },
+      { from: 'heng', type: 'voice', seconds: 16, transcript: '张函瑞我跟你说，昨天我和左奇函发气球的时候，还遇到粉丝了，穿着玩偶服她们都不知道是我们，嘿嘿，惊喜吧' },
+      { from: 'me', text: '嗯嗯不愧是陈奕恒，但玩也要适可而止哦' },
+      { from: 'heng', text: '可是你俩在打篮球，我也想。。' },
+      { from: 'me', text: '是我、看、张桂源、打篮球，谢谢！' },
+      { from: 'heng', text: '你也可以看、我和张桂源、打篮球啊，哈哈' },
+      { from: 'me', text: '你很嚣张哦宝宝' },
+      { from: 'me', text: '需要我联系一下总策划大人，就说这里有人对他的安排不满意吗' },
+      { from: 'heng', text: '😭' },
+      { from: 'me', text: '你们俩又不是真的连体婴，大家都要有自己的空间！' },
+      { from: 'heng', text: '唉，不去就不去嘛' },
+      { from: 'heng', text: '我走了，哼！' }
+    ]
+  },
+
+  zuo: {
+    name: '左奇函',
+    avatar: 'zuo',
+    messages: [
+      { type: 'time', text: '周五 16:42' },
+      { from: 'zuo', type: 'voice', seconds: 5, transcript: '张函瑞你那边怎么样张桂源在打篮球你俩真能录到东西吗' },
+      { from: 'me', text: '你说慢点，我天，你搞得像我俩像是在偷情' },
+      { from: 'me', text: '还是说你在故意展现rap课的快嘴成果' },
+      { from: 'zuo', type: 'voice', seconds: 10, transcript: '你有过那种上课趁着老师回头板书时跟同学传小纸条的体验吗我现在就这样太刺激了杨博文又去盖章了我赶紧来回一下消息' },
+      { from: 'me', text: '这不是你选的地点吗，怎么搞得像是杨博文主场' },
+      { from: 'me', text: '海洋馆你俩之前也去过吧，call back很浪漫啊~' },
+      { from: 'zuo', type: 'voice', seconds: 11, transcript: '只是觉得海洋馆很方便出片好吗尤其在打篮球的衬托下感觉我完全可以拿满分了天啊我真的期待张桂源要怎么介绍了想想就搞笑你也不劝劝他' },
+      { from: 'me', text: '多说几句他又要垮着张小狗脸了' },
+      { from: 'me', text: '而且死道友不死贫道，我选的地方又没问题，和珍惜的人一起拼豆稳稳的幸福啊' },
+      { from: 'zuo', text: '我靠9999999999999999999999' },
+      { from: 'me', text: '99什么？舅舅？找舅舅？还是救救你？' },
+      { from: 'zuo', text: '9999999999999999999999' },
+      { from: 'me', text: '懂了，等着' },
+      { type: 'time', text: '周五 17:08' },
+      { from: 'zuo', text: '还是你厉害，我看他脸色好多了' },
+      { from: 'zuo', text: '但为什么他给我点了个儿童餐' },
+      { from: 'me', text: '博文很贴心啊，是你反应过度了' },
+      { from: 'zuo', text: '有吗' },
+      { from: 'me', text: '有哦' },
+      { from: 'me', text: '你知道吗，鼠鼠的心跳本来就比其他小动物更快，总是应激的话很容易抑郁生病甚至死掉掉' },
+      { from: 'zuo', text: '及时行乐然后早点死掉说不定是好事啊' },
+      { from: 'me', text: '。。不要总是说一些让我不开心的话' },
+      { from: 'zuo', text: '我错了' },
+      { from: 'zuo', text: '我保证张函瑞一定会养出全世界最长寿的鼠' }
+    ]
+  },
+
+  wen: {
+    name: '杨博文',
+    avatar: 'wen',
+    messages: [
+      { type: 'time', text: '周五 16:50' },
+      { from: 'me', text: '我们博文玩得开心吗今天？' },
+      { from: 'wen', text: '很开心啊，汉海比北京动物园的海洋馆更有意思。' },
+      { from: 'me', text: '是吧，出来玩呢讲究一个放松，完成任务就行了，你看张桂源非要去打篮球我都顺从' },
+      { from: 'wen', text: '这是来找我兴师问罪了？我可没欺负左奇函。' },
+      { from: 'me', text: '我哪能兴师问罪啊，你的人你随便搓圆捏扁谁敢有意见' },
+      { from: 'me', text: '而且我也没说你欺负他吧' },
+      { from: 'wen', text: '哦，难道他刚刚偷偷给你发消息不是在抱怨我？' },
+      { from: 'me', text: '那必须不是啊，他可开心了' },
+      { from: 'me', text: '但你知道的，他跟王橹杰一样两个体弱，受不了特种兵行程安排' },
+      { from: 'wen', text: '那也不能拍完照就摆烂吧。' },
+      { from: 'wen', text: '只是把大洋馆看一遍集齐印章，旁边雨林馆还没看，他到底在不高兴什么？' },
+      { from: 'me', text: '哎呀，你别忘了你俩出去是要做正事的' },
+      { from: 'me', text: '大家一定会喜欢的，乖~~~' },
+      { from: 'me', text: '一想到大家会喜欢，心情一下就变好了对吧(*^▽^*)' },
+      { from: 'wen', text: '他是因为大家喜欢才选了这里吗？' },
+      { from: 'me', text: '你可以这么想，但他也是决定和你一起之后，才决定去海洋馆的啊' },
+      { from: 'wen', text: '因为他没其他人可选了。' },
+      { from: 'me', text: '哇，那岂不是天作之合，命中注定，我都想点播一首樱花草了' },
+      { from: 'me', text: '对于这种顽固分子，要采取怀柔政策啊，博文' },
+      { from: 'wen', text: '你说的有道理。' },
+      { from: 'wen', text: '我带他去海洋餐厅那边休息一下。' },
+      { from: 'me', text: '好~~~' }
+    ]
+  },
+
+  gui: {
+    name: '张桂源',
+    avatar: 'gui',
+    messages: [
+      { type: 'time', text: '周五 20:03' },
+      { from: 'gui', text: '我们下午买的那个酸奶，小狗能吃吗？' },
+      { from: 'gui', text: '幺幺三看到我在喝酸奶就围过来哼唧撒娇了' },
+      { from: 'me', text: '我看了一下配料表，没问题，可以吃' },
+      { from: 'me', text: '看看小狗' },
+      { from: 'gui', type: 'image', src: '小狗合照.jpg' },
+      { from: 'me', text: '。' },
+      { from: 'me', text: '张桂源' },
+      { from: 'gui', text: '嗯？' },
+      { from: 'me', text: '我真搞不懂你' },
+      { from: 'gui', text: '啊？' },
+      { from: 'me', text: '如果你觉得单独和我出来玩尴尬的话，就别选我啊' },
+      { from: 'me', text: '当时你想选谁都可以吧，三陈里随便挑个人，你们都更能玩到一起' },
+      { from: 'me', text: '既然选了我，为什么要躲避我，一个人在那儿打篮球' },
+      { from: 'me', text: '然后现在又若无其事地做出撒娇的行为' },
+      { from: 'me', text: '你真的很幼稚' },
+      { from: 'gui', text: '……抱歉' },
+      { from: 'gui', text: '啊啊啊啊啊，我就，我就' },
+      { from: 'gui', text: '我知道我又犯傻了' },
+      { from: 'gui', text: '但是我' },
+      { from: 'gui', text: '……' },
+      { from: 'gui', text: '你生气了吗？' },
+      { from: 'me', text: '跟着我去万象城是想道歉吧' },
+      { from: 'gui', text: '嗯' },
+      { from: 'me', text: '非要给我买礼物也是想道歉吧' },
+      { from: 'gui', text: '嗯' },
+      { from: 'me', text: '用幺幺三当借口找我聊天也很幼稚' },
+      { from: 'gui', text: '对不起' },
+      { from: 'gui', text: '真的对不起' },
+      { from: 'gui', text: '我还是不知道该怎么做才好' },
+      { from: 'me', text: '为什么总是想着要做什么呢' },
+      { from: 'me', text: '什么都不做也很好啊' },
+      { from: 'gui', text: '我太焦虑了' },
+      { from: 'gui', text: '我知道我很幼稚，这么说很傻，也不浪漫，但是最想一起做的事情真的是打篮球' },
+      { from: 'gui', text: '和我一起打篮球，或者一扭头就能看到有人陪着我打篮球，我都很开心' },
+      { from: 'gui', text: '张函瑞，我不是故意的' },
+      { from: 'gui', text: '不要生我的气' },
+      { from: 'me', text: '唉' },
+      { from: 'me', text: '没关系啊，没关系的' },
+      { from: 'me', text: '还记得那个天使数字吗' },
+      { from: 'gui', text: '嗯，记得' },
+      { from: 'me', text: '看一下我今天给你买的香水' },
+      { from: 'gui', text: '啊' },
+      { from: 'gui', text: '！！！' },
+      { from: 'me', text: '我们都会有好运的，你别怕' }
+    ]
+  }
+};
+
+const MOMENTS = [
+  {
+    name: '张桂源',
+    avatar: 'gui',
+    time: '周五',
+    text: '嘿嘿',
+    images: ['香水.jpg'],
+    likes: ['陈思罕', '陈浚铭', '杨博文', '陈奕恒'],
+    comments: [
+      { name: '陈浚铭', text: '今天竟然没发篮球照？' },
+      { name: '张桂源', replyTo: '陈浚铭', text: '我靠，忘了！' },
+      { name: '陈奕恒', text: '张桂源你和张函瑞背着兄弟打篮球，不够意思啊' },
+      { name: '张桂源', replyTo: '陈奕恒', text: '一边玩去吧你这个婴儿' }
+    ]
+  },
+  {
+    name: '左奇函',
+    avatar: 'zuo',
+    time: '周五',
+    text: '下一次玩地球online我要当一只水母，没有大脑，没有心脏，不关心不思考不在意，谁来碰我我就蛰谁一下，然后飘走',
+    images: ['水母1.jpg', '水母2.jpg'],
+    likes: ['陈奕恒', '张函瑞', '杨博文', '陈思罕', '张桂源', '陈浚铭'],
+    comments: [
+      { name: '陈奕恒', text: '那你还会记得我吗' },
+      { name: '左奇函', replyTo: '陈奕恒', text: '你也来当水母，我会对你说，你好啊，紫海刺水母' },
+      { name: '张函瑞', text: '那我呢' },
+      { name: '左奇函', replyTo: '张函瑞', text: '你好啊，桃花水母' },
+      { name: '张桂源', text: '我呢我呢' },
+      { name: '左奇函', replyTo: '张桂源', text: '你不好，蛋黄水母' },
+      { name: '张桂源', replyTo: '左奇函', text: '喂！' }
+    ]
+  },
+  {
+    name: '杨博文',
+    avatar: 'wen',
+    time: '周五',
+    text: '今日打卡',
+    images: ['海洋馆打卡.jpg'],
+    likes: ['左奇函', '张函瑞', '王橹杰', '陈思罕', '张桂源', '陈浚铭', '陈奕恒'],
+    comments: [
+      { name: '张桂源', text: '👏🏻👏🏻👏🏻真充实啊杨博文' },
+      { name: '杨博文', replyTo: '张桂源', text: '明天见，也带你体验充实的一天' },
+      { name: '张桂源', replyTo: '杨博文', text: '😭一定要去那里吗' }
+    ]
+  },
+  {
+    name: '张函瑞',
+    avatar: 'me',
+    time: '周五',
+    text: '天 空 龙',
+    images: ['天空龙.jpg'],
+    likes: ['王橹杰', '左奇函', '陈思罕', '陈奕恒', '张桂源', '杨博文', '陈浚铭'],
+    comments: [
+      { name: '王橹杰', text: '😠😠😠' },
+      { name: '张函瑞', replyTo: '王橹杰', text: '🥺🥺🥺' },
+      { name: '陈思罕', text: '天空 龙' },
+      { name: '张函瑞', replyTo: '陈思罕', text: '小嘴巴，闭起来' }
+    ]
+  }
+];
+
+const LEDGER_BOOKS = {
+  recent: {
+    bookName: '最近账本',
+    pageTitle: '09.18 的账目明细',
+    dateTitle: '9.18 星期五',
+    total: '￥786.00',
+    records: [
+      {
+        icon: '🍽️',
+        name: 'brunch',
+        amount: '84.00',
+        note: '又来吃我最爱的香草嫩鸡佐欧姆蛋拼盘了！搭配一杯荔枝苹果冰茶，开启元气满满的一天亚米亚米'
+      },
+      {
+        icon: '💐',
+        name: '买花',
+        amount: '98.00',
+        note: '路过花店看到一束扎得很漂亮的秋色系花束，重瓣百合和剑兰好漂亮啊，妈妈收到后很开心~'
+      },
+      {
+        icon: '🚗',
+        name: '出行路费',
+        amount: '23.00',
+        note: '坐车去见张桂源，看到他挑的这个地方我真是两眼一黑……'
+      },
+      {
+        icon: '🍪',
+        name: '开心果迪拜软曲奇',
+        amount: '76.00',
+        note: '卖相一般但味道还可以哦，不是特别甜，我家橹橹还是很好哄的嘛'
+      },
+      {
+        icon: '🍎',
+        name: '黑苹果小夜灯',
+        amount: '35.00',
+        note: '笑死我了，陈思罕绝对会喜欢'
+      },
+      {
+        icon: '🐱',
+        name: '小猫刺绣吧唧',
+        amount: '16.00',
+        note: '和建国好像啊，带回去给它看看'
+      },
+      {
+        icon: '🐊',
+        name: '青语白朗EDT',
+        amount: '386.00',
+        note: '给张桂源的回礼，柑橘木质调，这个味道还蛮适合他的'
+      },
+      {
+        icon: '🍐',
+        name: '餐盘',
+        amount: '68.00',
+        note: '这个绿色的手绘梨子餐盘太好看了，一眼心动'
+      }
+    ]
+  },
+
+  private: {
+  bookName: '张桂源欠我500万',
+  pageTitle: '2026年的账目明细',
+  dateTitle: '私密账本',
+  total: '￥13173.80',
+  records: [
+    {
+      icon: '🛡️',
+      name: '保护费',
+      amount: '500.00',
+      note: '1.18 坐电梯时当了一回我的保镖，给他折点费用吧！我开价还是很良心的哦'
+    },
+    {
+      icon: '🍬',
+      name: '牛轧糖',
+      amount: '10.00',
+      note: '1.23 练舞好累啊，张桂源给我一个牛轧糖，哪来的？算他十块钱好了'
+    },
+    {
+      icon: '💬',
+      name: '陪聊费',
+      amount: '50.00',
+      note: '2.2 这次飞机上坐在一起，虽然因为我太困了都没说几句话，但还是好心给他点陪聊费'
+    },
+    {
+      icon: '☕',
+      name: '冰美式',
+      amount: '9.90',
+      note: '2.21 早起消肿'
+    },
+    {
+      icon: '🧥',
+      name: '服务费',
+      amount: '200.00',
+      note: '3.15 今天拍了双人戏，烦死了真想给他倒扣五百块，唉，再扣下去，真不知道他欠我这五百万什么时候能还清了。看在他帮我拿外套的份上赏两百吧'
+    },
+    {
+      icon: '☕',
+      name: '冰美式',
+      amount: '9.90',
+      note: '4.3 这九块九都不想给张桂源，无语，我化妆时他举着咖啡一直在捣乱，只能说懒得喷'
+    },
+    {
+      icon: '🧸',
+      name: '小熊挂件',
+      amount: '25.00',
+      note: '4.15 张桂源从道具那里搞来的挂件，小小一个还蛮可爱，朕心甚慰啊'
+    },
+    {
+      icon: '🌊',
+      name: '服务费',
+      amount: '100.00',
+      note: '4.21 今天去海上玩了，张桂源帮了我一把，给他记个一百块吧'
+    },
+    {
+      icon: '🎂',
+      name: '给寿星的祝福',
+      amount: '10000.00',
+      note: '5.11 不知道张桂源又在发什么神经，我真服了，算了算了，人家过生日呢还是别骂了，今天我就让让他吧。和往年一样，今年也记个一万块吧，这个数字吉利，希望你能成为你想成为的人，万里挑一。我从来没后悔过长大，也不想回到以前，希望你也能幸福地活在当下，不要总是纠结后悔，世界上有结果苦果但是没有如果。'
+    },
+    {
+      icon: '🥑',
+      name: '牛油果羽衣甘蓝',
+      amount: '15.00',
+      note: '6.23 多大了还没点长进，想和好还是只会送奶茶，无语笑了'
+    },
+    {
+      icon: '🎧',
+      name: '陪聊费',
+      amount: '200.00',
+      note: '6.25 坐飞机上非要听我的歌单，唉，我可太懂了，张桂源现在属于那种冷战刚结束他就支棱起来了，忍不住想嘚瑟的阶段，顺从，这次多给点'
+    },
+    {
+      icon: '🥣',
+      name: 'blueglass',
+      amount: '149.00',
+      note: '7.4 天啊张桂源竟然放弃了他雷打不动的9.9瑞幸冰美式和茶百道，这次买了很火的那个酸奶杯，不错不错，值得嘉奖，多记一百块以资鼓励'
+    },
+    {
+      icon: '🏷️',
+      name: '撕名牌保护费',
+      amount: '1000.00',
+      note: '7.17 不枉我平时的资敌行为，虽然很对不起余宇涵师兄，嗯嗯嗯嗯，反正最后还是黑队赢啦！给张桂源记一千！'
+    },
+    {
+      icon: '🍭',
+      name: '水果糖',
+      amount: '10.00',
+      note: '8.1 突然塞了个水果糖，所以说到底是哪儿来的？'
+    },
+    {
+      icon: '🎤',
+      name: '辛苦费',
+      amount: '511.00',
+      note: '8.13 真好啊，眼鼻嘴'
+    },
+    {
+      icon: '🐭',
+      name: '鼠粮',
+      amount: '50.00',
+      note: '8.17 笑死我了，晚上在酒店张桂源从左奇函那里顺了一袋子零食，被左奇函追着打得嗷嗷叫，不过这个新味道的薯片确实挺好吃，算上他嗷嗷叫的表演费就多给点吧！'
+    },
+    {
+      icon: '🍹',
+      name: '鲜萃祥茅金佛手',
+      amount: '35.00',
+      note: '9.18 味道很清爽，给张桂源尝了一口，他直接龇牙咧嘴，无语，山猪吃不了细糠'
+    },
+    {
+      icon: '🐉',
+      name: 'Jellycat天空龙',
+      amount: '299.00',
+      note: '9.18 呆呆傻傻的，也算可爱吧！'
+    }
+  ]
+}
+
+};
+
+function updateProgressPanel() {
+  const mainKeys = [
+    'phone1Unlocked',
+    'phone1PrivateAlbumUnlocked',
+    'mondayNoteUnlocked',
+    'phone2Unlocked',
+    'phone2PrivateVoiceUnlocked',
+    'phone2AnniversaryUnlocked',
+    'phone3Unlocked',
+    'phone3AppUnlocked_wechat',
+    'phone3AppUnlocked_music',
+    'phone3AppUnlocked_pan'
+  ];
+
+  const eggKeys = [
+    'thursdayEasterEggFound',
+    'secondEasterEggFound',
+    'thirdEasterEggFound'
+  ];
+
+  const mainCount = mainKeys.filter(key => localStorage.getItem(key) === 'yes').length;
+  const eggCount = eggKeys.filter(key => localStorage.getItem(key) === 'yes').length;
+
+  const mainText = document.getElementById('mainProgressText');
+  const eggText = document.getElementById('eggProgressText');
+
+  if (mainText) {
+    mainText.innerText = `主线进度${mainCount}/10`;
+  }
+
+  if (eggText) {
+    eggText.innerText = `发现彩蛋${eggCount}/3`;
+  }
+}
+
+let currentLedgerBook = 'recent';
+
+function openLedgerApp() {
+  document.getElementById('homeScreen').classList.remove('show');
+  document.getElementById('ledgerScreen').classList.remove('hidden');
+  document.getElementById('ledgerBooksScreen').classList.add('hidden');
+  renderLedgerBook(currentLedgerBook);
+}
+
+function renderLedgerBook(bookId) {
+  const book = LEDGER_BOOKS[bookId];
+  if (!book) return;
+
+  currentLedgerBook = bookId;
+
+  document.getElementById('ledgerTitle').innerText = book.pageTitle;
+  document.getElementById('currentLedgerBookName').innerText = book.bookName;
+  document.getElementById('ledgerDateTitle').innerText = book.dateTitle;
+
+  if (bookId === 'private') {
+    document.getElementById('ledgerSummaryLabel').innerText = '最近收入：';
+  } else {
+    document.getElementById('ledgerSummaryLabel').innerText = '总支出：';
+  }
+
+  document.getElementById('ledgerTotal').innerText = book.total;
+
+  const list = document.getElementById('ledgerList');
+  list.innerHTML = '';
+
+  book.records.forEach((record, index) => {
+    const moneyPrefix = bookId === 'private' ? '+￥' : '-￥';
+
+    list.innerHTML += `
+      <div class="ledger-item" onclick="openLedgerNote('${bookId}', ${index})">
+        <div class="ledger-category">${record.icon}</div>
+        <div class="ledger-main">
+          <div class="ledger-name">${record.name}</div>
+          <div class="ledger-note-preview">${record.note}</div>
+        </div>
+        <div class="ledger-money">${moneyPrefix}${record.amount}</div>
+      </div>
+    `;
+  });
+}
+
+function openLedgerBooks() {
+  document.getElementById('ledgerScreen').classList.add('hidden');
+  document.getElementById('ledgerBooksScreen').classList.remove('hidden');
+}
+
+function triggerSecondEasterEgg() {
+  const audio = document.getElementById('easterEggBgm2');
+
+  if (audio) {
+    audio.currentTime = 0;
+    audio.volume = 0.6;
+
+    audio.play().catch(err => {
+      console.log('音频播放失败：', err);
+    });
+  }
+
+  if (localStorage.getItem('secondEasterEggFound') !== 'yes') {
+    showEasterEggMessage('恭喜你发现了第二个彩蛋！');
+    localStorage.setItem('secondEasterEggFound', 'yes');
+    updateProgressPanel();
+  }
+}
+
+function showEasterEggMessage(text) {
+  const message = document.createElement('div');
+  message.className = 'easter-egg-message';
+  message.innerText = text;
+
+  document.body.appendChild(message);
+
+  setTimeout(() => {
+    message.remove();
+  }, 2500);
+}
+
+function backToLedgerMain() {
+  document.getElementById('ledgerBooksScreen').classList.add('hidden');
+  document.getElementById('ledgerScreen').classList.remove('hidden');
+}
+
+function openLedgerBook(bookId) {
+  renderLedgerBook(bookId);
+  document.getElementById('ledgerBooksScreen').classList.add('hidden');
+  document.getElementById('ledgerScreen').classList.remove('hidden');
+
+  if (bookId === 'private') {
+    triggerSecondEasterEgg();
+  }
+}
+
+function openLedgerNote(bookId, index) {
+  const book = LEDGER_BOOKS[bookId];
+  const record = book.records[index];
+  if (!record) return;
+
+  const moneyPrefix = bookId === 'private' ? '+￥' : '-￥';
+
+  document.getElementById('ledgerNoteTitle').innerText = record.name;
+  document.getElementById('ledgerNoteMoney').innerText = `${moneyPrefix}${record.amount}`;
+  document.getElementById('ledgerNoteText').innerText = `备注：${record.note}`;
+  document.getElementById('ledgerNoteModal').classList.remove('hidden');
+}
+function closeLedgerNote() {
+  document.getElementById('ledgerNoteModal').classList.add('hidden');
+}
+
+function escapeHTML(text) {
+  return String(text ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function setupAvatars() {
+  document.querySelectorAll('[data-avatar]').forEach(el => {
+    const key = el.dataset.avatar;
+    if (AVATARS[key]) {
+      el.style.backgroundImage = `url('${AVATARS[key]}')`;
+    }
+  });
+}
+
+const CORRECT_PASSCODE = '1018';
+const PASSCODE_LENGTH = 4;
+let input = '';
+
+function buildDots() {
+  const box = document.getElementById('dots');
+  box.innerHTML = '';
+  for (let i = 0; i < PASSCODE_LENGTH; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    box.appendChild(d);
+  }
+}
+
+function updateDots() {
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((d, i) => {
+    d.classList.toggle('filled', i < input.length);
+  });
+}
+
+function press(n) {
+  if (input.length >= PASSCODE_LENGTH) return;
+  input += n;
+  updateDots();
+  if (input.length === PASSCODE_LENGTH) {
+    setTimeout(check, 160);
+  }
+}
+
+function backspace() {
+  input = input.slice(0, -1);
+  updateDots();
+}
+
+function check() {
+  if (input === CORRECT_PASSCODE) {
+    unlock();
+  } else {
+    document.getElementById('passcodeScreen').classList.add('shake');
+    setTimeout(() => {
+      document.getElementById('passcodeScreen').classList.remove('shake');
+    }, 500);
+    input = '';
+    updateDots();
+  }
+}
+
+function unlock() {
+  localStorage.setItem('phone2Unlocked', 'yes');
+  document.getElementById('lockScreen').classList.add('hidden');
+  document.getElementById('passcodeScreen').classList.add('hidden');
+  document.getElementById('homeScreen').classList.add('show');
+  updateProgressPanel();
+}
+
+const lock = document.getElementById('lockScreen');
+let startY = null;
+let moved = false;
+
+lock.addEventListener('pointerdown', e => {
+  startY = e.clientY;
+  moved = false;
+});
+
+window.addEventListener('pointermove', e => {
+  if (startY === null) return;
+  const dy = startY - e.clientY;
+  if (dy > 0) {
+    moved = true;
+    lock.style.transform = `translateY(-${Math.min(dy, lock.clientHeight)}px)`;
+  }
+});
+
+window.addEventListener('pointerup', e => {
+  if (startY === null) return;
+  const dy = startY - e.clientY;
+  if (dy > 100 || !moved) {
+    openPasscode();
+  } else {
+    lock.style.transform = 'translateY(0)';
+  }
+  startY = null;
+});
+
+function openPasscode() {
+  lock.style.transform = 'translateY(-100%)';
+  lock.style.opacity = '0';
+
+  setTimeout(() => {
+    lock.classList.add('hidden');
+
+    if (localStorage.getItem('phone2Unlocked') === 'yes') {
+      document.getElementById('passcodeScreen').classList.add('hidden');
+      document.getElementById('homeScreen').classList.add('show');
+      updateProgressPanel();
+    }
+  }, 350);
+}
+
+function openPlaceholder(title) {
+  document.getElementById('homeScreen').classList.remove('show');
+  document.getElementById('placeholderTitle').innerText = title;
+  document.getElementById('placeholderScreen').classList.remove('hidden');
+}
+
+function backToHomeFromApp() {
+  document.getElementById('placeholderScreen').classList.add('hidden');
+
+  if (document.getElementById('voiceMemosScreen')) {
+    stopCurrentVoice();
+    document.getElementById('voiceMemosScreen').classList.add('hidden');
+  }
+
+  if (document.getElementById('anniversaryScreen')) {
+    document.getElementById('anniversaryScreen').classList.add('hidden');
+  }
+
+  if (document.getElementById('anniversaryDetailScreen')) {
+    document.getElementById('anniversaryDetailScreen').classList.add('hidden');
+  }
+
+  if (document.getElementById('ledgerScreen')) {
+    document.getElementById('ledgerScreen').classList.add('hidden');
+  }
+
+  if (document.getElementById('ledgerBooksScreen')) {
+    document.getElementById('ledgerBooksScreen').classList.add('hidden');
+  }
+
+  if (document.getElementById('ledgerNoteModal')) {
+    document.getElementById('ledgerNoteModal').classList.add('hidden');
+  }
+
+  document.getElementById('homeScreen').classList.add('show');
+  updateProgressPanel();
+}
+
+const ANNIVERSARIES = [
+  {
+    id: 'public',
+    pinned: true,
+    name: '公开日',
+    date: '2022.2.14',
+    days: '1677天了',
+    note: `马上就要和大家见面了。
+
+其实现在还是有一点没反应过来哈哈哈，感觉之前一直都是上课、练习、上课、练习，突然有一天老师说，以后会有更多的人看到你。
+
+听到的时候第一反应是：啊啊啊？真的吗？
+
+肯定有期待啊！也有一点紧张嘛。会想大家第一次看到我会觉得我是个什么样的人，会不会喜欢我唱歌，也会担心自己做得不够好。
+
+但是想太多也没有用。
+
+既然已经走到这里了，那就好好唱，好好跳，把现在能做的事情做好吧。以后会发生什么我也不知道，希望未来的我回头看现在，不会觉得自己偷懒哦。
+
+还有就是——
+
+第一次见面，请多关照。
+
+我是张函瑞。
+
+（我们马上就见面了哦！）
+
+（张函瑞最最最棒张函瑞加油啊啊啊啊啊）
+
+（张桂源你不要在旁边念经了行不行打扰到我背歌词了！！！）`
+  },
+  {
+    id: 'friend',
+    pinned: false,
+    name: '和橹橹成为朋友',
+    date: '2022.8.8',
+    days: '1502天了',
+    note: `也没有突然意识到“哇橹橹是我朋友了诶”，就是慢慢熟起来了嘛，然后发现什么事情都可以和他讲，虽然你跟他讲，他不认同的时候就在那儿瘪嘴哦！哼！但是认识橹橹，还是好幸运好幸运呀。谢谢你呀橹橹，大家不在的时候有你在，嗯，以后也会在一起玩很久很久的，一定！`
+  },
+  {
+    id: 'jianguo',
+    pinned: false,
+    name: '建国生日',
+    date: '2023.12.23',
+    days: '96天后',
+    note: `建国滴生日！虽然你平时也听不懂我说什么，但是没关系，我多说一点你总会听懂的吧哈哈哈。希望你健健康康的，我们在一起久一点，拉钩。`
+  },
+  {
+    id: 'firstStage',
+    pinned: false,
+    name: '第一次公演',
+    date: '2023.5.3',
+    days: '1234天了',
+    note: `魔法城堡克卜勒第一天超能力oneandonly大梦想家快乐崇拜剩下的盛夏啊啊啊啊啊啊记不住没关系记得住肯定记得住`
+  },
+  {
+    id: 'gym',
+    pinned: false,
+    name: '第一次体育馆',
+    date: '2025.8.16',
+    days: '398天了',
+    note: `今天记录一下，下一次会和更多的粉丝见面吗？`
+  },
+  {
+    id: 'outdoorStadium',
+    pinned: false,
+    name: '第一次体育场',
+    date: '2026.8.13',
+    days: '36天了',
+    note: `还是在青岛诶，体育场比我想的、还要、还要、还要大！站在台上的时候往前看，好像怎么看都看不到尽头。突然有一点不知道该说什么，只觉得能站在这里真的很幸运。那就继续努力吧，希望下一次见面我又进步一点，能让大家更幸福一点。`
+  }
+];
+
+function openAnniversaryPassword() {
+  if (localStorage.getItem('phone2AnniversaryUnlocked') === 'yes') {
+    openAnniversaryApp();
+    return;
+  }
+
+  document.getElementById('annivPasswordModal').classList.remove('hidden');
+  document.getElementById('annivPasswordInput').value = '';
+}
+
+function closeAnniversaryPassword() {
+  document.getElementById('annivPasswordModal').classList.add('hidden');
+  document.getElementById('annivPasswordInput').value = '';
+}
+
+function checkAnniversaryPassword() {
+  const input = document.getElementById('annivPasswordInput').value.trim();
+
+  if (input === '1212') {
+    localStorage.setItem('phone2AnniversaryUnlocked', 'yes');
+    updateProgressPanel();
+    closeAnniversaryPassword();
+    openAnniversaryApp();
+  } else {
+    alert('密码错误');
+    document.getElementById('annivPasswordInput').value = '';
+  }
+}
+
+function openAnniversaryApp() {
+  document.getElementById('homeScreen').classList.remove('show');
+  document.getElementById('anniversaryScreen').classList.remove('hidden');
+  document.getElementById('anniversaryDetailScreen').classList.add('hidden');
+  renderAnniversaryList();
+}
+
+function renderAnniversaryList() {
+  const list = document.getElementById('anniversaryList');
+  list.innerHTML = '';
+
+  ANNIVERSARIES.forEach(item => {
+    list.innerHTML += `
+      <div class="anniv-card ${item.pinned ? 'pinned' : ''}" onclick="openAnniversaryDetail('${item.id}')">
+        ${item.pinned ? '<div class="anniv-pin">置顶</div>' : ''}
+        <div class="anniv-name">${item.name}</div>
+        <div class="anniv-date">${item.date}</div>
+        <div class="anniv-days">
+          ${item.days.replace('天了', '<small>天了</small>').replace('天后', '<small>天后</small>')}
+        </div>
+      </div>
+    `;
+  });
+}
+
+function openAnniversaryDetail(id) {
+  const item = ANNIVERSARIES.find(a => a.id === id);
+  if (!item) return;
+
+  document.getElementById('anniversaryScreen').classList.add('hidden');
+  document.getElementById('anniversaryDetailScreen').classList.remove('hidden');
+
+  document.getElementById('annivDetailDate').innerText = item.date;
+  document.getElementById('annivDetailTitle').innerText = item.name;
+  document.getElementById('annivDetailNote').innerText = item.note;
+}
+
+function backToAnniversaryList() {
+  document.getElementById('anniversaryDetailScreen').classList.add('hidden');
+  document.getElementById('anniversaryScreen').classList.remove('hidden');
+}
+
+const VOICE_FOLDERS = {
+  recent: {
+    title: '最近项目',
+    records: [
+      { 
+        name: '练歌', 
+        date: '周二', 
+        duration: '00:31', 
+        audio: '练歌.mp3' 
+      },
+      { 
+        name: '乐理课', 
+        date: '周三', 
+        duration: '00:37', 
+        audio: '乐理课.mp3' 
+      },
+      { 
+        name: '钢琴练习', 
+        date: '周四', 
+        duration: '00:27', 
+        audio: '钢琴练习.mp3' 
+      },
+      { 
+        name: '听到了鸟叫', 
+        date: '周五', 
+        duration: '00:10', 
+        audio: '听到了鸟叫.mp3' 
+      }
+    ]
+  },
+
+  private: {
+    title: '私密录音',
+    password: '0214',
+    records: [
+      { 
+        name: '左奇函不许骗我', 
+        date: '2023.12.25', 
+        duration: '00:31', 
+        audio: '左奇函不许骗我.mp3' 
+      },
+      { 
+        name: '和橹橹的约定', 
+        date: '2026.5.11', 
+        duration: '00:31', 
+        audio: '和橹橹的约定.mp3' 
+      },
+      { 
+        name: '作战会议录音', 
+        date: '周一', 
+        duration: '00:16', 
+        audio: '作战会议录音.mp3' 
+      }
+    ]
+  }
+};
+
+function openVoiceMemos() {
+  document.getElementById('homeScreen').classList.remove('show');
+  document.getElementById('voiceMemosScreen').classList.remove('hidden');
+  document.getElementById('voiceFolderHome').classList.remove('hidden');
+  document.getElementById('voiceFolderDetail').classList.add('hidden');
+}
+
+let currentVoiceAudio = null;
+let currentVoiceButton = null;
+
+function openVoiceFolder(folderId) {
+  const folder = VOICE_FOLDERS[folderId];
+  if (!folder) return;
+
+  stopCurrentVoice();
+
+  document.getElementById('voiceFolderHome').classList.add('hidden');
+  document.getElementById('voiceFolderDetail').classList.remove('hidden');
+  document.getElementById('voiceFolderTitle').innerText = folder.title;
+
+  const list = document.getElementById('voiceRecordList');
+
+  list.innerHTML = `
+    <div class="voice-card">
+      ${folder.records.map((record, index) => `
+        <div class="voice-record-row">
+          <div class="voice-record-info">
+            <div class="voice-record-name">${record.name}</div>
+            <div class="voice-record-meta">${record.date}　${record.duration}</div>
+          </div>
+          <div class="voice-play" onclick="toggleVoice('${folderId}', ${index}, this)">▶</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function toggleVoice(folderId, index, btn) {
+  const record = VOICE_FOLDERS[folderId].records[index];
+
+  if (!record.audio) {
+    alert('这条录音还没有添加音频文件');
+    return;
+  }
+
+  if (currentVoiceAudio && currentVoiceButton === btn && !currentVoiceAudio.paused) {
+    currentVoiceAudio.pause();
+    btn.innerText = '▶';
+    return;
+  }
+
+  stopCurrentVoice();
+
+  currentVoiceAudio = new Audio(record.audio);
+  currentVoiceButton = btn;
+
+  currentVoiceAudio.play()
+    .then(() => {
+      btn.innerText = '⏸';
+    })
+    .catch(() => {
+      alert('音频无法播放，请检查 MP3 文件名和路径是否正确');
+      btn.innerText = '▶';
+      currentVoiceAudio = null;
+      currentVoiceButton = null;
+    });
+
+  currentVoiceAudio.onended = () => {
+    btn.innerText = '▶';
+    currentVoiceAudio = null;
+    currentVoiceButton = null;
+  };
+}
+
+function stopCurrentVoice() {
+  if (currentVoiceAudio) {
+    currentVoiceAudio.pause();
+    currentVoiceAudio.currentTime = 0;
+  }
+
+  if (currentVoiceButton) {
+    currentVoiceButton.innerText = '▶';
+  }
+
+  currentVoiceAudio = null;
+  currentVoiceButton = null;
+}
+
+function openPrivateVoiceFolder() {
+  if (localStorage.getItem('phone2PrivateVoiceUnlocked') === 'yes') {
+    openVoiceFolder('private');
+    return;
+  }
+
+  document.getElementById('voicePasswordModal').classList.remove('hidden');
+  document.getElementById('voicePasswordInput').value = '';
+}
+
+function closeVoicePassword() {
+  document.getElementById('voicePasswordModal').classList.add('hidden');
+  document.getElementById('voicePasswordInput').value = '';
+}
+
+function checkVoicePassword() {
+  const input = document.getElementById('voicePasswordInput').value.trim();
+
+  if (input === VOICE_FOLDERS.private.password) {
+    localStorage.setItem('phone2PrivateVoiceUnlocked', 'yes');
+    updateProgressPanel();
+    closeVoicePassword();
+    openVoiceFolder('private');
+  } else {
+    alert('密码错误');
+    document.getElementById('voicePasswordInput').value = '';
+  }
+}
+
+function backToVoiceFolders() {
+  stopCurrentVoice();
+  document.getElementById('voiceFolderDetail').classList.add('hidden');
+  document.getElementById('voiceFolderHome').classList.remove('hidden');
+}
+
+function openWechat() {
+  document.getElementById('homeScreen').classList.remove('show');
+  document.getElementById('wechatScreen').classList.remove('hidden');
+}
+
+function backToHome() {
+  document.getElementById('wechatScreen').classList.add('hidden');
+  document.getElementById('homeScreen').classList.add('show');
+  updateProgressPanel();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.wechat-panel').forEach(p => p.classList.add('hidden'));
+  document.getElementById(tab + 'Panel').classList.remove('hidden');
+
+  document.querySelectorAll('.wechat-tab-bar .tab-item').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.wechat-tab-bar .tab-item[data-tab="${tab}"]`).classList.add('active');
+
+  const title = document.getElementById('wechatTitle');
+  const search = document.getElementById('wechatSearch');
+  const plus = document.getElementById('wechatPlus');
+
+  if (tab === 'wechat') {
+    title.innerText = '微信';
+    search.classList.remove('hidden');
+    plus.classList.remove('hidden');
+  } else if (tab === 'contacts') {
+    title.innerText = '通讯录';
+    search.classList.remove('hidden');
+    plus.classList.add('hidden');
+  } else if (tab === 'discover') {
+    title.innerText = '发现';
+    search.classList.add('hidden');
+    plus.classList.add('hidden');
+  } else if (tab === 'me') {
+    title.innerText = '';
+    search.classList.add('hidden');
+    plus.classList.add('hidden');
+  }
+}
+
+function openChat(chatId) {
+  const chat = CHATS[chatId];
+  if (!chat) return;
+
+  const chatDetail = document.getElementById('chatDetail');
+  const chatTitle = document.getElementById('chatTitle');
+  const chatMessages = document.getElementById('chatMessages');
+
+  chatTitle.innerText = chat.name;
+  chatMessages.innerHTML = '';
+
+  chat.messages.forEach(msg => {
+    if (msg.type === 'time') {
+      chatMessages.innerHTML += `<div class="msg-time">${escapeHTML(msg.text)}</div>`;
+      return;
+    }
+
+    if (msg.type === 'system') {
+      chatMessages.innerHTML += `<div class="msg-system">${escapeHTML(msg.text)}</div>`;
+      return;
+    }
+
+    const isMe = msg.from === 'me';
+
+    let avatarKey;
+    if (isMe) {
+      avatarKey = 'me';
+    } else if (msg.avatar) {
+      avatarKey = msg.avatar;
+    } else {
+      avatarKey = chat.avatar;
+    }
+
+    const avatarUrl = AVATARS[avatarKey] || '';
+
+    let messageHTML = '';
+
+    if (msg.type === 'voice') {
+      const waveIcon = `
+        <span class="voice-wave">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      `;
+
+      messageHTML = `
+        <div class="voice-box">
+          ${isMe
+            ? `<span class="voice-seconds">${msg.seconds}"</span>${waveIcon}`
+            : `${waveIcon}<span class="voice-seconds">${msg.seconds}"</span>`
+          }
+        </div>
+        <div class="voice-transcript">${escapeHTML(msg.transcript)}</div>
+      `;
+    } else if (msg.type === 'image') {
+      messageHTML = `
+        <img class="msg-image" src="${msg.src}" onclick="openImageViewer('${msg.src}')">
+      `;
+    } else {
+      messageHTML = `<div class="msg-bubble">${escapeHTML(msg.text)}</div>`;
+    }
+
+    chatMessages.innerHTML += `
+      <div class="msg-row ${isMe ? 'me' : 'other'}">
+        ${isMe ? '' : `<div class="msg-avatar" style="background-image:url('${avatarUrl}')"></div>`}
+
+        <div class="msg-content">
+          ${!isMe && msg.name ? `<div class="msg-sender-name">${escapeHTML(msg.name)}</div>` : ''}
+          ${messageHTML}
+        </div>
+
+        ${isMe ? `<div class="msg-avatar" style="background-image:url('${avatarUrl}')"></div>` : ''}
+      </div>
+    `;
+  });
+
+  chatDetail.classList.remove('hidden');
+
+  setTimeout(() => {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }, 0);
+}
+
+function closeChat() {
+  document.getElementById('chatDetail').classList.add('hidden');
+}
+
+function openMoments() {
+  const page = document.getElementById('momentsPage');
+  const list = document.getElementById('momentsList');
+
+  list.innerHTML = '';
+
+  MOMENTS.forEach(moment => {
+    const avatarUrl = AVATARS[moment.avatar] || '';
+
+    let imagesHTML = '';
+    if (moment.images && moment.images.length > 0) {
+      const oneClass = moment.images.length === 1 ? 'one' : '';
+      imagesHTML = `
+        <div class="moment-images ${oneClass}">
+          ${moment.images.map(src => `
+            <img class="moment-img" src="${src}" onclick="openImageViewer('${src}')">
+          `).join('')}
+        </div>
+      `;
+    }
+
+    const likesHTML = moment.likes && moment.likes.length > 0
+      ? `<div class="moment-likes">♡ ${moment.likes.map(escapeHTML).join('，')}</div>`
+      : '';
+
+    const commentsHTML = moment.comments && moment.comments.length > 0
+      ? moment.comments.map(c => {
+          if (c.replyTo) {
+            return `
+              <div class="moment-comment">
+                <span class="moment-comment-name">${escapeHTML(c.name)}</span>
+                <span> 回复 </span>
+                <span class="moment-comment-name">${escapeHTML(c.replyTo)}</span>
+                <span>：${escapeHTML(c.text)}</span>
+              </div>
+            `;
+          } else {
+            return `
+              <div class="moment-comment">
+                <span class="moment-comment-name">${escapeHTML(c.name)}</span>
+                <span>：${escapeHTML(c.text)}</span>
+              </div>
+            `;
+          }
+        }).join('')
+      : '';
+
+    const socialHTML = likesHTML || commentsHTML
+      ? `<div class="moment-social">${likesHTML}${commentsHTML}</div>`
+      : '';
+
+    list.innerHTML += `
+      <div class="moment-item">
+        <div class="moment-avatar" style="background-image:url('${avatarUrl}')"></div>
+        <div class="moment-body">
+          <div class="moment-name">${escapeHTML(moment.name)}</div>
+          <div class="moment-text">${escapeHTML(moment.text)}</div>
+          ${imagesHTML}
+          <div class="moment-footer">
+            <span>${escapeHTML(moment.time)}</span>
+            <span class="moment-actions">··</span>
+          </div>
+          ${socialHTML}
+        </div>
+      </div>
+    `;
+  });
+
+  page.classList.remove('hidden');
+}
+
+function closeMoments() {
+  document.getElementById('momentsPage').classList.add('hidden');
+}
+
+function openImageViewer(src) {
+  document.getElementById('viewerImage').src = src;
+  document.getElementById('imageViewer').classList.remove('hidden');
+}
+
+function closeImageViewer() {
+  document.getElementById('imageViewer').classList.add('hidden');
+  document.getElementById('viewerImage').src = '';
+}
+
+buildDots();
+setupAvatars();
+updateProgressPanel();
+</script>
+</body>
+</html>
