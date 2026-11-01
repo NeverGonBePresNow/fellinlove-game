@@ -1,0 +1,4200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>第三个手机</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --wallpaper: url('杨博文壁纸.jpg');
+  --wechat-green: #07c160;
+}
+
+body {
+  background: #1f1f1f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100svh;
+  min-height: 100svh;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+               "SF Pro Display", "Helvetica Neue", "PingFang SC",
+               "Microsoft YaHei", sans-serif;
+  user-select: none;
+}
+
+.phone {
+  width: min(390px, calc(100vw - 16px));
+  height: min(844px, calc(100svh - 16px));
+  aspect-ratio: 390 / 844;
+  background: #000;
+  border-radius: 55px;
+  padding: 10px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+}
+
+.screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 45px;
+  overflow: hidden;
+}
+
+.screen::after {
+  content: "@刮刮乐特等奖";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-18deg);
+
+  z-index: 9999;
+  pointer-events: none;
+
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  white-space: nowrap;
+
+  color: rgba(255, 255, 255, 0.16);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.wallpaper {
+  position: absolute;
+  inset: 0;
+  background-image: var(--wallpaper);
+  background-size: cover;
+  background-position: center;
+}
+
+.wallpaper.blur {
+  filter: blur(36px) brightness(0.65);
+  transform: scale(1.15);
+}
+
+.status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 26px 0;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  z-index: 10;
+}
+
+.status-left,
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.signal {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.signal span {
+  display: inline-block;
+  width: 3px;
+  background: #fff;
+  border-radius: 1px;
+}
+
+.battery {
+  width: 24px;
+  height: 12px;
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: 3px;
+  position: relative;
+  margin-left: 2px;
+}
+
+.battery::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 3px;
+  width: 2px;
+  height: 6px;
+  background: #fff;
+  border-radius: 0 1px 1px 0;
+}
+
+.battery-fill {
+  height: 100%;
+  width: 61%;
+  background: #fff;
+  border-radius: 2px;
+}
+
+.status-bar.dark {
+  color: #111;
+}
+
+.status-bar.dark .signal span {
+  background: #111;
+}
+
+.status-bar.dark .battery {
+  border-color: #111;
+}
+
+.status-bar.dark .battery::after,
+.status-bar.dark .battery-fill {
+  background: #111;
+}
+
+.easter-egg-message {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 300;
+  width: 260px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.82);
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.5;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.lock-screen {
+  z-index: 3;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+  cursor: grab;
+  touch-action: none;
+}
+
+.lock-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 90px;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.date {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.time {
+  font-size: 92px;
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.swipe-hint {
+  position: absolute;
+  bottom: 55px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(255,255,255,0.85);
+  font-size: 17px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.passcode-screen {
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.passcode-content {
+  position: relative;
+  z-index: 5;
+  margin-top: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+}
+
+.passcode-title {
+  font-size: 21px;
+  font-weight: 400;
+  margin-bottom: 28px;
+}
+
+.dots {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.passcode-hint {
+  font-size: 14px;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 36px;
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 50%;
+}
+
+.dot.filled {
+  background: #fff;
+}
+
+.keypad {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(3, 76px);
+  gap: 14px 34px;
+  margin-top: auto;
+  margin-bottom: 80px;
+}
+
+.key {
+  width: 76px;
+  height: 76px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+  font-size: 34px;
+  font-weight: 400;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.key:active {
+  background: rgba(255,255,255,0.35);
+}
+
+.key small {
+  font-size: 10px;
+  letter-spacing: 1px;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+.bottom-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  padding: 55px 30px 30px;
+  color: #fff;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-12px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-8px); }
+  80% { transform: translateX(6px); }
+}
+
+.shake {
+  animation: shake 0.5s;
+}
+
+.progress-panel {
+  position: absolute;
+  left: 50%;
+  bottom: 105px;
+  transform: translateX(-50%);
+  z-index: 8;
+  width: 220px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.7;
+  backdrop-filter: blur(10px);
+}
+
+.home-screen {
+  z-index: 10;
+  display: none;
+}
+
+.home-screen.show {
+  display: block;
+  animation: fadein 0.6s ease;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.app-grid {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(4, 62px);
+  gap: 22px;
+  justify-content: center;
+  margin-top: 140px;
+}
+
+.app {
+  width: 74px;
+  height: 90px;
+  border-radius: 14px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+.app-icon-img {
+  width: 58px;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 13px;
+  margin-bottom: 6px;
+}
+
+.placeholder-screen {
+  z-index: 14;
+  background: #f8f8f8;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.ios-status-spacer {
+  height: 44px;
+  background: #f8f8f8;
+}
+
+.ios-nav {
+  height: 46px;
+  background: #f8f8f8;
+  border-bottom: 1px solid #dcdcdc;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ios-back {
+  position: absolute;
+  left: 14px;
+  top: -2px;
+  font-size: 40px;
+  font-weight: 300;
+  cursor: pointer;
+  color: #007aff;
+}
+
+.ios-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.placeholder-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 16px;
+}
+
+.app-password-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-password-box {
+  width: 285px;
+  background: rgba(248,248,248,0.96);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  color: #111;
+}
+
+.app-password-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.app-password-hint {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 14px;
+  line-height: 1.45;
+}
+
+.app-password-input {
+  width: 150px;
+  height: 36px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 17px;
+  margin-bottom: 14px;
+}
+
+.app-password-actions {
+  display: flex;
+  border-top: 1px solid #ddd;
+  margin: 0 -18px -18px;
+}
+
+.app-password-actions button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  height: 44px;
+  font-size: 16px;
+  color: #007aff;
+  cursor: pointer;
+}
+
+.app-password-actions button:first-child {
+  border-right: 1px solid #ddd;
+}
+
+.study-screen {
+  z-index: 14;
+  background: #f5f6f8;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.study-header {
+  height: 92px;
+  padding: 48px 18px 0;
+  background: #fff;
+  position: relative;
+  border-bottom: 1px solid #eee;
+}
+
+.study-back {
+  position: absolute;
+  left: 14px;
+  top: 36px;
+  font-size: 40px;
+  font-weight: 300;
+  color: #222;
+  cursor: pointer;
+}
+
+.study-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.study-main {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 70px;
+}
+
+.study-profile {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 22px 18px;
+  margin-bottom: 10px;
+}
+
+.study-avatar {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: #ddd;
+  background-size: cover;
+  background-position: center;
+  margin-right: 14px;
+}
+
+.study-name {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.study-list {
+  background: #fff;
+}
+
+.study-row {
+  height: 54px;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.study-row.disabled {
+  color: #999;
+  cursor: default;
+}
+
+.study-icon {
+  width: 30px;
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.study-row-title {
+  flex: 1;
+}
+
+.study-arrow {
+  color: #c7c7cc;
+  font-size: 24px;
+}
+
+.study-tabbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 66px;
+  background: #fff;
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  padding-bottom: 10px;
+}
+
+.study-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  color: #777;
+  padding-top: 7px;
+}
+
+.study-tab-icon {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.study-tab.active {
+  color: #2f7df6;
+}
+
+.study-page-screen {
+  z-index: 15;
+  background: #f5f6f8;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.study-page-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 14px 28px;
+}
+
+.study-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+
+.study-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.study-card-sub {
+  font-size: 13px;
+  color: #777;
+  line-height: 1.5;
+}
+
+.study-status {
+  display: inline-block;
+  font-size: 12px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.status-todo {
+  background: #fff0f0;
+  color: #e04b4b;
+}
+
+.status-done {
+  background: #edf8ef;
+  color: #36a852;
+}
+
+.status-doing {
+  background: #eef4ff;
+  color: #2f7df6;
+}
+
+.book-shelf-item {
+  display: flex;
+  align-items: center;
+}
+
+.book-cover {
+  width: 72px;
+  height: 96px;
+  border-radius: 6px;
+  background: #ddd;
+  background-size: cover;
+  background-position: center;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.book-name {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.book-progress {
+  font-size: 13px;
+  color: #777;
+}
+
+.music-screen {
+  z-index: 14;
+  background: #f7f7f7;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.music-header {
+  height: 92px;
+  padding: 48px 18px 0;
+  background: #fff;
+  position: relative;
+  border-bottom: 1px solid #eee;
+}
+
+.music-back {
+  position: absolute;
+  left: 14px;
+  top: 36px;
+  font-size: 40px;
+  font-weight: 300;
+  color: #111;
+  cursor: pointer;
+}
+
+.music-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.music-main {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 24px;
+}
+
+.music-profile {
+  background: #fff;
+  padding: 20px 18px 16px;
+  display: flex;
+  align-items: center;
+}
+
+.music-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #ddd;
+  background-size: cover;
+  background-position: center;
+  margin-right: 14px;
+}
+
+.music-name {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.music-desc {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 6px;
+}
+
+.music-follow {
+  font-size: 13px;
+  color: #999;
+}
+
+.music-tabs {
+  height: 48px;
+  background: #fff;
+  display: flex;
+  border-bottom: 1px solid #eee;
+}
+
+.music-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  font-size: 15px;
+  cursor: pointer;
+  position: relative;
+}
+
+.music-tab.active {
+  color: #d33a31;
+  font-weight: 700;
+}
+
+.music-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 28px;
+  height: 3px;
+  border-radius: 3px;
+  background: #d33a31;
+}
+
+.music-panel {
+  padding: 12px 14px 24px;
+}
+
+.music-note-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.music-cover {
+  width: 76px;
+  height: 76px;
+  border-radius: 8px;
+  background: #ddd;
+  background-size: cover;
+  background-position: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.music-note-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.music-song-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 7px;
+}
+
+.music-note-text {
+  font-size: 14px;
+  line-height: 1.55;
+  color: #333;
+  white-space: pre-line;
+}
+
+.music-note-footer {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #999;
+}
+
+.music-message-item {
+  background: #fff;
+  min-height: 72px;
+  padding: 12px 12px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.music-message-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ddd;
+  background-size: cover;
+  background-position: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.music-message-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.music-message-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.music-message-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.music-message-time {
+  font-size: 12px;
+  color: #aaa;
+  margin-left: 8px;
+}
+
+.music-message-preview {
+  font-size: 13px;
+  color: #777;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.music-unread {
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #d33a31;
+  color: #fff;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  padding: 0 6px;
+}
+
+.music-setting-btn {
+  position: absolute;
+  right: 18px;
+  top: 48px;
+  font-size: 22px;
+  color: #333;
+  cursor: pointer;
+}
+
+.music-settings-screen,
+.music-account-screen {
+  z-index: 16;
+  background: #f7f7f7;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.music-settings-list {
+  background: #fff;
+  margin-top: 12px;
+}
+
+.music-setting-row {
+  height: 52px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.music-setting-row span {
+  color: #c7c7cc;
+  font-size: 24px;
+}
+
+.music-settings-actions {
+  margin-top: auto;
+  padding: 16px;
+}
+
+.music-switch-account,
+.music-logout {
+  height: 48px;
+  border-radius: 12px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.music-switch-account {
+  color: #d33a31;
+  cursor: pointer;
+}
+
+.music-logout {
+  color: #aaa;
+}
+
+.music-account-list {
+  padding: 14px 16px;
+}
+
+.music-account-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.music-account-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #ddd;
+  background-size: cover;
+  background-position: center;
+  margin-right: 14px;
+}
+
+.music-account-info {
+  flex: 1;
+}
+
+.music-account-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.music-account-sign {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.music-account-follow {
+  font-size: 13px;
+  color: #999;
+}
+
+.music-empty {
+  text-align: center;
+  color: #aaa;
+  font-size: 15px;
+  padding: 70px 0;
+}
+
+.music-message-item.clickable {
+  cursor: pointer;
+}
+
+.music-chat-screen {
+  z-index: 17;
+  background: #f2f2f2;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.music-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 12px;
+}
+
+.music-chat-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.music-chat-row.other {
+  justify-content: flex-start;
+}
+
+.music-chat-row.me {
+  justify-content: flex-end;
+}
+
+.music-chat-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ddd;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.music-chat-row.other .music-chat-avatar {
+  margin-right: 8px;
+}
+
+.music-chat-row.me .music-chat-avatar {
+  margin-left: 8px;
+}
+
+.music-chat-bubble {
+  max-width: 230px;
+  padding: 9px 11px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.music-chat-row.other .music-chat-bubble {
+  background: #fff;
+  color: #111;
+  border-top-left-radius: 4px;
+}
+
+.music-chat-row.me .music-chat-bubble {
+  background: #d33a31;
+  color: #fff;
+  border-top-right-radius: 4px;
+}
+
+.music-chat-time {
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  margin: 10px 0 14px;
+}
+
+.music-chat-inputbar {
+  min-height: 58px;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  padding: 10px 12px 20px;
+}
+
+.music-chat-input {
+  height: 34px;
+  border-radius: 18px;
+  background: #f0f0f0;
+  color: #aaa;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+}
+
+.pan-screen {
+  z-index: 14;
+  background: #f5f7fb;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.pan-header {
+  height: 92px;
+  padding: 48px 18px 0;
+  background: #fff;
+  position: relative;
+  border-bottom: 1px solid #eee;
+}
+
+.pan-back {
+  position: absolute;
+  left: 14px;
+  top: 36px;
+  font-size: 40px;
+  font-weight: 300;
+  color: #1677ff;
+  cursor: pointer;
+}
+
+.pan-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.pan-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+}
+
+.pan-item {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  cursor: pointer;
+}
+
+.pan-icon {
+  width: 42px;
+  font-size: 28px;
+  margin-right: 12px;
+}
+
+.pan-info {
+  flex: 1;
+}
+
+.pan-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.pan-meta {
+  font-size: 13px;
+  color: #999;
+}
+
+.pan-arrow {
+  color: #c7c7cc;
+  font-size: 24px;
+}
+
+.pan-player-screen {
+  z-index: 18;
+  background: #fff;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.pan-player-tabs {
+  height: 48px;
+  display: flex;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+}
+
+.pan-player-tab {
+  flex: 1;
+  text-align: center;
+  line-height: 48px;
+  font-size: 16px;
+  color: #777;
+  cursor: pointer;
+  position: relative;
+}
+
+.pan-player-tab.active {
+  color: #1677ff;
+  font-weight: 700;
+}
+
+.pan-player-tab.active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 34px;
+  height: 3px;
+  border-radius: 3px;
+  background: #1677ff;
+  transform: translateX(-50%);
+}
+
+.pan-player-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 22px 24px 28px;
+}
+
+.pan-audio-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pan-audio-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 18px 0 32px;
+  text-align: center;
+}
+
+.pan-cover-circle {
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background-image: url('约会大作战.jpg');
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  margin-bottom: auto;
+}
+
+.pan-progress-area {
+  width: 100%;
+  margin-top: 36px;
+}
+
+.pan-time-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 8px;
+}
+
+.pan-progress {
+  width: 100%;
+  accent-color: #1677ff;
+}
+
+.pan-controls {
+  margin-top: 22px;
+  display: flex;
+  justify-content: center;
+}
+
+.pan-play-btn {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: none;
+  background: #1677ff;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.pan-transcript-panel {
+  flex: 1;
+  overflow-y: auto;
+  font-size: 16px;
+  line-height: 1.7;
+  white-space: pre-line;
+  color: #222;
+}
+
+.wechat-screen {
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  background: #ededed;
+  color: #111;
+}
+
+.wechat-header {
+  position: relative;
+  padding-top: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ededed;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.wechat-header .back-btn {
+  position: absolute;
+  left: 16px;
+  top: 48px;
+  font-size: 28px;
+  cursor: pointer;
+  color: #111;
+}
+
+.wechat-header .plus {
+  position: absolute;
+  right: 16px;
+  top: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #111;
+}
+
+.wechat-search {
+  margin: 10px 16px;
+  background: #e1e1e1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #888;
+  text-align: center;
+}
+
+.wechat-panel {
+  flex: 1;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.chat-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+}
+
+.chat-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 6px;
+  background-color: #d8d8d8;
+  background-size: cover;
+  background-position: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.chat-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-name {
+  font-size: 17px;
+  font-weight: 500;
+  color: #111;
+}
+
+.chat-preview {
+  font-size: 13px;
+  color: #999;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-time {
+  font-size: 12px;
+  color: #bbb;
+  margin-left: 8px;
+}
+
+.msg-image {
+  max-width: 170px;
+  border-radius: 6px;
+  display: block;
+}
+
+.discover-list {
+  background: #ededed;
+  padding-top: 10px;
+  min-height: 100%;
+}
+
+.discover-group {
+  background: #fff;
+  margin-bottom: 8px;
+}
+
+.discover-item {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 17px;
+  color: #111;
+  cursor: pointer;
+}
+
+.discover-icon {
+  width: 30px;
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.discover-text {
+  flex: 1;
+}
+
+.discover-arrow {
+  color: #c7c7cc;
+  font-size: 24px;
+}
+
+.me-page {
+  background: #ededed;
+  min-height: 100%;
+  padding-top: 55px;
+}
+
+.me-card {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 24px 16px 22px;
+  margin-bottom: 8px;
+}
+
+.me-avatar {
+  width: 66px;
+  height: 66px;
+  border-radius: 8px;
+  background-color: #d8d8d8;
+  background-size: cover;
+  background-position: center;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.me-main {
+  flex: 1;
+}
+
+.me-name {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.me-id {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.me-status {
+  font-size: 14px;
+  color: #555;
+}
+
+.me-arrow {
+  color: #c7c7cc;
+  font-size: 26px;
+}
+
+.me-list {
+  background: #fff;
+  margin-bottom: 8px;
+}
+
+.me-item {
+  height: 52px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 17px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.me-item span {
+  color: #c7c7cc;
+  font-size: 24px;
+}
+
+.wechat-tab-bar {
+  display: flex;
+  background: #f9f9f9;
+  border-top: 1px solid #e5e5e5;
+  padding: 8px 0 25px;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  cursor: pointer;
+}
+
+.tab-item .tab-icon {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.tab-item.active {
+  color: var(--wechat-green);
+}
+
+.disabled-tab {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.chat-detail {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: #ededed;
+  display: flex;
+  flex-direction: column;
+  color: #111;
+}
+
+.chat-status-placeholder {
+  height: 34px;
+  background: #ededed;
+}
+
+.chat-detail-header {
+  height: 54px;
+  background: #ededed;
+  border-bottom: 1px solid #dcdcdc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.chat-back {
+  position: absolute;
+  left: 14px;
+  top: 3px;
+  font-size: 40px;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.chat-more {
+  position: absolute;
+  right: 18px;
+  top: 12px;
+  font-size: 24px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 12px 14px;
+  background: #ededed;
+}
+
+.msg-time,
+.msg-system {
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  margin: 10px 0 14px;
+}
+
+.msg-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.msg-row.other {
+  justify-content: flex-start;
+}
+
+.msg-row.me {
+  justify-content: flex-end;
+}
+
+.msg-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 5px;
+  background-color: #cfcfcf;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.msg-row.other .msg-avatar {
+  margin-right: 8px;
+}
+
+.msg-row.me .msg-avatar {
+  margin-left: 8px;
+}
+
+.msg-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 240px;
+}
+
+.msg-row.me .msg-content {
+  align-items: flex-end;
+}
+
+.msg-row.other .msg-content {
+  align-items: flex-start;
+}
+
+.msg-sender-name {
+  font-size: 12px;
+  color: #888;
+  margin-top: -6px;
+  margin-bottom: 3px;
+  margin-left: 2px;
+}
+
+.msg-bubble {
+  max-width: 230px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  line-height: 1.45;
+  word-break: break-word;
+  position: relative;
+  white-space: pre-wrap;
+}
+
+.msg-row.other .msg-bubble {
+  background: #fff;
+  color: #111;
+}
+
+.msg-row.me .msg-bubble {
+  background: #95ec69;
+  color: #111;
+}
+
+.msg-row.other .msg-bubble::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 12px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 6px solid #fff;
+}
+
+.msg-row.me .msg-bubble::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 12px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 6px solid #95ec69;
+}
+
+.chat-input-bar {
+  min-height: 58px;
+  background: #f7f7f7;
+  border-top: 1px solid #dcdcdc;
+  display: flex;
+  align-items: center;
+  padding: 8px 10px 22px;
+  gap: 8px;
+}
+
+.input-icon {
+  font-size: 21px;
+  color: #333;
+}
+
+.fake-input {
+  flex: 1;
+  height: 34px;
+  background: #fff;
+  border-radius: 5px;
+}
+
+.moments-page {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  color: #111;
+}
+
+.moments-header {
+  height: 88px;
+  padding-top: 42px;
+  background: rgba(237,237,237,0.96);
+  border-bottom: 1px solid #ddd;
+  position: relative;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.moments-back {
+  position: absolute;
+  left: 14px;
+  top: 34px;
+  font-size: 40px;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.moments-camera {
+  position: absolute;
+  right: 18px;
+  top: 45px;
+  font-size: 20px;
+}
+
+.moments-scroll {
+  flex: 1;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.moments-cover {
+  height: 220px;
+  position: relative;
+  background: #ddd;
+}
+
+.moments-cover-img {
+  width: 100%;
+  height: 220px;
+  background-image: url('杨博文背景.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.moments-my-info {
+  position: absolute;
+  right: 16px;
+  bottom: 5px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.moments-my-text {
+  text-align: right;
+  margin-right: 12px;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.moments-my-name {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.moments-my-sign {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.moments-my-avatar {
+  width: 66px;
+  height: 66px;
+  border-radius: 6px;
+  background-color: #ccc;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #fff;
+}
+
+.moment-item {
+  display: flex;
+  padding: 14px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.moment-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 5px;
+  background-color: #ccc;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.moment-body {
+  flex: 1;
+}
+
+.moment-name {
+  color: #576b95;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.moment-text {
+  font-size: 15px;
+  line-height: 1.45;
+  color: #111;
+  margin-bottom: 8px;
+  white-space: pre-line;
+}
+.moment-images {
+  display: grid;
+  grid-template-columns: repeat(3, 76px);
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.moment-images.one {
+  display: block;
+}
+
+.moment-img {
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+}
+
+.moment-images.one .moment-img {
+  width: 150px;
+  height: auto;
+  max-height: 190px;
+  object-fit: cover;
+}
+
+.moment-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #888;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.moment-actions {
+  background: #f3f3f3;
+  color: #576b95;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+.moment-social {
+  background: #f3f3f3;
+  margin-top: 8px;
+  padding: 6px 8px;
+  font-size: 13px;
+  color: #111;
+  border-radius: 2px;
+}
+
+.moment-likes {
+  color: #576b95;
+  margin-bottom: 4px;
+}
+
+.moment-comment {
+  line-height: 1.5;
+}
+
+.moment-comment-name {
+  color: #576b95;
+}
+
+@media (max-width: 600px) {
+  .phone {
+    width: min(390px, calc(100vw - 12px));
+    max-height: calc(100dvh - 12px);
+    border-radius: 42px;
+    padding: 8px;
+  }
+
+  .screen {
+    border-radius: 35px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="phone">
+  <div class="screen">
+
+    <div class="layer passcode-screen" id="passcodeScreen">
+      <div class="wallpaper blur"></div>
+
+      <div class="status-bar">
+        <div class="status-left">中国移动</div>
+        <div class="status-right">
+          <div class="signal">
+            <span style="height:5px"></span>
+            <span style="height:8px"></span>
+            <span style="height:11px"></span>
+            <span style="height:14px"></span>
+          </div>
+          <div class="battery"><div class="battery-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="passcode-content">
+        <div class="passcode-title">输入密码</div>
+        <div class="dots" id="dots"></div>
+        <div class="passcode-hint">密码提示：我的生日</div>
+      </div>
+
+      <div class="keypad">
+        <button class="key" onclick="press('1')">1</button>
+        <button class="key" onclick="press('2')">2<small>A B C</small></button>
+        <button class="key" onclick="press('3')">3<small>D E F</small></button>
+        <button class="key" onclick="press('4')">4<small>G H I</small></button>
+        <button class="key" onclick="press('5')">5<small>J K L</small></button>
+        <button class="key" onclick="press('6')">6<small>M N O</small></button>
+        <button class="key" onclick="press('7')">7<small>P Q R S</small></button>
+        <button class="key" onclick="press('8')">8<small>T U V</small></button>
+        <button class="key" onclick="press('9')">9<small>W X Y Z</small></button>
+        <button class="key"></button>
+        <button class="key" onclick="press('0')">0</button>
+        <button class="key" onclick="backspace()">⌫</button>
+      </div>
+
+      <div class="bottom-actions">
+        <span>紧急情况</span>
+        <span>取消</span>
+      </div>
+    </div>
+
+    <div class="layer lock-screen" id="lockScreen">
+      <div class="wallpaper"></div>
+
+      <div class="status-bar">
+        <div class="status-left">中国移动</div>
+        <div class="status-right">
+          <div class="signal">
+            <span style="height:5px"></span>
+            <span style="height:8px"></span>
+            <span style="height:11px"></span>
+            <span style="height:14px"></span>
+          </div>
+          <div class="battery"><div class="battery-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="lock-content">
+        <div class="date">9月19日 周六</div>
+        <div class="time">22:18</div>
+      </div>
+
+      <div class="swipe-hint">向上轻扫解锁</div>
+    </div>
+
+    <div class="layer home-screen" id="homeScreen">
+      <div class="wallpaper blur"></div>
+
+      <div class="status-bar">
+        <div class="status-left">中国移动</div>
+        <div class="status-right">
+          <div class="signal">
+            <span style="height:5px"></span>
+            <span style="height:8px"></span>
+            <span style="height:11px"></span>
+            <span style="height:14px"></span>
+          </div>
+          <div class="battery"><div class="battery-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="app-grid">
+        <div class="app" onclick="openStudyApp()">
+  <img class="app-icon-img" src="学习通图标.jpg" alt="学习通">
+  <span>学习通</span>
+</div>
+      
+        <div class="app" onclick="openLockedApp('wechat')">
+          <img class="app-icon-img" src="微信图标.jpg" alt="微信">
+          <span>微信</span>
+        </div>
+
+        <div class="app" onclick="openLockedApp('music')">
+          <img class="app-icon-img" src="网易云音乐图标.jpg" alt="网易云音乐">
+          <span>网易云音乐</span>
+        </div>
+
+        <div class="app" onclick="openLockedApp('pan')">
+          <img class="app-icon-img" src="百度网盘图标.jpg" alt="百度网盘">
+          <span>百度网盘</span>
+        </div>
+
+        <div class="progress-panel">
+  <div id="mainProgressText">主线进度0/10</div>
+  <div id="eggProgressText">发现彩蛋0/3</div>
+</div>
+      </div>
+    </div>
+
+    <div class="layer placeholder-screen hidden" id="placeholderScreen">
+      <div class="ios-status-spacer"></div>
+      <div class="ios-nav">
+        <span class="ios-back" onclick="backToHomeFromApp()">‹</span>
+        <span class="ios-title" id="placeholderTitle">应用</span>
+      </div>
+      <div class="placeholder-content">该应用内容待制作</div>
+    </div>
+
+    <div class="app-password-modal hidden" id="appPasswordModal">
+      <div class="app-password-box">
+        <div class="app-password-title" id="appPasswordTitle">输入密码</div>
+        <div class="app-password-hint" id="appPasswordHint"></div>
+        <input id="appPasswordInput" class="app-password-input" type="password" placeholder="输入密码">
+        <div class="app-password-actions">
+          <button onclick="closeAppPassword()">取消</button>
+          <button onclick="checkAppPassword()">确定</button>
+        </div>
+      </div>
+    </div>
+
+<div class="layer music-screen hidden" id="musicScreen">
+  <div class="music-header">
+  <span class="music-back" onclick="backToHomeFromApp()">‹</span>
+  <div class="music-title">网易云音乐</div>
+  <span class="music-setting-btn" onclick="openMusicSettings()">⚙︎</span>
+</div>
+
+
+  <div class="music-main">
+    <div class="music-profile">
+  <div class="music-avatar" id="musicProfileAvatar"></div>
+  <div>
+    <div class="music-name" id="musicProfileName">小羊</div>
+    <div class="music-desc" id="musicProfileDesc">普通歌迷</div>
+    <div class="music-follow" id="musicProfileFollow">105关注　0粉丝</div>
+  </div>
+</div>
+
+
+    <div class="music-tabs">
+      <div class="music-tab active" id="musicTabNotes" onclick="switchMusicTab('notes')">笔记</div>
+      <div class="music-tab" id="musicTabMessages" onclick="switchMusicTab('messages')">私信</div>
+    </div>
+
+    <div class="music-panel" id="musicContent"></div>
+  </div>
+</div>
+
+<div class="layer music-settings-screen hidden" id="musicSettingsScreen">
+  <div class="music-header">
+    <span class="music-back" onclick="backToMusicHome()">‹</span>
+    <div class="music-title">设置</div>
+  </div>
+
+  <div class="music-settings-list">
+    <div class="music-setting-row">账号与安全 <span>›</span></div>
+    <div class="music-setting-row">播放与下载 <span>›</span></div>
+    <div class="music-setting-row">音质 <span>›</span></div>
+    <div class="music-setting-row">通用 <span>›</span></div>
+    <div class="music-setting-row">通知 <span>›</span></div>
+    <div class="music-setting-row">隐私与权限 <span>›</span></div>
+    <div class="music-setting-row">存储空间 <span>›</span></div>
+    <div class="music-setting-row">未成年人模式 <span>›</span></div>
+    <div class="music-setting-row">关于 <span>›</span></div>
+  </div>
+
+  <div class="music-settings-actions">
+    <div class="music-switch-account" onclick="openMusicAccountSwitch()">切换账号</div>
+    <div class="music-logout">退出登录</div>
+  </div>
+</div>
+
+<div class="layer music-chat-screen hidden" id="musicChatScreen">
+  <div class="music-header">
+    <span class="music-back" onclick="backToMusicMessages()">‹</span>
+    <div class="music-title" id="musicChatTitle">私信</div>
+  </div>
+
+  <div class="music-chat-messages" id="musicChatMessages"></div>
+
+  <div class="music-chat-inputbar">
+    <div class="music-chat-input">说点什么...</div>
+  </div>
+</div>
+
+<div class="layer music-account-screen hidden" id="musicAccountScreen">
+  <div class="music-header">
+    <span class="music-back" onclick="backToMusicSettings()">‹</span>
+    <div class="music-title">切换账号</div>
+  </div>
+
+  <div class="music-account-list">
+
+    <div class="music-account-card" onclick="switchMusicAccount('main')">
+      <div class="music-account-avatar" style="background-image:url('大号头像.jpg')"></div>
+      <div class="music-account-info">
+        <div class="music-account-name">🐑</div>
+        <div class="music-account-sign">普通歌迷</div>
+        <div class="music-account-follow">105关注　0粉丝</div>
+      </div>
+    </div>
+
+    <div class="music-account-card" onclick="switchMusicAccount('small')">
+      <div class="music-account-avatar" style="background-image:url('小号头像.jpg')"></div>
+      <div class="music-account-info">
+        <div class="music-account-name">看不见我看不见我</div>
+        <div class="music-account-sign">一片自留地</div>
+        <div class="music-account-follow">1关注　1粉丝</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="layer pan-screen hidden" id="panScreen">
+  <div class="pan-header">
+    <span class="pan-back" onclick="backToHomeFromApp()">‹</span>
+    <div class="pan-title">百度网盘</div>
+  </div>
+
+  <div class="pan-list">
+    <div class="pan-item" onclick="openPanFolder()">
+      <div class="pan-icon">📁</div>
+      <div class="pan-info">
+        <div class="pan-name">约会大作战-语音素材</div>
+        <div class="pan-meta">8 个文件</div>
+      </div>
+      <div class="pan-arrow">›</div>
+    </div>
+  </div>
+</div>
+
+<div class="layer pan-screen hidden" id="panFolderScreen">
+  <div class="pan-header">
+    <span class="pan-back" onclick="backToPanHome()">‹</span>
+    <div class="pan-title">约会大作战-语音素材</div>
+  </div>
+
+  <div class="pan-list" id="panFileList"></div>
+</div>
+
+<div class="layer pan-player-screen hidden" id="panPlayerScreen">
+  <div class="pan-header">
+    <span class="pan-back" onclick="backToPanFolder()">‹</span>
+    <div class="pan-title">音频播放</div>
+  </div>
+
+  <div class="pan-player-tabs">
+    <div class="pan-player-tab active" id="panAudioTab" onclick="switchPanPlayerTab('audio')">音频</div>
+    <div class="pan-player-tab" id="panTextTab" onclick="switchPanPlayerTab('text')">文稿</div>
+  </div>
+
+  <div class="pan-player-main">
+    <div class="pan-audio-panel" id="panAudioPanel">
+      <div class="pan-audio-title" id="panAudioTitle">音频标题</div>
+
+      <div class="pan-cover-circle"></div>
+
+      <div class="pan-progress-area">
+        <div class="pan-time-row">
+          <span id="panCurrentTime">00:00</span>
+          <span id="panDuration">00:00</span>
+        </div>
+
+        <input
+          id="panProgress"
+          class="pan-progress"
+          type="range"
+          min="0"
+          max="100"
+          value="0"
+          step="0.1"
+          oninput="seekPanAudio(this.value)"
+        >
+
+        <div class="pan-controls">
+          <button class="pan-play-btn" id="panPlayBtn" onclick="togglePanAudio()">⏸</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pan-transcript-panel hidden" id="panTranscriptPanel">
+      文稿内容待补充。
+    </div>
+  </div>
+</div>
+
+<div class="layer study-screen hidden" id="studyScreen">
+  <div class="study-header">
+    <span class="study-back" onclick="backToHomeFromApp()">‹</span>
+    <div class="study-title">我的页面</div>
+  </div>
+
+  <div class="study-main">
+    <div class="study-profile">
+      <div class="study-avatar" style="background-image:url('杨博文头像.jpg')"></div>
+      <div class="study-name">杨博文</div>
+    </div>
+
+    <div class="study-list">
+      <div class="study-row" onclick="openStudyPage('todo')">
+        <span class="study-icon">✅</span>
+        <span class="study-row-title">待办</span>
+        <span class="study-arrow">›</span>
+      </div>
+
+      <div class="study-row" onclick="openStudyPage('courses')">
+        <span class="study-icon">📘</span>
+        <span class="study-row-title">课程</span>
+        <span class="study-arrow">›</span>
+      </div>
+
+      <div class="study-row" onclick="openStudyPage('notes')">
+        <span class="study-icon">📝</span>
+        <span class="study-row-title">笔记本</span>
+        <span class="study-arrow">›</span>
+      </div>
+
+      <div class="study-row" onclick="openStudyPage('cloud')">
+        <span class="study-icon">☁️</span>
+        <span class="study-row-title">云盘</span>
+        <span class="study-arrow">›</span>
+      </div>
+
+      <div class="study-row disabled">
+        <span class="study-icon">👥</span>
+        <span class="study-row-title">小组</span>
+        <span class="study-arrow">›</span>
+      </div>
+
+      <div class="study-row" onclick="openStudyPage('books')">
+        <span class="study-icon">📚</span>
+        <span class="study-row-title">书架</span>
+        <span class="study-arrow">›</span>
+      </div>
+
+      <div class="study-row disabled">
+        <span class="study-icon">⚙️</span>
+        <span class="study-row-title">设置</span>
+        <span class="study-arrow">›</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="study-tabbar">
+  <div class="study-tab">
+    <div class="study-tab-icon">🏠</div>
+    首页
+  </div>
+  <div class="study-tab">
+    <div class="study-tab-icon">📘</div>
+    课程
+  </div>
+  <div class="study-tab">
+    <div class="study-tab-icon">💬</div>
+    消息
+  </div>
+  <div class="study-tab">
+    <div class="study-tab-icon">🧰</div>
+    工具
+  </div>
+  <div class="study-tab active">
+    <div class="study-tab-icon">👤</div>
+    我的
+  </div>
+</div>
+</div>
+
+<div class="layer study-page-screen hidden" id="studyPageScreen">
+  <div class="study-header">
+    <span class="study-back" onclick="backToStudyHome()">‹</span>
+    <div class="study-title" id="studyPageTitle">页面</div>
+  </div>
+
+  <div class="study-page-content" id="studyPageContent"></div>
+</div>
+
+    <div class="layer wechat-screen hidden" id="wechatScreen">
+      <div class="status-bar dark">
+        <div class="status-left">中国移动</div>
+        <div class="status-right">
+          <div class="signal">
+            <span style="height:5px"></span>
+            <span style="height:8px"></span>
+            <span style="height:11px"></span>
+            <span style="height:14px"></span>
+          </div>
+          <div class="battery"><div class="battery-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="wechat-header">
+        <span class="back-btn" onclick="backToHome()">‹</span>
+        <span id="wechatTitle">微信</span>
+        <span class="plus" id="wechatPlus">＋</span>
+      </div>
+
+      <div class="wechat-search" id="wechatSearch">搜索</div>
+
+<div class="wechat-panel" id="wechatPanel">
+  <div class="chat-item" onclick="openChat('group1')">
+    <div class="chat-avatar" data-avatar="group1"></div>
+    <div class="chat-info">
+      <div class="chat-name">今天也在当童工</div>
+      <div class="chat-preview">左奇函：宝宝长大了，越来越有自知之明了</div>
+    </div>
+    <div class="chat-time">周六</div>
+  </div>
+
+  <div class="chat-item" onclick="openChat('gui')">
+    <div class="chat-avatar" data-avatar="gui"></div>
+    <div class="chat-info">
+      <div class="chat-name">张桂源</div>
+      <div class="chat-preview">😄</div>
+    </div>
+    <div class="chat-time">周六</div>
+  </div>
+
+  <div class="chat-item" onclick="openChat('rui')">
+    <div class="chat-avatar" data-avatar="rui"></div>
+    <div class="chat-info">
+      <div class="chat-name">张函瑞</div>
+      <div class="chat-preview">我就好开心啊哈哈哈哈！！！</div>
+    </div>
+    <div class="chat-time">周五</div>
+  </div>
+
+  <div class="chat-item" onclick="openChat('ming')">
+    <div class="chat-avatar" data-avatar="ming"></div>
+    <div class="chat-info">
+      <div class="chat-name">陈浚铭</div>
+      <div class="chat-preview">他让我别打扰你俩</div>
+    </div>
+    <div class="chat-time">周六</div>
+  </div>
+
+  <div class="chat-item" onclick="openChat('zuo')">
+    <div class="chat-avatar" data-avatar="zuo"></div>
+    <div class="chat-info">
+      <div class="chat-name">左奇函</div>
+      <div class="chat-preview">👌</div>
+    </div>
+    <div class="chat-time">周六</div>
+  </div>
+</div>
+
+      <div class="wechat-panel hidden" id="contactsPanel">
+        <div class="placeholder-content">暂无查看权限</div>
+      </div>
+
+      <div class="wechat-panel hidden" id="discoverPanel">
+        <div class="discover-list">
+          <div class="discover-group">
+            <div class="discover-item" onclick="openMoments()">
+              <span class="discover-icon">🖼️</span>
+              <span class="discover-text">朋友圈</span>
+              <span class="discover-arrow">›</span>
+            </div>
+          </div>
+
+          <div class="discover-group">
+            <div class="discover-item">
+              <span class="discover-icon">▶️</span>
+              <span class="discover-text">视频号</span>
+              <span class="discover-arrow">›</span>
+            </div>
+            <div class="discover-item">
+              <span class="discover-icon">📺</span>
+              <span class="discover-text">直播</span>
+              <span class="discover-arrow">›</span>
+            </div>
+          </div>
+
+          <div class="discover-group">
+            <div class="discover-item">
+              <span class="discover-icon">🔍</span>
+              <span class="discover-text">扫一扫</span>
+              <span class="discover-arrow">›</span>
+            </div>
+            <div class="discover-item">
+              <span class="discover-icon">🎧</span>
+              <span class="discover-text">听一听</span>
+              <span class="discover-arrow">›</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wechat-panel hidden" id="mePanel">
+        <div class="me-page">
+          <div class="me-card">
+            <div class="me-avatar" data-avatar="me"></div>
+            <div class="me-main">
+              <div class="me-name">木易北北</div>
+              <div class="me-id">微信号：ybw0601</div>
+              <div class="me-status">＋ 状态</div>
+            </div>
+            <div class="me-arrow">›</div>
+          </div>
+
+          <div class="me-list">
+            <div class="me-item">服务 <span>›</span></div>
+          </div>
+
+          <div class="me-list">
+            <div class="me-item">收藏 <span>›</span></div>
+            <div class="me-item">朋友圈 <span>›</span></div>
+            <div class="me-item">作品 <span>›</span></div>
+            <div class="me-item">卡包 <span>›</span></div>
+            <div class="me-item">表情 <span>›</span></div>
+          </div>
+
+          <div class="me-list">
+            <div class="me-item">设置 <span>›</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="moments-page hidden" id="momentsPage">
+        <div class="moments-header">
+          <span class="moments-back" onclick="closeMoments()">‹</span>
+          <span class="moments-title">朋友圈</span>
+          <span class="moments-camera">📷</span>
+        </div>
+
+        <div class="moments-scroll">
+          <div class="moments-cover">
+            <div class="moments-cover-img"></div>
+
+            <div class="moments-my-info">
+              <div class="moments-my-text">
+                <div class="moments-my-name">木易北北</div>
+                <div class="moments-my-sign">今日割5城，明日割10城，然后得1夕安寝。</div>
+              </div>
+              <div class="moments-my-avatar" data-avatar="me"></div>
+            </div>
+          </div>
+
+          <div class="moments-list" id="momentsList"></div>
+        </div>
+      </div>
+
+      <div class="chat-detail hidden" id="chatDetail">
+        <div class="chat-status-placeholder"></div>
+
+        <div class="chat-detail-header">
+          <span class="chat-back" onclick="closeChat()">‹</span>
+          <span id="chatTitle">聊天</span>
+          <span class="chat-more">···</span>
+        </div>
+
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <div class="chat-input-bar">
+          <span class="input-icon">🎙</span>
+          <div class="fake-input"></div>
+          <span class="input-icon">😊</span>
+          <span class="input-icon">＋</span>
+        </div>
+      </div>
+
+      <div class="wechat-tab-bar">
+        <div class="tab-item active" data-tab="wechat" onclick="switchTab('wechat')">
+          <div class="tab-icon">💬</div>
+          微信
+        </div>
+        <div class="tab-item disabled-tab" data-tab="contacts">
+          <div class="tab-icon">👥</div>
+          通讯录
+        </div>
+        <div class="tab-item" data-tab="discover" onclick="switchTab('discover')">
+          <div class="tab-icon">🧭</div>
+          发现
+        </div>
+        <div class="tab-item" data-tab="me" onclick="switchTab('me')">
+          <div class="tab-icon">👤</div>
+          我
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<audio id="easterEggBgm3" src="彩蛋3.mp3" preload="auto" loop></audio>
+
+<script>
+const AVATARS = {
+  me: '杨博文头像.jpg',
+  group1: '大群头像.jpg',
+  gui: '张桂源头像.jpg',
+  zuo: '左奇函头像.jpg',
+  rui: '张函瑞头像.jpg',
+  wang: '王橹杰头像.jpg',
+  ming: '陈浚铭头像.jpg',
+  sihan: '陈思罕头像.jpg',
+  heng: '陈奕恒头像.jpg'
+};
+
+const CHATS = {
+  group1: {
+    name: '今天也在当童工(8)',
+    avatar: 'group1',
+    messages: [
+      { type: 'time', text: '周六 8:50' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '有人吗' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '在线等人聊天' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '你们真的太弱了，这个时间都没人起床？！' },
+
+      { type: 'time', text: '周六 9:43' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '有人吗。。。' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '来个人啊。。。。' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '来人啊！！！！！' },
+
+      { type: 'time', text: '周六 10:24' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '大师兄，大师兄，大事不好了！师父又被妖精捉走了！' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '徒儿莫慌，且待。。。且待。。。' },
+
+      { type: 'time', text: '周六 11:41' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '冷静一下桂圆，想想孙悟空一个人在五指山下想了些什么，想想鲁滨逊漂流到荒岛想了什么，想想拿破仑想想……' },
+      { from: 'rui', avatar: 'rui', name: '张函瑞', text: '@左奇函 把这个人踢了' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '我最亲爱的，我最交心的，我最hearts2hearts的函瑞、瑞瑞！终于有人醒了！' },
+      { from: 'rui', avatar: 'rui', name: '张函瑞', text: '没人在看你少单卖，恶心心！' },
+      { from: 'wang', avatar: 'wang', name: '王橹杰', text: '哦真的吗，王橹杰觉得人生处处是观众呢' },
+      { from: 'wang', avatar: 'wang', name: '王橹杰', text: '有的人还是小心一点为妙！' },
+      { from: 'rui', avatar: 'rui', name: '张函瑞', text: '所以我建议群主@左奇函 起床后还是把张桂源踢了吧' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '不会的……不会的……' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '左奇函一定会懂我的' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '左奇函昨天也在和杨博文约会，他肯定最懂我了。。。' },
+      { type: 'system', text: '张桂源已被移出群聊' },
+      { from: 'me', text: '怎么了呢？' },
+      { from: 'me', text: '@左奇函 让他继续说啊，看着挺有意思的😄' },
+      { from: 'zuo', avatar: 'zuo', name: '左奇函', text: '手滑了一下，我把他拉回来' },
+      { type: 'system', text: '张桂源（已禁言）已进入群聊' },
+      { from: 'gui', avatar: 'gui', name: '张桂源（已禁言）', text: '😭' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '咋了这是，我龙哥今天不是在和杨博文约会吗' },
+      { from: 'sihan', avatar: 'sihan', name: '陈思罕', text: '对啊，就差你俩了，你俩弄完我们这次作战活动就齐活了' },
+      { from: 'me', text: '放心吧，今天的约会很顺利。' },
+      { from: 'gui', avatar: 'gui', name: '张桂源（已禁言）', text: '🤐' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '@张函瑞 看不懂，你来翻译一下' },
+      { from: 'rui', avatar: 'rui', name: '张函瑞', text: '宝宝只要你把自己的智商拉低成他那样一定能看懂啦！' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '哇，好热闹啊，第一次看早上有这么多条群消息' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '杨博文张桂源你们今天去哪儿玩的啊' },
+      { from: 'gui', avatar: 'gui', name: '张桂源（已禁言）', text: '📖🏠' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '图书馆？' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '我靠这你都能看懂？' },
+      { from: 'me', text: '大家想来的话我都欢迎啊，一起看看书写写作业，我还可以提供补课服务。' },
+      { from: 'gui', avatar: 'gui', name: '张桂源（已禁言）', text: '对对对，陈奕恒你这必须来啊，没被你插足过的cp算什么真爱，你就是我和杨博文感情路上的试金石' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '哇，杨博文你真是太好了吧！' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '我不去' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '哈哈哈杨博文你和张桂源好好玩啊，多给张桂源补补课' },
+      { from: 'sihan', avatar: 'sihan', name: '陈思罕', text: '😮这个语弱是从哪里学会了三明治拒绝法' },
+      { from: 'me', text: '还有其他人想来吗😊' },
+      { from: 'me', text: '哦？大家怎么不说话了啊。' },
+      { from: 'rui', avatar: 'rui', name: '张函瑞', text: '北北老师饶命啊' },
+      { from: 'zuo', avatar: 'zuo', name: '左奇函', text: '我真是头疼' },
+      { from: 'zuo', avatar: 'zuo', name: '左奇函', text: '你俩结束后说一声，素材发我过一遍' },
+      { from: 'zuo', avatar: 'zuo', name: '左奇函', text: '等视频剪出来，这个事儿就算咱们圆满结束了' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '期待' },
+      { from: 'sihan', avatar: 'sihan', name: '陈思罕', text: '期待一个' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '期待一个大结果' },
+      { from: 'wang', avatar: 'wang', name: '王橹杰', text: '王橹杰觉得你们很欠揍' },
+      { from: 'sihan', avatar: 'sihan', name: '陈思罕', text: '橹橹觉得欠揍的人里一定没有思罕吧' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '橹橹觉得欠揍的人里一定没有小明吧' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '哈哈，反正肯定有我呗' },
+      { from: 'zuo', avatar: 'zuo', name: '左奇函', text: '宝宝长大了，越来越有自知之明了' }
+    ]
+  },
+
+  gui: {
+    name: '张桂源',
+    avatar: 'gui',
+    messages: [
+      { type: 'time', text: '周五 20:48' },
+      { from: 'me', text: '明天早上八点半，图书馆门口集合。' },
+      { from: 'gui', text: '。。。' },
+      { from: 'me', text: '有什么没办法克服的困难？' },
+      { from: 'gui', text: '哥，博哥，我刚搜了，图书馆早上九点才开门啊？？' },
+      { from: 'me', text: '嗯，所以要早点去排队，不然好位置就没了。' },
+      { from: 'gui', text: '。。。' },
+      { from: 'gui', text: '杨博文你别不是公报私仇故意整我吧？' },
+      { from: 'me', text: '哪里来的仇呢，你可以讲讲。' },
+      { from: 'gui', text: '我我我' },
+      { from: 'gui', text: '你你你' },
+      { from: 'gui', text: '羊羊🥺🥺🥺🥺🥺' },
+      { from: 'me', text: '这招骗得了张函瑞，但是对我可没用呀。' },
+      { from: 'gui', text: '哎你别，突然提张函瑞干嘛' },
+      { from: 'gui', type: 'image', src: '卖萌图.jpg' },
+      { from: 'gui', text: '看到我这么可爱的人还舍得让我早起吗' },
+      { from: 'me', text: '身为哥哥对弟弟撒娇的话很逊哦。' },
+      { from: 'gui', text: '哇杨博文！你还记得我才是哥哥啊！' },
+      { from: 'gui', text: '被弟弟管得死死的难道不逊吗！！' },
+      { from: 'gui', text: '我要行使身为你哥的权力要求明天十点再集合😎' },
+      { from: 'me', text: '如果你想早上七点就见面，我也可以接受。' },
+      { from: 'gui', text: '给跪了大哥，博哥，你才是我哥' },
+      { from: 'gui', text: '开个玩笑别介意哈' },
+      { from: 'gui', text: '八点半，说好了八点半就八点半，一言为定啊' },
+      { from: 'me', text: '嗯😊' },
+      { from: 'gui', text: '唉，郎心似铁！' },
+
+      { type: 'time', text: '周六 11:56' },
+      { from: 'me', text: '张桂源，解释一下什么叫左奇函一定能懂你呢。' },
+      { from: 'gui', text: '我的意思是' },
+      { from: 'me', text: '你还有30秒可以询问豆包。' },
+      { from: 'gui', text: '我的意思是，和你待在一起，这种受益良多的感觉，左奇函一定懂我，我太爱图书馆了，真的，和图书馆比起来我觉得他们挑的那些玩儿的地方，很肤浅！' },
+      { from: 'me', text: '哦，是这样吗？' },
+      { from: 'gui', text: '绝无第二个答案！' },
+      { from: 'me', text: '张桂源，其实我也忍不住告诉你……' },
+      { from: 'gui', text: '您说，小张候着呢' },
+      { from: 'me', text: '其实就是小张建议的早上八点半集合。' },
+      { from: 'gui', text: '？？？？你这就血口喷人了啊杨博文，我可没说过！' },
+      { from: 'me', text: '😄' }
+    ]
+  },
+
+  rui: {
+    name: '张函瑞',
+    avatar: 'rui',
+    messages: [
+      { type: 'time', text: '周五 20:35' },
+      { from: 'rui', text: '博文~~~现在可以聊天吗' },
+      { from: 'me', text: '可以啊，今天周五，时间充裕一些。' },
+      { from: 'rui', text: '太好啦！' },
+      { from: 'rui', text: '你和张桂源的约会安排在什么时候啊，快要ddl了吧' },
+      { from: 'me', text: '明天。' },
+      { from: 'rui', text: '？？？' },
+      { from: 'rui', text: '你今天微信步数都登顶了啊！不用休息一下吗，明天直接连轴转？' },
+      { from: 'me', text: '对呀，有人提醒最近公司好像在查我们，所以我想尽早结束这件事，以免出现什么变故。' },
+      { from: 'rui', text: '你真是超高精力人群。。' },
+      { from: 'me', text: '还好，我约张桂源明天去图书馆，就当做休息了。' },
+      { from: 'rui', text: '笑死我了' },
+      { from: 'rui', text: '你去给他一对一补课啊，对他也太好了吧' },
+      { from: 'me', text: '他肯定不乐意就是了。' },
+      { from: 'rui', text: '那下次你选我呀，我愿意陪你去图书馆' },
+      { from: 'me', text: '陪张桂源去篮球馆不好玩？' },
+      { from: 'rui', text: '倒不算讨厌，但他还是老样子，反反复复的我实在有点不耐烦了' },
+      { from: 'me', text: '左奇函不也一样，可没见你对他不耐烦过。' },
+      { from: 'rui', text: '因为我对左奇函的要求就一个，好好活着就行了，他只能散养' },
+      { from: 'me', text: '我懂了，你对他俩的期望不一样。' },
+      { from: 'me', text: '因材施教，很有道理。' },
+      { from: 'rui', text: '哈哈哈哈哈哈你不也是嘛' },
+      { from: 'me', text: '是啊，但我还是觉得走出舒适区也是有必要的。' },
+      { from: 'rui', text: '暴走两万步把鼠鼠榨成鼠干已经不只是走出舒适区的范畴了吧！' },
+      { from: 'me', text: '哦，结果还是来找我兴师问罪的啊。' },
+      { from: 'rui', text: '哎呀杨博文，你知道我不是那个意思嘛' },
+      { from: 'me', text: '知道🤭' },
+      { from: 'me', text: '明天我带张桂源去图书馆，帮你出口恶气，也让他体验一下你坐着看他打球的感受。' },
+      { from: 'rui', text: '🤩🤩🤩🥰🥰🥰🥰🥳' },
+      { from: 'rui', text: '世界上最好的最善良的博文！' },
+      { from: 'rui', text: '要不你俩明早八点半约在图书馆见怎么样？！' },
+      { from: 'me', text: '张函瑞，我觉得你这叫谋杀。' },
+      { from: 'rui', text: '哪有，一想到张桂源和你在一起进步，我就' },
+      { from: 'rui', text: '我就好开心啊哈哈哈哈！！！' }
+    ]
+  },
+
+  ming: {
+    name: '陈浚铭',
+    avatar: 'ming',
+    messages: [
+      { type: 'time', text: '周六 13:15' },
+      { from: 'ming', text: '你俩还在图书馆啊？' },
+      { from: 'me', text: '嗯，和张桂源度过了一个高效的上午，吃完午饭之后继续鏖战数理化。' },
+      { from: 'ming', text: '别把我龙哥玩死了' },
+      { from: 'me', text: '【全国政协委员：#建议禁止16岁以下未成年人用社交媒体#】' },
+      { from: 'ming', text: '哇，杨博文你！' },
+      { from: 'ming', text: '你又用年龄欺负人！' },
+      { from: 'ming', text: '我已经长大了好不啦，都比你还高了' },
+      { from: 'me', text: '心智和身高无关。' },
+      { from: 'ming', text: '我心智也很成熟啊，只有你才一直把我当小孩' },
+      { from: 'me', text: '当小孩不好吗？' },
+      { from: 'ming', text: '被你当作小孩的话就不好' },
+      { from: 'me', text: '这么说我可要伤心了。' },
+      { from: 'ming', text: '啊啊啊，你又故意曲折我的意思！' },
+      { from: 'me', text: '😄' },
+      { from: 'ming', text: '你这个人真是，白切黑啊，恶趣味' },
+      { from: 'me', text: '下午你要过来吗？' },
+      { from: 'ming', text: '哇，可以吗！🤩' },
+      { from: 'me', text: '只要你不嫌图书馆无聊' },
+      { from: 'ming', text: '嘿嘿，你等等我嗷，我马上去问问！' },
+      { from: 'me', text: '嗯？问什么？' },
+
+      { type: 'time', text: '周六 13:34' },
+      { from: 'ming', text: '不行😭左奇函不同意' },
+      { from: 'ming', text: '他让我别打扰你俩' }
+    ]
+  },
+
+  zuo: {
+    name: '左奇函',
+    avatar: 'zuo',
+    messages: [
+      { type: 'time', text: '周四 22:36' },
+      { from: 'zuo', text: '你和张桂源的约会确定了吗，公司最近好像在查我们，尽快安排吧' },
+      { from: 'me', text: '定在周六。' },
+      { from: 'zuo', text: '👌' },
+      { from: 'me', text: '明天早上我有点事情，见面时间能往后推迟十分钟吗？' },
+      { from: 'zuo', text: '推迟半小时吧' },
+      { from: 'me', text: '👌' },
+
+      { type: 'time', text: '周五 21:57' },
+      { from: 'zuo', text: '【超级会员V8】通过百度网盘分享的文件：已审核素材-约会...\n链接：https://pan.baidu.com/s/xxx\n复制这段内容打开「百度网盘APP 即可获取」' },
+      { from: 'zuo', text: '其他人的素材都在这里了' },
+      { from: 'me', text: '👌' },
+      { from: 'me', text: '明天我这边结束后会把我的视频素材发给你审核。' },
+      { from: 'zuo', text: '👌' },
+
+      { type: 'time', text: '周六 21:03' },
+      { from: 'zuo', text: '我过了一遍，都没问题，剪辑麻烦你了' },
+      { from: 'me', text: '👌' },
+      { from: 'me', text: '明天应该能粗剪出来。' },
+      { from: 'zuo', text: '👌' }
+    ]
+  }
+};
+
+const MOMENTS = [
+  {
+    name: '张桂源',
+    avatar: 'gui',
+    time: '周六',
+    text: '杨博文好爱念书啊杨博文',
+    images: ['看人.jpg'],
+    likes: ['陈思罕', '张函瑞', '陈浚铭', '陈奕恒'],
+    comments: [
+      { name: '陈奕恒', text: '张桂源这都是你昨天背着我去打篮球的报应😆' },
+      { name: '张桂源', replyTo: '陈奕恒', text: '大哥别说得我俩好像有什么故事' },
+      { name: '陈思罕', replyTo: '张桂源', text: '不要因为收视率砸底就翻脸不认你俩的双男主剧啊' }
+    ]
+  },
+
+  {
+    name: '杨博文',
+    avatar: 'me',
+    time: '周六',
+    text: '这棵树有那么好看吗？',
+    images: ['看树.jpg'],
+    likes: ['王橹杰', '陈浚铭', '陈思罕', '张函瑞', '陈奕恒'],
+    comments: [
+      { name: '陈奕恒', text: '景不醉人人自醉！' },
+      { name: '陈思罕', replyTo: '陈奕恒', text: '?' },
+      { name: '张函瑞', replyTo: '陈奕恒', text: '?' },
+      { name: '王橹杰', replyTo: '张函瑞', text: '谁教的他' },
+      { name: '张函瑞', replyTo: '王橹杰', text: '我有个怀疑对象但我不敢说' }
+    ]
+  },
+
+  {
+    name: '陈浚铭',
+    avatar: 'ming',
+    time: '周六',
+    text: '',
+    images: ['歌曲2.jpg'],
+    likes: ['杨博文', '陈思罕', '王橹杰', '张函瑞', '张桂源'],
+    comments: [
+      { name: '杨博文', text: '到底是一叶障目还是一叶知秋' },
+      { name: '陈浚铭', replyTo: '杨博文', text: '我也想一叶障目啊' }
+    ]
+  },
+
+  {
+    name: '左奇函',
+    avatar: 'zuo',
+    time: '周六',
+    text: '最后一天了gogogo！',
+    images: [],
+    likes: ['张函瑞', '陈奕恒', '陈思罕', '陈浚铭'],
+    comments: [
+      { name: '张函瑞', text: '杨桂约会你这么期待？' },
+      { name: '左奇函', replyTo: '张函瑞', text: '哪有，我是因为我们这周的辛苦马上能和大家见面在开心好不好' }
+    ]
+  }
+];
+
+const PAN_FILES = [
+  {
+    id: 'ming',
+    title: '玩游戏',
+    audio: '陈浚铭音频.mp3',
+    transcript: `陈浚铭：谁先来？哇不是吧，我先啊？年龄最小的先来？你们……已经开始了吗？就是那个，那个，大家好！这里是陈太帅！嗯，聪明的你肯定已经知道我们到底在干嘛啦！没错！我选了陈奕恒一起玩我的世界，在里面建了粉丝之家。然后我们两个本来想建一个特别特别豪华的，结果——哈哈哈哈，真的，理想很丰满，现实就是……先把房子搭起来再说。但是里面还是有很多小惊喜的！有给大家留的位置，还有我们偷偷放进去的一些东西。至于是什么……现在肯定不能告诉你们啊！自己去找！反正这个房子虽然不是全世界最厉害的，但是，是我们两个一点一点搭出来的，所以还是很满意的。好了好了，我讲完了，下一个！谁下一个？不要又是我啊！`
+  },
+  {
+    id: 'rui',
+    title: '拼豆',
+    audio: '张函瑞音频.mp3',
+    transcript: `张函瑞：哈喽哈喽，这里是张~函~瑞~我选了王橹杰和我一起去拼豆，当然不是故意折腾王橹杰啦，只是因为我想拼enhypen了，想拼一个作纪念。橹橹一开始还说很简单，结果拼到后面比我还认真。我们两个就在那边一直低头拼，结果老是弄错豆子，不停重来，最后成品我还是很满意的！虽然中途差点被我们两个弄散掉……但是没关系，结果是好的就行。而且以后看到这个，我应该就会想起来，哦，那个时候是想和大家一起拼豆，所以和橹橹一起去做了一件普通的小事，想和大家一起做这样生活中随处可见的小事～虽然是我们生活中很常见的小事，我却希望能够和你一起分享，当然当然，最重要的是如果你喜欢的话那就特别好！`
+  },
+  {
+    id: 'sihan',
+    title: '购物',
+    audio: '陈思罕音频.mp3',
+    transcript: `陈思罕：哈喽大家好，我是陈思罕，对，跟大家说一下，我选的陈浚铭去逛kkv，啊就是，觉得这个地方挺好的，有零食，也有玩儿的，各种玩的都有，你们的城市有kkv吗，我很好奇这个，嗯对。然后我们就进去随便逛了一下，啊，陈浚铭真的，只呆在食物货架那边不走啊，这种时候真的会觉得他确实是弟弟啊，嗯对，我也买了一些东西，什么酸辣粉什么薯片……到时候vlog里面你们都能看见。逛得还是挺开心的，和陈浚铭在一起给你们录东西。其他也没做什么安排了，就是为了这个出去的。嗯，差不多就是这样，放心好了，我会好好学习，也会好好训练，会努力提升自己的技能的，拜拜咯。不要太想我们，但是也不能不想我们啊。`
+  },
+  {
+    id: 'heng',
+    title: '穿玩偶服发气球',
+    audio: '陈奕恒音频.mp3',
+    transcript: `陈奕恒：这里是你们的~Jonathan~陈奕恒~哈哈，没错，是我，我来了。你们先猜猜，我选的谁，给你们五秒钟，就是呢，我选了左奇函，我俩去游乐园穿玩偶服，给路人发气球，怎么样？是不是很酷！我简直就是个天才，想和你们一起做这样很酷的事情！哦对了，好像还遇到了粉丝了呢，不过我俩都假装不知道。我觉得玩偶服很可爱，你们肯定会喜欢，就这样安排了，没错。而且穿着那个走来走去还挺累的，左奇函后面已经不想走路了。反正呢，我希望，那天收到气球的人，会得到大大的开心，看见这封信的你，也能大大的开心，对，没错。OK，暂时先这样，你的Jonathan下线~`
+  },
+  {
+    id: 'wang',
+    title: '在江边散步',
+    audio: '王橹杰音频.mp3',
+    transcript: `王橹杰：哈喽大家好，久违地和大家打招呼，最近就是，嗯，怎么说呢，我想想，我想想，因为最近突围结束了嘛，第五次公演也结束了嘛，到现在已经很久没见到大家了，这段时间我的一些，嗯，想法，一些经历和收获，为了梳理清楚，所以我选了陈思罕去江边散步。我其实挺喜欢散步的，大家在重庆的江边散步过吗？我每次看到江水就觉得，我现在看到的江水已经不是上一秒我看到的江水了，但看着是一样的呢。有时候会觉得我们也是这样吧。公演结束的时候会觉得一件很大的事情结束了，可过几天以后，又开始上课、练习，又有新的事情。以前特别在意的一些瞬间，慢慢也就变成回忆了。但是我觉得这样也挺好的。至少那个时候很认真地做过，很认真地开心过，也很认真地难过过，那就没有白费。然后思罕就在旁边听我说这些，我不知道他有没有觉得我话很多。反正今天就想慢一点走，吹吹风，也顺便想一想，接下来要怎么继续往前走。嗯，就这样。下次见，我们一起在未来相见吧。`
+  },
+  {
+    id: 'zuo',
+    title: '去水族馆',
+    audio: '左奇函音频.mp3',
+    transcript: `左奇函：你好啊，最近心情怎么样？见不到我们的日子里有在认真过自己的生活吗？小朋友要好好读书，大人们就要好好工作哦。哈哈哈哈，别闹别闹，那难道让我对你们说不好好读书、不好好工作也可以吗？嗯没错，我选了杨博文一起去水族馆。哎呀，别说已经在北京去过了，别说别说，这次不一样。杨博文，啧，你们知道的，他一开始还说什么早就来过了还来，这个世界上怎么可能有一模一样的水族馆呢，对吧？果然，他看得比我认真多了，一直拿着那个集印章的打卡纸不放，哈哈哈哈。一开始策划这个的时候，大家都很积极地响应我，我也觉得很满足，很开心。选去水族馆呢，也是想去一个安静的地方，让你们看看一些日常生活中很美丽的东西，希望你们能够暂时把不开心的事情放一放。好了好了，不说太多了，不然就太肉麻啦，但是希望大家能知道，让你们能明白我们的心意，对我们来说一直都很重要。`
+  },
+  {
+    id: 'gui',
+    title: '打篮球',
+    audio: '张桂源音频.mp3',
+    transcript: `张桂源：大家好啊ayyo切克闹这里是张桂源！然后我想和粉丝一起做的事情是去打篮球，然后我选了张函瑞作为我的惊喜搭子一起去打篮球……嗯，虽然最后好像变成了他看我打篮球，但是！我想说的是，因为打篮球是我喜欢的运动嘛，所以无论是你愿意和我一起打篮球，还是你在旁边为我加油鼓劲，都会让我觉得非常的幸福。因为我觉得，喜欢一个人也不一定非要一起去做什么特别厉害、特别隆重的事情。可能就是一起打打球，一起散散步，听一首歌，或者你坐在旁边看着我做我喜欢的事情，就已经很好了。我想做一些普通的事，唱一些普通的歌，让你们能得到普通的快乐。啊，好尴尬啊！`
+  },
+  {
+    id: 'bowen',
+    title: '图书馆自习',
+    audio: '杨博文音频.mp3',
+    transcript: `杨博文：哈喽大家好啊，嗯，今天是我们约会大作战的最后一天了，呃，就是，我刚和张桂源从图书馆出来，好想给你们拍一下他现在的脸色啊，他不让，说有损他英明神武的形象，嗯，大家都懂，我就不多说了。选在图书馆是因为，好像我就是这么一个无聊的人吧……哈哈，开玩笑，开玩笑的。其实是因为我们马上有个数学的单元测试，啊，头好疼，你们得帮我保密啊，千万别和张桂源说我和他来图书馆约会的目的是这个。本来想的是，一起安安静静待一天挺好的。结果他坐了没多久就开始问我还有多久，后来又问能不能休息，再后来已经开始研究窗外那棵树了。如果以后你们也有很重要的考试，希望你们不要像张桂源一样坐十分钟就想跑。希望你们在见不到我们的日子里，有好好学习，好好生活，也有自己的事情可以认真去做。好了，不说了，再说他要过来抢我手机了。
+拜拜，祝我数学好运。`
+  }
+];
+
+function updateProgressPanel() {
+  const mainKeys = [
+    'phone1Unlocked',
+    'phone1PrivateAlbumUnlocked',
+    'mondayNoteUnlocked',
+    'phone2Unlocked',
+    'phone2PrivateVoiceUnlocked',
+    'phone2AnniversaryUnlocked',
+    'phone3Unlocked',
+    'phone3AppUnlocked_wechat',
+    'phone3AppUnlocked_music',
+    'phone3AppUnlocked_pan'
+  ];
+
+  const eggKeys = [
+    'thursdayEasterEggFound',
+    'secondEasterEggFound',
+    'thirdEasterEggFound'
+  ];
+
+  const mainCount = mainKeys.filter(key => localStorage.getItem(key) === 'yes').length;
+  const eggCount = eggKeys.filter(key => localStorage.getItem(key) === 'yes').length;
+
+  const mainText = document.getElementById('mainProgressText');
+  const eggText = document.getElementById('eggProgressText');
+
+  if (mainText) {
+    mainText.innerText = `主线进度${mainCount}/10`;
+  }
+
+  if (eggText) {
+    eggText.innerText = `发现彩蛋${eggCount}/3`;
+  }
+}
+
+let currentPanAudio = null;
+let currentPanFile = null;
+let panProgressTimer = null;
+
+function openBaiduPan() {
+  document.getElementById('homeScreen').classList.remove('show');
+  document.getElementById('panScreen').classList.remove('hidden');
+  document.getElementById('panFolderScreen').classList.add('hidden');
+  document.getElementById('panPlayerScreen').classList.add('hidden');
+}
+
+function openPanFolder() {
+  document.getElementById('panScreen').classList.add('hidden');
+  document.getElementById('panFolderScreen').classList.remove('hidden');
+
+  const list = document.getElementById('panFileList');
+  list.innerHTML = '';
+
+  PAN_FILES.forEach(file => {
+    list.innerHTML += `
+      <div class="pan-item" onclick="openPanPlayer('${file.id}')">
+        <div class="pan-icon">🎧</div>
+        <div class="pan-info">
+          <div class="pan-name">${file.title}</div>
+          <div class="pan-meta">${file.audio}</div>
+        </div>
+        <div class="pan-arrow">›</div>
+      </div>
+    `;
+  });
+}
+
+function backToPanHome() {
+  document.getElementById('panFolderScreen').classList.add('hidden');
+  document.getElementById('panScreen').classList.remove('hidden');
+}
+
+function openPanPlayer(fileId) {
+  const file = PAN_FILES.find(f => f.id === fileId);
+  if (!file) return;
+
+  stopPanAudio();
+
+  currentPanFile = file;
+  currentPanAudio = new Audio(file.audio);
+
+  document.getElementById('panFolderScreen').classList.add('hidden');
+  document.getElementById('panPlayerScreen').classList.remove('hidden');
+
+  document.getElementById('panAudioTitle').innerText = file.title;
+  document.getElementById('panTranscriptPanel').innerText = file.transcript;
+
+  document.getElementById('panCurrentTime').innerText = '00:00';
+  document.getElementById('panDuration').innerText = '00:00';
+  document.getElementById('panProgress').value = 0;
+  document.getElementById('panPlayBtn').innerText = '⏸';
+
+  switchPanPlayerTab('audio');
+
+  currentPanAudio.addEventListener('loadedmetadata', () => {
+    document.getElementById('panDuration').innerText = formatPanTime(currentPanAudio.duration);
+  });
+
+  currentPanAudio.addEventListener('ended', () => {
+    document.getElementById('panPlayBtn').innerText = '▶';
+    clearInterval(panProgressTimer);
+  });
+
+  currentPanAudio.play().catch(() => {
+    alert('音频无法播放，请检查 MP3 文件名和路径是否正确');
+    document.getElementById('panPlayBtn').innerText = '▶';
+  });
+
+  panProgressTimer = setInterval(updatePanProgress, 300);
+}
+
+function switchPanPlayerTab(tab) {
+  document.getElementById('panAudioTab').classList.toggle('active', tab === 'audio');
+  document.getElementById('panTextTab').classList.toggle('active', tab === 'text');
+
+  document.getElementById('panAudioPanel').classList.toggle('hidden', tab !== 'audio');
+  document.getElementById('panTranscriptPanel').classList.toggle('hidden', tab !== 'text');
+}
+
+function togglePanAudio() {
+  if (!currentPanAudio) return;
+
+  const btn = document.getElementById('panPlayBtn');
+
+  if (currentPanAudio.paused) {
+    currentPanAudio.play();
+    btn.innerText = '⏸';
+  } else {
+    currentPanAudio.pause();
+    btn.innerText = '▶';
+  }
+}
+
+function updatePanProgress() {
+  if (!currentPanAudio || !currentPanAudio.duration) return;
+
+  const percent = currentPanAudio.currentTime / currentPanAudio.duration * 100;
+
+  document.getElementById('panProgress').value = percent;
+  document.getElementById('panCurrentTime').innerText = formatPanTime(currentPanAudio.currentTime);
+  document.getElementById('panDuration').innerText = formatPanTime(currentPanAudio.duration);
+}
+
+function seekPanAudio(value) {
+  if (!currentPanAudio || !currentPanAudio.duration) return;
+
+  currentPanAudio.currentTime = currentPanAudio.duration * value / 100;
+  updatePanProgress();
+}
+
+function formatPanTime(seconds) {
+  if (!seconds || isNaN(seconds)) return '00:00';
+
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+function backToPanFolder() {
+  stopPanAudio();
+  document.getElementById('panPlayerScreen').classList.add('hidden');
+  document.getElementById('panFolderScreen').classList.remove('hidden');
+}
+
+function stopPanAudio() {
+  if (currentPanAudio) {
+    currentPanAudio.pause();
+    currentPanAudio.currentTime = 0;
+  }
+
+  currentPanAudio = null;
+  clearInterval(panProgressTimer);
+  panProgressTimer = null;
+}
+
+function escapeHTML(text) {
+  return String(text ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function setupAvatars() {
+  document.querySelectorAll('[data-avatar]').forEach(el => {
+    const key = el.dataset.avatar;
+    if (AVATARS[key]) {
+      el.style.backgroundImage = `url('${AVATARS[key]}')`;
+    }
+  });
+}
+
+const CORRECT_PASSCODE = '0601';
+const PASSCODE_LENGTH = 4;
+let input = '';
+
+function buildDots() {
+  const box = document.getElementById('dots');
+  box.innerHTML = '';
+  for (let i = 0; i < PASSCODE_LENGTH; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    box.appendChild(d);
+  }
+}
+
+function updateDots() {
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((d, i) => {
+    d.classList.toggle('filled', i < input.length);
+  });
+}
+
+function press(n) {
+  if (input.length >= PASSCODE_LENGTH) return;
+  input += n;
+  updateDots();
+  if (input.length === PASSCODE_LENGTH) {
+    setTimeout(check, 160);
+  }
+}
+
+function backspace() {
+  input = input.slice(0, -1);
+  updateDots();
+}
+
+function check() {
+  if (input === CORRECT_PASSCODE) {
+    unlock();
+  } else {
+    document.getElementById('passcodeScreen').classList.add('shake');
+    setTimeout(() => {
+      document.getElementById('passcodeScreen').classList.remove('shake');
+    }, 500);
+    input = '';
+    updateDots();
+  }
+}
+
+function unlock() {
+  localStorage.setItem('phone3Unlocked', 'yes');
+  document.getElementById('lockScreen').classList.add('hidden');
+  document.getElementById('passcodeScreen').classList.add('hidden');
+  document.getElementById('homeScreen').classList.add('show');
+  updateProgressPanel();
+}
+
+const lock = document.getElementById('lockScreen');
+let startY = null;
+let moved = false;
+
+lock.addEventListener('pointerdown', e => {
+  startY = e.clientY;
+  moved = false;
+});
+
+window.addEventListener('pointermove', e => {
+  if (startY === null) return;
+  const dy = startY - e.clientY;
+  if (dy > 0) {
+    moved = true;
+    lock.style.transform = `translateY(-${Math.min(dy, lock.clientHeight)}px)`;
+  }
+});
+
+window.addEventListener('pointerup', e => {
+  if (startY === null) return;
+  const dy = startY - e.clientY;
+  if (dy > 100 || !moved) {
+    openPasscode();
+  } else {
+    lock.style.transform = 'translateY(0)';
+  }
+  startY = null;
+});
+
+function openPasscode() {
+  lock.style.transform = 'translateY(-100%)';
+  lock.style.opacity = '0';
+
+  setTimeout(() => {
+    lock.classList.add('hidden');
+
+    if (localStorage.getItem('phone3Unlocked') === 'yes') {
+      document.getElementById('passcodeScreen').classList.add('hidden');
+      document.getElementById('homeScreen').classList.add('show');
+      updateProgressPanel();
+    }
+  }, 350);
+}
+
+function openStudyApp() {
+  document.getElementById('homeScreen').classList.remove('show');
+  document.getElementById('studyScreen').classList.remove('hidden');
+  document.getElementById('studyPageScreen').classList.add('hidden');
+}
+
+function openStudyPage(pageId) {
+  const title = document.getElementById('studyPageTitle');
+  const content = document.getElementById('studyPageContent');
+
+  let html = '';
+
+  if (pageId === 'todo') {
+    title.innerText = '待办';
+    html = `
+      <div class="study-card">
+        <div class="study-status status-todo">未完成</div>
+        <div class="study-card-title">英语作业</div>
+        <div class="study-card-sub">Unit 1 语法点<br>截止时间：9月21日 23:59</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-status status-done">已完成</div>
+        <div class="study-card-title">数学考试</div>
+        <div class="study-card-sub">第一章-单元测试<br>截止时间：9月21日 23:59</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-status status-doing">进行中</div>
+        <div class="study-card-title">关于中秋国庆放假通知</div>
+        <div class="study-card-sub">学校通知<br>时间：9月17日 12:00</div>
+      </div>
+    `;
+  }
+
+  if (pageId === 'courses') {
+    title.innerText = '我的课程';
+    html = `
+      <div class="study-card">
+        <div class="study-card-title">高中语文必修上</div>
+        <div class="study-card-sub">教师：张老师</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-card-title">高中数学必修一册</div>
+        <div class="study-card-sub">教师：李老师</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-card-title">高中英语必修一</div>
+        <div class="study-card-sub">教师：王老师</div>
+      </div>
+    `;
+  }
+
+  if (pageId === 'notes') {
+    title.innerText = '我的笔记';
+    html = `
+      <div class="study-card">
+        <div class="study-card-title">英语作文模板</div>
+        <div class="study-card-sub">12篇笔记</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-card-title">化学易错点</div>
+        <div class="study-card-sub">8篇笔记</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-card-title">语文摘抄</div>
+        <div class="study-card-sub">15篇笔记</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-card-title">学习方法</div>
+        <div class="study-card-sub">6篇笔记</div>
+      </div>
+    `;
+  }
+
+  if (pageId === 'cloud') {
+    title.innerText = '我的云盘';
+    html = `
+      <div class="study-card">
+        <div class="study-card-title">课程资料</div>
+        <div class="study-card-sub">32个文件</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-card-title">课件</div>
+        <div class="study-card-sub">18个文件</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-card-title">作业附件</div>
+        <div class="study-card-sub">6个文件</div>
+      </div>
+
+      <div class="study-card">
+        <div class="study-card-title">上传记录</div>
+        <div class="study-card-sub">10个文件</div>
+      </div>
+    `;
+  }
+
+  if (pageId === 'books') {
+    title.innerText = '我的书架';
+    html = `
+      <div class="study-card">
+        <div class="book-shelf-item">
+          <div class="book-cover" style="background-image:url('红楼梦.jpg')"></div>
+          <div>
+            <div class="book-name">《红楼梦》</div>
+            <div class="book-progress">原名：石头记</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  content.innerHTML = html;
+
+  document.getElementById('studyScreen').classList.add('hidden');
+  document.getElementById('studyPageScreen').classList.remove('hidden');
+}
+
+function backToStudyHome() {
+  document.getElementById('studyPageScreen').classList.add('hidden');
+  document.getElementById('studyScreen').classList.remove('hidden');
+}
+
+const APP_LOCKS = {
+  wechat: {
+    title: '微信',
+    hint: '密码提示：我最喜欢的书（三个字）',
+    password: '石头记',
+    type: 'text'
+  },
+  music: {
+    title: '网易云音乐',
+    hint: '密码提示：六国论（四个数字）',
+    password: '5101',
+    type: 'numeric'
+  },
+  pan: {
+    title: '百度网盘',
+    hint: '密码提示：双人舞台（四个数字）',
+    password: '0812',
+    type: 'numeric'
+  }
+};
+
+let pendingLockedApp = null;
+
+function openLockedApp(appId) {
+  if (localStorage.getItem('phone3AppUnlocked_' + appId) === 'yes') {
+    openAppAfterPassword(appId);
+    return;
+  }
+
+  const app = APP_LOCKS[appId];
+  if (!app) return;
+
+  pendingLockedApp = appId;
+
+  document.getElementById('appPasswordTitle').innerText = app.title;
+  document.getElementById('appPasswordHint').innerText = app.hint;
+
+  const input = document.getElementById('appPasswordInput');
+  input.value = '';
+  if (app.type === 'numeric') {
+  input.type = 'password';
+  input.inputMode = 'numeric';
+} else {
+  input.type = 'text';
+  input.removeAttribute('inputmode');
+}
+  input.placeholder = '输入密码';
+
+  document.getElementById('appPasswordModal').classList.remove('hidden');
+}
+
+function closeAppPassword() {
+  document.getElementById('appPasswordModal').classList.add('hidden');
+  document.getElementById('appPasswordInput').value = '';
+  pendingLockedApp = null;
+}
+
+function checkAppPassword() {
+  if (!pendingLockedApp) return;
+
+  const app = APP_LOCKS[pendingLockedApp];
+  const value = document.getElementById('appPasswordInput').value.trim();
+
+  if (value === app.password) {
+    localStorage.setItem('phone3AppUnlocked_' + pendingLockedApp, 'yes');
+    updateProgressPanel();
+    const appId = pendingLockedApp;
+    closeAppPassword();
+    openAppAfterPassword(appId);
+  } else {
+    alert('密码错误');
+    document.getElementById('appPasswordInput').value = '';
+  }
+}
+
+function openAppAfterPassword(appId) {
+  if (appId === 'wechat') {
+    openWechat();
+  } else if (appId === 'music') {
+    openNetEaseMusic();
+  } else if (appId === 'pan') {
+    openBaiduPan();
+  }
+}
+
+function openPlaceholder(title) {
+  document.getElementById('homeScreen').classList.remove('show');
+  document.getElementById('placeholderTitle').innerText = title;
+  document.getElementById('placeholderScreen').classList.remove('hidden');
+}
+
+function backToHomeFromApp() {
+  document.getElementById('placeholderScreen').classList.add('hidden');
+
+  if (document.getElementById('studyScreen')) {
+    document.getElementById('studyScreen').classList.add('hidden');
+  }
+
+  if (document.getElementById('studyPageScreen')) {
+    document.getElementById('studyPageScreen').classList.add('hidden');
+  }
+
+  if (document.getElementById('musicScreen')) {
+  document.getElementById('musicScreen').classList.add('hidden');
+}
+
+if (document.getElementById('musicSettingsScreen')) {
+  document.getElementById('musicSettingsScreen').classList.add('hidden');
+}
+
+if (document.getElementById('musicAccountScreen')) {
+  document.getElementById('musicAccountScreen').classList.add('hidden');
+}
+if (document.getElementById('musicChatScreen')) {
+  document.getElementById('musicChatScreen').classList.add('hidden');
+}
+
+if (document.getElementById('panScreen')) {
+  document.getElementById('panScreen').classList.add('hidden');
+}
+
+if (document.getElementById('panFolderScreen')) {
+  document.getElementById('panFolderScreen').classList.add('hidden');
+}
+
+if (document.getElementById('panPlayerScreen')) {
+  document.getElementById('panPlayerScreen').classList.add('hidden');
+}
+
+stopPanAudio();
+  document.getElementById('homeScreen').classList.add('show');
+  updateProgressPanel();
+}
+
+const MUSIC_ACCOUNTS = {
+  main: {
+    avatar: '大号头像.jpg',
+    name: '🐑',
+    desc: '普通歌迷',
+    follow: '105关注　0粉丝'
+  },
+
+  small: {
+    avatar: '小号头像.jpg',
+    name: '看不见我看不见我',
+    desc: '一片自留地',
+    follow: '1关注　1粉丝'
+  }
+};
+
+let currentMusicAccount = 'main';
+
+function renderMusicProfile(accountId) {
+  const account = MUSIC_ACCOUNTS[accountId];
+  if (!account) return;
+
+  currentMusicAccount = accountId;
+
+  document.getElementById('musicProfileAvatar').style.backgroundImage = `url('${account.avatar}')`;
+  document.getElementById('musicProfileName').innerText = account.name;
+  document.getElementById('musicProfileDesc').innerText = account.desc;
+  document.getElementById('musicProfileFollow').innerText = account.follow;
+}
+
+const MUSIC_DATA = {
+  main: {
+    notes: [
+      {
+        cover: '歌曲2.jpg',
+        song: '一叶知秋',
+        text: '岁岁枯荣。'
+      },
+      {
+        cover: '歌曲3.jpg',
+        song: '耳 喃',
+        text: '耀眼的月光 快照进我心'
+      },
+      {
+        cover: '歌曲4.jpg',
+        song: 'Intentions (Acoustic)',
+        text: '希望比伯和海莉能一直幸福下去，我嗑的cp一定要he啊！'
+      },
+      {
+        cover: '歌曲1.jpg',
+        song: 'I Quit Drinking',
+        text: '每次听到这首歌都能又一次把我拉回夏天。在我身上，有一个无法战胜的夏天。'
+      },
+      {
+        cover: '歌曲5.jpg',
+        song: 'Therefore I Am',
+        text: '2024.8.12，老板转了我们的双人舞台🙏不会忘记这一天。'
+      }
+    ],
+
+    messages: [
+      {
+        id: 'singer1',
+        avatar: '歌手1.jpg',
+        name: 'TroyeSivan',
+        time: '9月18日',
+        message: '我的最新MV《Party》发布啦，快来……',
+        unread: '1',
+        clickable: false
+      },
+      {
+        id: 'singer2',
+        avatar: '歌手2.jpg',
+        name: 'YOASOBI_Official',
+        time: '9月14日',
+        message: '我的最新MV《才リ才ン》发布啦，快来……',
+        unread: '1',
+        clickable: false
+      },
+      {
+        id: 'singer3',
+        avatar: '歌手3.jpg',
+        name: '法老pharaoh420',
+        time: '8月25日',
+        message: '我的最新专辑《我想呼风唤雨》发布了，快来……',
+        unread: '1',
+        clickable: false
+      },
+      {
+        id: 'singer4',
+        avatar: '歌手4.jpg',
+        name: 'Ghost-flame',
+        time: '6月12日',
+        message: '我的新歌《心跳(Live)》正式发布啦！快来……',
+        unread: '1',
+        clickable: false
+      }
+    ]
+  },
+
+  small: {
+    notes: [],
+
+    messages: [
+      {
+        id: 'z',
+        avatar: 'z.jpg',
+        name: 'z',
+        time: '2024年9月2日',
+        message: '私信',
+        unread: '',
+        clickable: true
+      }
+    ]
+  }
+};
+
+function openNetEaseMusic() {
+  document.getElementById('homeScreen').classList.remove('show');
+  document.getElementById('musicScreen').classList.remove('hidden');
+  renderMusicProfile('main');
+  switchMusicTab('notes');
+}
+
+function switchMusicAccount(accountId) {
+  renderMusicProfile(accountId);
+
+  document.getElementById('musicAccountScreen').classList.add('hidden');
+  document.getElementById('musicSettingsScreen').classList.add('hidden');
+  document.getElementById('musicScreen').classList.remove('hidden');
+
+  switchMusicTab('notes');
+
+  if (accountId === 'small') {
+    triggerThirdEasterEgg();
+  }
+}
+
+function triggerThirdEasterEgg() {
+  const audio = document.getElementById('easterEggBgm3');
+
+  if (audio) {
+    audio.currentTime = 0;
+    audio.volume = 0.6;
+
+    audio.play().catch(err => {
+      console.log('音频播放失败：', err);
+    });
+  }
+
+  if (localStorage.getItem('thirdEasterEggFound') !== 'yes') {
+    showEasterEggMessage('恭喜你发现了第三个彩蛋！');
+    localStorage.setItem('thirdEasterEggFound', 'yes');
+    updateProgressPanel();
+  }
+}
+
+function showEasterEggMessage(text) {
+  const message = document.createElement('div');
+  message.className = 'easter-egg-message';
+  message.innerText = text;
+
+  document.body.appendChild(message);
+
+  setTimeout(() => {
+    message.remove();
+  }, 2500);
+}
+
+function switchMusicTab(tab) {
+  document.getElementById('musicTabNotes').classList.toggle('active', tab === 'notes');
+  document.getElementById('musicTabMessages').classList.toggle('active', tab === 'messages');
+
+  const data = MUSIC_DATA[currentMusicAccount] || MUSIC_DATA.main;
+  const content = document.getElementById('musicContent');
+  content.innerHTML = '';
+
+  if (tab === 'notes') {
+    if (data.notes.length === 0) {
+      content.innerHTML = `
+        <div class="music-empty">暂无笔记</div>
+      `;
+      return;
+    }
+
+    data.notes.forEach(note => {
+      content.innerHTML += `
+        <div class="music-note-card">
+          <div class="music-cover" style="background-image:url('${note.cover}')"></div>
+          <div class="music-note-body">
+            <div class="music-song-name">${note.song}</div>
+            <div class="music-note-text">${note.text}</div>
+            <div class="music-note-footer">${MUSIC_ACCOUNTS[currentMusicAccount].name}　</div>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  if (tab === 'messages') {
+    data.messages.forEach(msg => {
+      content.innerHTML += `
+        <div class="music-message-item ${msg.clickable ? 'clickable' : ''}" ${msg.clickable ? `onclick="openMusicPrivateChat('${msg.id}')"` : ''}>
+          <div class="music-message-avatar" style="background-image:url('${msg.avatar}')"></div>
+          <div class="music-message-info">
+            <div class="music-message-top">
+              <div class="music-message-name">${msg.name}</div>
+              <div class="music-message-time">${msg.time}</div>
+            </div>
+            <div class="music-message-preview">${msg.message}</div>
+          </div>
+          ${msg.unread ? `<div class="music-unread">${msg.unread}</div>` : ''}
+        </div>
+      `;
+    });
+  }
+}
+
+const MUSIC_PRIVATE_CHATS = {
+  z: {
+    name: 'z',
+    avatar: 'z.jpg',
+    messages: [
+      { type: 'time', text: '2023.8.5' },
+      { from: 'z', text: '你好哇你好哇，我是左奇函' },
+      { from: 'me', text: '你好哇你好哇，我是杨博文' },
+      { from: 'z', text: '哈哈，我们一定要这样傻乎乎地自我介绍吗' },
+      { from: 'z', text: '我还是第一次用网易云跟人聊天' },
+      { from: 'z', text: '你妈妈管你管那么严啊' },
+      { from: 'me', text: '嗯，是不是给你添麻烦了？' },
+      { from: 'z', text: '没关系！' },
+      { from: 'z', text: '用网易云多方便啊，我们还可以一起听音乐😎' },
+      { from: 'me', text: '☺️' },
+
+      { type: 'time', text: '2023.8.25' },
+      { from: 'z', text: '杨博文' },
+      { from: 'z', text: '杨博博' },
+      { from: 'z', text: '杨文文' },
+      { from: 'z', text: '博博文文文文文' },
+      { from: 'me', text: '怎么了？' },
+      { from: 'z', text: '哇你可算出现了' },
+      { from: 'me', text: '我刚在检查暑假作业，你呢？作业写完了吗？' },
+      { from: 'z', text: '呃！暑假作业那种小事不用在意！' },
+      { from: 'z', text: '我们来听歌吧！' },
+      { from: 'me', text: '好～' },
+      { from: 'me', text: '今天我帮忙做家务了，妈妈说我可以多用一会儿手机。' },
+      { from: 'z', text: '呜呼！太好了！' },
+
+      { type: 'time', text: '2023.9.10' },
+      { from: 'z', text: '杨博文杨博文杨博文杨博文杨博文杨博文杨博文杨博文杨博文杨博文杨博文杨博文杨博文杨博文杨博文' },
+      { from: 'z', text: '我好伤心' },
+      { from: 'me', text: '左奇函左奇函左奇函左奇函左奇函左奇函左奇函左奇函左奇函左奇函左奇函左奇函左奇函左奇函左奇函' },
+      { from: 'me', text: '怎么啦，你为什么伤心？' },
+      { from: 'z', text: '因为你这次又要离开很久很久了' },
+      { from: 'me', text: '因为我要回去考试啊，没办法，考试是很重要的。' },
+      { from: 'z', text: '考试比朋友还重要吗？' },
+      { from: 'me', text: '左奇函你好笨，又说这种傻话。' },
+      { from: 'z', text: '那就是考试更重要了，啊啊啊啊啊啊我好伤心' },
+      { from: 'me', text: '人为什么要跟考试比较，你们又不是同类，一个是重要的测试，一个是我重要的朋友，都很重要。' },
+      { from: 'z', text: '可是那只是开学考试啊，又不是期中考试期末考试，为什么非要回去' },
+      { from: 'z', text: '下次见到你只能等国庆了' },
+      { from: 'me', text: '但是妈妈说开学考也是很重要的，老师要检验学生暑假有没有认真学习，所以她不希望我缺席，想给老师留下一个好印象。' },
+      { from: 'z', text: '好吧' },
+      { from: 'me', text: '别伤心了，我们来听歌吧！' },
+      { from: 'z', text: '你不复习了吗？' },
+      { from: 'me', text: '劳逸结合嘛，可以听一会儿音乐' },
+      { from: 'z', text: '好耶！' },
+
+      { type: 'time', text: '2023.9.30' },
+      { from: 'z', text: '在不在在不在在不在' },
+      { from: 'me', text: '在啊在啊在啊' },
+      { from: 'z', text: '来听歌！' },
+      { from: 'me', text: '好！' },
+
+      { type: 'time', text: '2023.10.7' },
+      { from: 'z', text: '来听歌吗？' },
+      { from: 'me', text: '好啊，今天听什么？' },
+      { from: 'z', text: '我想听反方向的钟' },
+      { from: 'z', text: '唉，纪念我逝去的假期！' },
+      { from: 'me', text: '哈哈哈，好呀。' },
+
+      { type: 'time', text: '2023.10.19' },
+      { from: 'z', text: '听歌11111' },
+      { from: 'me', text: '来了11111' },
+
+      { type: 'time', text: '2023.11.24' },
+      { from: 'z', text: '我今天给你拍的照片好看吧？' },
+      { from: 'me', text: '好看，不愧是你👍' },
+      { from: 'z', text: '那当然，我可是大师！' },
+      { from: 'z', text: '你什么时候回北京啊，能留下来过完万圣节再走吗？' },
+      { from: 'me', text: '我不知道哎，要看妈妈安排。' },
+      { from: 'z', text: '哎呀你就等万圣节之后再走嘛，拜托拜托' },
+      { from: 'z', text: '杨博文文文文文文' },
+      { from: 'z', text: '我准备了一个大南瓜灯，到时候大家一起过节，你一定会喜欢的！' },
+      { from: 'me', text: '哇' },
+      { from: 'me', text: '我去问问我妈，看看能不能十一月再回去。' },
+      { from: 'z', text: '好呀好呀，必要的时候我也可以出场，我会抱着阿姨大腿求情的！' },
+      { from: 'me', text: '哈哈，那就不用啦。' },
+
+      { type: 'time', text: '2023.10.30' },
+      { from: 'z', text: '骗子' },
+      { from: 'me', text: '对不起，我也想和你一起过万圣节。' },
+      { from: 'me', text: '北京的街上好安静啊，都没什么节日的氛围。' },
+      { from: 'z', text: '干嘛把自己说得那么可怜' },
+      { from: 'z', text: '原谅你了！' },
+      { from: 'z', text: '来听歌吧，今晚听万圣节专场' },
+      { from: 'me', text: '好☺️' },
+
+      { type: 'time', text: '2023.11.17' },
+      { from: 'z', text: '听歌听歌！' },
+      { from: 'me', text: '听歌听歌！' },
+
+      { type: 'time', text: '2023.12.18' },
+      { from: 'z', text: '圣诞节会来重庆吗？' },
+      { from: 'me', text: '应该没办法过去，要留在北京准备考试。' },
+      { from: 'z', text: '好吧' },
+      { from: 'me', text: '你那边应该也要考试了吧？' },
+      { from: 'z', text: '嗯' },
+      { from: 'me', text: '复习得怎么样了，要不然今天一起听英语听力？' },
+      { from: 'z', text: '算了吧，今天我要早睡' },
+      { from: 'me', text: '是不想听英语听力吧？' },
+      { from: 'z', text: '喂！' },
+      { from: 'me', text: '英文要好好学啊，听力是很重要的，以后如果我们能出道，出国活动什么的，说不定还要自己发言呢。' },
+      { from: 'z', text: '哈哈哈哈，你这么早就在准备出道的事情啦？' },
+      { from: 'me', text: '就算不能出道，英语也很重要，不仅中考高考，大学还要考四六级，找工作也要看英语成绩。' },
+      { from: 'z', text: '哎呀我知道，你怎么和老师一样' },
+      { from: 'me', text: '左同学，要来听英语听力吗？' },
+      { from: 'z', text: '杨老师，good night！' },
+
+      { type: 'time', text: '2024.1.1' },
+      { from: 'z', text: '新年快乐！' },
+      { from: 'me', text: '新年快乐！' },
+
+      { type: 'time', text: '2024.2.9' },
+      { from: 'z', text: '除夕了，好久没有见到你了' },
+      { from: 'me', text: '新的一年，我们见面的机会一定会越来越多。' },
+      { from: 'z', text: '如果真是这样就太好了' },
+      { from: 'me', text: '今晚听歌吗？' },
+      { from: 'z', text: '外面都在放鞭炮，还听什么歌呀' },
+      { from: 'z', text: '打个电话？' },
+      { from: 'me', text: '好。' },
+
+      { type: 'time', text: '2024.2.14' },
+      { from: 'z', text: '听歌否？' },
+      { from: 'me', text: '否否。' },
+      { from: 'z', text: '？' },
+      { from: 'me', text: '双重否定表肯定。' },
+      { from: 'z', text: '无语' },
+      { from: 'z', text: '来！' },
+
+      { type: 'time', text: '2024.3.19' },
+      { from: 'z', text: '你送的礼物我很喜欢' },
+      { from: 'z', text: '谢啦' },
+      { from: 'me', text: '喜欢就好，希望你能一直开心。' },
+      { from: 'z', text: '肯定能，哎呀，就算天塌下来我都会有办法让自己开开心心的～' },
+      { from: 'z', text: '看到我这样你们也会开心吧' },
+      { from: 'me', text: '嗯。' },
+      { from: 'z', text: '哈哈哈，我就是传说中的快乐王子！' },
+      { from: 'me', text: '那个故事的寓意可不好。' },
+      { from: 'z', text: '啊？不是带给人快乐的王子吗' },
+      { from: 'me', text: '是，但又不是' },
+      { from: 'z', text: '怎么什么东西被你一说都显得很复杂' },
+      { from: 'z', text: '算了，搞不懂' },
+      { from: 'z', text: '来听歌吧' },
+      { from: 'me', text: '好。' },
+
+      { type: 'time', text: '2024.4.15' },
+      { from: 'z', text: '你不觉得你应该对我说点什么吗' },
+      { from: 'me', text: '什么？' },
+      { from: 'z', text: '道歉啊！！！' },
+      { from: 'me', text: '但是我没有错，为什么要我道歉？' },
+      { from: 'z', text: '。。。。' },
+      { from: 'z', text: '你没错，难道是我错了？' },
+      { from: 'me', text: '是的。' },
+      { from: 'z', text: '我都气笑了' },
+      { from: 'z', text: '你行' },
+      { from: 'me', text: '如果你是想解决问题，我们可以好好谈一谈，如果你只是想发泄情绪，我觉得我们暂时不要说话了，你需要自己冷静一下。' },
+      { from: 'z', text: '哦' },
+
+      { type: 'time', text: '2024.5.17' },
+      { from: 'me', text: '在吗？' },
+
+      { type: 'time', text: '2024.5.26' },
+      { from: 'z', text: '原来你还给我发消息了' },
+      { from: 'z', text: '我都没看见' },
+      { from: 'z', text: '可不是故意不回的啊' },
+      { from: 'me', text: '没关系。' },
+      { from: 'me', text: '我们现在已经和好了，对吧？' },
+      { from: 'z', text: '当然啦～' },
+      { from: 'me', text: '☺️' },
+
+      { type: 'time', text: '2024.6.1' },
+      { from: 'z', text: '虽然线下已经说过了但还是' },
+      { from: 'z', text: '杨博文，生日快乐！' },
+      { from: 'me', text: '谢谢你，左奇函。' },
+      { from: 'me', text: '我很开心！' },
+      { from: 'z', text: '😎😎😎' },
+
+      { type: 'time', text: '2024.7.20' },
+      { from: 'z', text: '训练好累啊～' },
+      { from: 'me', text: '但是想想舞台，也很有动力啊～' },
+      { from: 'z', text: '你说的对' },
+      { from: 'z', text: '啊啊啊啊啊冲了！' },
+      { from: 'me', text: '冲了！' },
+
+      { type: 'time', text: '2024.8.11' },
+      { from: 'me', text: '你没事吧？' },
+      { from: 'z', text: '哎呀，刚刚不都问过了吗' },
+      { from: 'z', text: '真没事' },
+      { from: 'me', text: '看到你吐了好多血，对不起。' },
+      { from: 'z', text: '只是看着吓人，真的没什么大问题，相信我好吧' },
+      { from: 'z', text: '微笑再美再甜不是你的都不特别～' },
+      { from: 'z', text: '喂喂喂，怎么不接歌词啊' },
+      { from: 'z', text: '不够默契啊' },
+      { from: 'me', text: '眼泪再苦再咸有你安慰都是晴天。' },
+      { from: 'z', text: '哈哈哈哈哈哈' },
+      { from: 'z', text: '别担心啦' },
+      { from: 'z', text: '能上舞台真好啊！' },
+
+      { type: 'time', text: '2024.9.2' },
+      { from: 'me', text: '今天听歌吗？' },
+      { from: 'z', text: '抱歉抱歉，今天有点不太方便' },
+      { from: 'me', text: '噢，你们还在贵州吗？' },
+      { from: 'z', text: '对呀' },
+      { from: 'z', text: '这里的蹦极特别刺激，风景还好看，你以后一定要试试' },
+      { from: 'z', text: '陈奕恒差点被吓哭，笑死我了，太可爱了' },
+      { from: 'me', text: '这么好玩啊，自驾游真好，想去哪儿就去哪儿。' },
+      { from: 'z', text: '哈哈哈哈，主要我妈和陈奕恒妈妈那叫一个相见恨晚，我和陈奕恒只能一起挤后排，都是她俩顺带的' },
+      { from: 'z', text: '我先去洗漱啦，后面有时间再一起听歌' },
+      { from: 'me', text: '好。' },
+
+      { type: 'time', text: '2024.11.1' },
+      { from: 'z', text: '听歌？' },
+      { from: 'me', text: '今晚终于有时间了？' },
+      { from: 'z', text: '这句话看起来有点阴阳怪气哦' },
+      { from: 'me', text: '没有，你想多了。' },
+      { from: 'z', text: '哎呀，这段时候我都和陈奕恒一起下班，我们要聊天嘛，总不能坐在车里不理他，然后戴着耳机找你听歌吧' },
+      { from: 'z', text: '那也太伤害他了' },
+      { from: 'z', text: '我一直都记得我们的约定，所以今天有空就来找你听歌了' },
+      { from: 'me', text: '你误会了，我不是在质问，所以你也没必要解释，我无所谓。' },
+      { from: 'z', text: '但我还是感觉你说话有点情绪' },
+      { from: 'me', text: '你都说了那是你的感觉，如果太把自己的感觉当真，就会显得自以为是。' },
+      { from: 'z', text: '杨博文，如果你不开心了，就直接跟我说啊' },
+      { from: 'z', text: '如果你想让我多和你玩，你也要跟我说' },
+      { from: 'z', text: '我很在乎朋友的感受' },
+      { from: 'me', text: '左奇函，我不认为我哪里表现出了不开心的情绪，你想多了。' },
+      { from: 'me', text: '麻烦你冷静一点。' },
+      { from: 'z', text: '。。？？？？。？。。。' },
+      { from: 'z', text: '需要冷静的是我？？？' },
+      { from: 'z', text: '你是不是以为用这种语气说话就显得你很清醒，你很平静，然后是我在闹腾？？' },
+      { from: 'me', text: '如果不是的话，你又在生什么气呢。' },
+      { from: 'z', text: '。。' },
+      { from: 'z', text: '行' },
+      { from: 'me', text: '你鸽了我很久，我都没有生气，反而是你现在生气了，为什么？难道这也要说是我的错吗？' },
+      { from: 'z', text: '你自己心里清楚你到底生没生气' },
+      { from: 'me', text: '我没有表现出任何生气的迹象' },
+      { from: 'z', text: '行你说什么就是什么吧' },
+      { from: 'z', text: '我不想跟你掰扯这种事，反正你总有很多道理' },
+      { from: 'me', text: '那是因为你一闹情绪就拒绝沟通，根本不想解决问题' },
+
+      { type: 'time', text: '2025.4.24' },
+      { from: 'me', text: '你找到了比考试更重要的朋友吗？' },
+
+      { type: 'time', text: '2025.6.14' },
+      { from: 'me', text: '那天是因为看到了你万圣节的造型，我很伤心，也有点儿生气。' },
+      { from: 'me', text: '为什么你会发现呢？' },
+
+      { type: 'time', text: '2025.12.25' },
+      { from: 'me', text: '分享音乐《只对你有感觉》' },
+      { from: 'me', text: '新音随舞有这个，你记得看一下。' }
+    ]
+  }
+};
+
+function openMusicPrivateChat(chatId) {
+  const chat = MUSIC_PRIVATE_CHATS[chatId];
+  if (!chat) return;
+
+  document.getElementById('musicScreen').classList.add('hidden');
+  document.getElementById('musicChatScreen').classList.remove('hidden');
+  document.getElementById('musicChatTitle').innerText = chat.name;
+
+  const box = document.getElementById('musicChatMessages');
+  box.innerHTML = '';
+
+  chat.messages.forEach(msg => {
+    if (msg.type === 'time') {
+      box.innerHTML += `<div class="music-chat-time">${msg.text}</div>`;
+      return;
+    }
+
+    const isMe = msg.from === 'me';
+    const avatar = isMe ? MUSIC_ACCOUNTS[currentMusicAccount].avatar : chat.avatar;
+
+    box.innerHTML += `
+      <div class="music-chat-row ${isMe ? 'me' : 'other'}">
+        ${isMe ? '' : `<div class="music-chat-avatar" style="background-image:url('${avatar}')"></div>`}
+        <div class="music-chat-bubble">${msg.text}</div>
+        ${isMe ? `<div class="music-chat-avatar" style="background-image:url('${avatar}')"></div>` : ''}
+      </div>
+    `;
+  });
+
+  setTimeout(() => {
+    box.scrollTop = box.scrollHeight;
+  }, 0);
+}
+
+function backToMusicMessages() {
+  document.getElementById('musicChatScreen').classList.add('hidden');
+  document.getElementById('musicScreen').classList.remove('hidden');
+  switchMusicTab('messages');
+}
+
+
+function openMusicSettings() {
+  document.getElementById('musicScreen').classList.add('hidden');
+  document.getElementById('musicSettingsScreen').classList.remove('hidden');
+}
+
+function backToMusicHome() {
+  document.getElementById('musicSettingsScreen').classList.add('hidden');
+  document.getElementById('musicScreen').classList.remove('hidden');
+}
+
+function openMusicAccountSwitch() {
+  document.getElementById('musicSettingsScreen').classList.add('hidden');
+  document.getElementById('musicAccountScreen').classList.remove('hidden');
+}
+
+function backToMusicSettings() {
+  document.getElementById('musicAccountScreen').classList.add('hidden');
+  document.getElementById('musicSettingsScreen').classList.remove('hidden');
+}
+
+function openWechat() {
+  document.getElementById('homeScreen').classList.remove('show');
+  document.getElementById('wechatScreen').classList.remove('hidden');
+}
+
+function backToHome() {
+  document.getElementById('wechatScreen').classList.add('hidden');
+  document.getElementById('homeScreen').classList.add('show');
+  updateProgressPanel();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.wechat-panel').forEach(p => p.classList.add('hidden'));
+  document.getElementById(tab + 'Panel').classList.remove('hidden');
+
+  document.querySelectorAll('.wechat-tab-bar .tab-item').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.wechat-tab-bar .tab-item[data-tab="${tab}"]`).classList.add('active');
+
+  const title = document.getElementById('wechatTitle');
+  const search = document.getElementById('wechatSearch');
+  const plus = document.getElementById('wechatPlus');
+
+  if (tab === 'wechat') {
+    title.innerText = '微信';
+    search.classList.remove('hidden');
+    plus.classList.remove('hidden');
+  } else if (tab === 'contacts') {
+    title.innerText = '通讯录';
+    search.classList.remove('hidden');
+    plus.classList.add('hidden');
+  } else if (tab === 'discover') {
+    title.innerText = '发现';
+    search.classList.add('hidden');
+    plus.classList.add('hidden');
+  } else if (tab === 'me') {
+    title.innerText = '';
+    search.classList.add('hidden');
+    plus.classList.add('hidden');
+  }
+}
+
+function openChat(chatId) {
+  const chat = CHATS[chatId];
+  if (!chat) return;
+
+  const chatDetail = document.getElementById('chatDetail');
+  const chatTitle = document.getElementById('chatTitle');
+  const chatMessages = document.getElementById('chatMessages');
+
+  chatTitle.innerText = chat.name;
+  chatMessages.innerHTML = '';
+
+  chat.messages.forEach(msg => {
+    if (msg.type === 'time') {
+      chatMessages.innerHTML += `<div class="msg-time">${escapeHTML(msg.text)}</div>`;
+      return;
+    }
+
+    if (msg.type === 'system') {
+      chatMessages.innerHTML += `<div class="msg-system">${escapeHTML(msg.text)}</div>`;
+      return;
+    }
+
+    const isMe = msg.from === 'me';
+
+    let avatarKey;
+    if (isMe) {
+      avatarKey = 'me';
+    } else if (msg.avatar) {
+      avatarKey = msg.avatar;
+    } else {
+      avatarKey = chat.avatar;
+    }
+
+    const avatarUrl = AVATARS[avatarKey] || '';
+
+    let messageHTML = '';
+
+if (msg.type === 'image') {
+  messageHTML = `
+    <img class="msg-image" src="${msg.src}">
+  `;
+} else {
+  messageHTML = `<div class="msg-bubble">${escapeHTML(msg.text)}</div>`;
+}
+
+
+    chatMessages.innerHTML += `
+      <div class="msg-row ${isMe ? 'me' : 'other'}">
+        ${isMe ? '' : `<div class="msg-avatar" style="background-image:url('${avatarUrl}')"></div>`}
+
+        <div class="msg-content">
+          ${!isMe && msg.name ? `<div class="msg-sender-name">${escapeHTML(msg.name)}</div>` : ''}
+          ${messageHTML}
+        </div>
+
+        ${isMe ? `<div class="msg-avatar" style="background-image:url('${avatarUrl}')"></div>` : ''}
+      </div>
+    `;
+  });
+
+  chatDetail.classList.remove('hidden');
+
+  setTimeout(() => {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }, 0);
+}
+
+function closeChat() {
+  document.getElementById('chatDetail').classList.add('hidden');
+}
+
+function openMoments() {
+  const page = document.getElementById('momentsPage');
+  const list = document.getElementById('momentsList');
+
+  list.innerHTML = '';
+
+  MOMENTS.forEach(moment => {
+    const avatarUrl = AVATARS[moment.avatar] || '';
+
+    let imagesHTML = '';
+    if (moment.images && moment.images.length > 0) {
+      const oneClass = moment.images.length === 1 ? 'one' : '';
+
+      imagesHTML = `
+        <div class="moment-images ${oneClass}">
+          ${moment.images.map(src => `
+            <img class="moment-img" src="${src}">
+          `).join('')}
+        </div>
+      `;
+    }
+
+    const likesHTML = moment.likes && moment.likes.length > 0
+      ? `<div class="moment-likes">♡ ${moment.likes.map(escapeHTML).join('，')}</div>`
+      : '';
+
+    const commentsHTML = moment.comments && moment.comments.length > 0
+      ? moment.comments.map(c => {
+          if (c.replyTo) {
+            return `
+              <div class="moment-comment">
+                <span class="moment-comment-name">${escapeHTML(c.name)}</span>
+                <span> 回复 </span>
+                <span class="moment-comment-name">${escapeHTML(c.replyTo)}</span>
+                <span>：${escapeHTML(c.text)}</span>
+              </div>
+            `;
+          } else {
+            return `
+              <div class="moment-comment">
+                <span class="moment-comment-name">${escapeHTML(c.name)}</span>
+                <span>：${escapeHTML(c.text)}</span>
+              </div>
+            `;
+          }
+        }).join('')
+      : '';
+
+    const socialHTML = likesHTML || commentsHTML
+      ? `<div class="moment-social">${likesHTML}${commentsHTML}</div>`
+      : '';
+
+    list.innerHTML += `
+      <div class="moment-item">
+        <div class="moment-avatar" style="background-image:url('${avatarUrl}')"></div>
+        <div class="moment-body">
+          <div class="moment-name">${escapeHTML(moment.name)}</div>
+          ${moment.text ? `<div class="moment-text">${escapeHTML(moment.text)}</div>` : ''}
+          ${imagesHTML}
+          <div class="moment-footer">
+            <span>${escapeHTML(moment.time)}</span>
+            <span class="moment-actions">··</span>
+          </div>
+          ${socialHTML}
+        </div>
+      </div>
+    `;
+  });
+
+  page.classList.remove('hidden');
+}
+
+function closeMoments() {
+  document.getElementById('momentsPage').classList.add('hidden');
+}
+
+buildDots();
+setupAvatars();
+updateProgressPanel();
+</script>
+</body>
+</html>
