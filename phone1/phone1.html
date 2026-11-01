@@ -1,0 +1,3295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>第一个手机</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :root {
+    --wallpaper: url('陈思罕壁纸.jpg');
+    --wechat-green: #07c160;
+  }
+
+  body {
+  background: #1f1f1f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100svh;
+  min-height: 100svh;
+  overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                 "SF Pro Display", "Helvetica Neue", "PingFang SC",
+                 "Microsoft YaHei", sans-serif;
+    user-select: none;
+    overflow: hidden;
+  }
+
+  .progress-panel {
+  position: absolute;
+  left: 50%;
+  bottom: 105px;
+  transform: translateX(-50%);
+  z-index: 8;
+  width: 220px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.7;
+  backdrop-filter: blur(10px);
+}
+
+  .phone {
+  width: min(390px, calc(100vw - 16px));
+  height: min(844px, calc(100svh - 16px));
+  aspect-ratio: 390 / 844;
+  background: #000;
+  border-radius: 55px;
+  padding: 10px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+}
+
+  .screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    border-radius: 45px;
+    overflow: hidden;
+  }
+
+.screen::after {
+  content: "@刮刮乐特等奖";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-18deg);
+
+  z-index: 9999;
+  pointer-events: none;
+
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  white-space: nowrap;
+
+  color: rgba(255, 255, 255, 0.16);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+  .layer {
+    position: absolute;
+    inset: 0;
+  }
+
+  .wallpaper {
+    position: absolute;
+    inset: 0;
+    background-image: var(--wallpaper);
+    background-size: cover;
+    background-position: center;
+  }
+  .wallpaper.blur {
+    filter: blur(36px) brightness(0.65);
+    transform: scale(1.15);
+  }
+
+  .status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 26px 0;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    z-index: 10;
+  }
+
+  .status-left, .status-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .signal {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 14px;
+  }
+  .signal span {
+    display: inline-block;
+    width: 3px;
+    background: #fff;
+    border-radius: 1px;
+  }
+
+  .battery {
+    width: 24px;
+    height: 12px;
+    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 3px;
+    position: relative;
+    margin-left: 2px;
+  }
+  .battery::after {
+    content: '';
+    position: absolute;
+    right: -4px;
+    top: 3px;
+    width: 2px;
+    height: 6px;
+    background: #fff;
+    border-radius: 0 1px 1px 0;
+  }
+  .battery-fill {
+    height: 100%;
+    width: 31%;
+    background: #fff;
+    border-radius: 2px;
+  }
+
+  .status-bar.dark {
+    color: #111;
+  }
+  .status-bar.dark .signal span {
+    background: #111;
+  }
+  .status-bar.dark .battery {
+    border-color: #111;
+  }
+  .status-bar.dark .battery::after {
+    background: #111;
+  }
+  .status-bar.dark .battery-fill {
+    background: #111;
+  }
+
+  .lock-screen {
+    z-index: 3;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+    cursor: grab;
+    touch-action: none;
+  }
+  .lock-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 90px; 
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .date {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .time {
+    font-size: 92px;
+    font-weight: 200;
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+  .swipe-hint {
+    position: absolute;
+    bottom: 55px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: rgba(255,255,255,0.85);
+    font-size: 17px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  .passcode-screen {
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .passcode-content {
+    position: relative;
+    z-index: 5;
+    margin-top: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+  }
+  .passcode-title {
+    font-size: 21px;
+    font-weight: 400;
+    margin-bottom: 28px;
+  }
+  .dots {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 14px;
+  }
+  .passcode-hint {
+  font-size: 14px;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 36px;
+  }
+  .dot {
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgba(255,255,255,0.9);
+    border-radius: 50%;
+  }
+  .dot.filled {
+    background: #fff;
+  }
+
+  .keypad {
+    position: relative;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(3, 76px);
+    gap: 14px 34px;
+    margin-top: auto;
+    margin-bottom: 80px;
+  }
+  .key {
+    width: 76px;
+    height: 76px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.14);
+    color: #fff;
+    font-size: 34px;
+    font-weight: 400;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .key:active {
+    background: rgba(255,255,255,0.35);
+  }
+  .key small {
+    font-size: 10px;
+    letter-spacing: 1px;
+    opacity: 0.75;
+    margin-top: 2px;
+  }
+
+  .bottom-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  padding: 55px 30px 30px;
+  color: #fff;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-12px); }
+    40%      { transform: translateX(10px); }
+    60%      { transform: translateX(-8px); }
+    80%      { transform: translateX(6px); }
+  }
+  .shake {
+    animation: shake 0.5s;
+  }
+
+  .home-screen {
+    z-index: 10;
+    display: none;
+  }
+  .home-screen.show {
+    display: block;
+    animation: fadein 0.6s ease;
+  }
+  @keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .app-grid {
+    position: relative;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: repeat(4, 62px);
+    gap: 22px;
+    justify-content: center;
+    margin-top: 140px;
+  }
+  .app {
+    width: 74px;
+    height: 90px;
+    border-radius: 14px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  }
+  .app .icon {
+    font-size: 26px;
+    line-height: 1;
+  }
+  .app-icon-img {
+    width: 58px;
+    height: 58px;
+    object-fit: cover;
+    border-radius: 13px;
+    margin-bottom: 6px;
+  }
+
+  .wechat-screen {
+    z-index: 15;
+    display: flex;
+    flex-direction: column;
+    background: #ededed;
+    color: #111;
+  }
+
+  .wechat-header {
+    position: relative;
+    padding-top: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ededed;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  .wechat-header .back-btn {
+    position: absolute;
+    left: 16px;
+    top: 48px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #111;
+  }
+  .wechat-header .plus {
+    position: absolute;
+    right: 16px;
+    top: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #111;
+  }
+
+  .wechat-search {
+    margin: 10px 16px;
+    background: #e1e1e1;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #888;
+    text-align: center;
+  }
+
+  .wechat-panel {
+    flex: 1;
+    overflow-y: auto;
+    background: #fff;
+  }
+  .chat-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .chat-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 6px;
+    background-color: #d8d8d8;
+    background-size: cover;
+    background-position: center;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  .chat-info {
+    flex: 1;
+  }
+  .chat-name {
+    font-size: 17px;
+    font-weight: 500;
+    color: #111;
+  }
+  .chat-preview {
+    font-size: 13px;
+    color: #999;
+    margin-top: 3px;
+  }
+  .chat-time {
+    font-size: 12px;
+    color: #bbb;
+    margin-left: 8px;
+  }
+
+  .panel-title {
+    padding: 80px 0 20px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 500;
+    color: #888;
+  }
+  .panel-desc {
+    text-align: center;
+    font-size: 14px;
+    color: #bbb;
+    margin-top: 8px;
+  }
+
+  .me-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 80px;
+  }
+  .me-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: #d8d8d8;
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 16px;
+  }
+  .me-name {
+    font-size: 22px;
+    font-weight: 600;
+    color: #111;
+  }
+  .me-id {
+    font-size: 14px;
+    color: #888;
+    margin-top: 8px;
+  }
+
+  .wechat-tab-bar {
+    display: flex;
+    background: #f9f9f9;
+    border-top: 1px solid #e5e5e5;
+    padding: 8px 0 25px;
+  }
+  .tab-item {
+    flex: 1;
+    text-align: center;
+    font-size: 11px;
+    color: #888;
+    cursor: pointer;
+  }
+  .disabled-tab {
+  opacity: 0.5;
+  cursor: default;
+  }
+  .tab-item .tab-icon {
+    font-size: 20px;
+    margin-bottom: 2px;
+  }
+  .tab-item.active {
+    color: var(--wechat-green);
+  }
+
+.discover-list {
+  background: #ededed;
+  padding-top: 10px;
+  min-height: 100%;
+}
+
+.discover-group {
+  background: #fff;
+  margin-bottom: 8px;
+}
+
+.discover-item {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 17px;
+  color: #111;
+}
+
+.discover-group .discover-item:last-child {
+  border-bottom: none;
+}
+
+.discover-icon {
+  width: 30px;
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.discover-text {
+  flex: 1;
+}
+
+.discover-sub {
+  color: #888;
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+.discover-arrow {
+  color: #c7c7cc;
+  font-size: 24px;
+}
+
+.easter-egg-message {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+  width: 260px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.82);
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.5;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.me-page {
+  background: #ededed;
+  min-height: 100%;
+  padding-top: 55px;
+}
+
+.me-card {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 24px 16px 22px;
+  margin-bottom: 8px;
+}
+
+.me-avatar {
+  width: 66px;
+  height: 66px;
+  border-radius: 8px;
+  background-color: #d8d8d8;
+  background-size: cover;
+  background-position: center;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.me-main {
+  flex: 1;
+}
+
+.me-name {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.me-id {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.me-status {
+  font-size: 14px;
+  color: #555;
+}
+
+.me-arrow {
+  color: #c7c7cc;
+  font-size: 26px;
+}
+
+.me-list {
+  background: #fff;
+  margin-bottom: 8px;
+}
+
+.me-item {
+  height: 52px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 17px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.me-list .me-item:last-child {
+  border-bottom: none;
+}
+
+.me-item span {
+  color: #c7c7cc;
+  font-size: 24px;
+}
+
+.chat-detail {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: #ededed;
+  display: flex;
+  flex-direction: column;
+  color: #111;
+}
+
+.chat-status-placeholder {
+  height: 34px;
+  background: #ededed;
+}
+
+.chat-detail-header {
+  height: 54px;
+  background: #ededed;
+  border-bottom: 1px solid #dcdcdc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.chat-back {
+  position: absolute;
+  left: 14px;
+  top: 3px;
+  font-size: 40px;
+  font-weight: 300;
+  cursor: pointer;
+  color: #111;
+}
+
+.chat-more {
+  position: absolute;
+  right: 18px;
+  top: 12px;
+  font-size: 24px;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 12px 14px;
+  background: #ededed;
+}
+
+.msg-time {
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  margin: 10px 0 14px;
+}
+
+.msg-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.msg-row.other {
+  justify-content: flex-start;
+}
+
+.msg-row.me {
+  justify-content: flex-end;
+}
+
+.msg-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 5px;
+  background-color: #cfcfcf;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.msg-row.other .msg-avatar {
+  margin-right: 8px;
+}
+
+.msg-row.me .msg-avatar {
+  margin-left: 8px;
+}
+
+.msg-bubble {
+  max-width: 230px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  line-height: 1.45;
+  word-break: break-word;
+  position: relative;
+}
+
+.msg-row.other .msg-bubble {
+  background: #fff;
+  color: #111;
+}
+
+.msg-row.me .msg-bubble {
+  background: #95ec69;
+  color: #111;
+}
+
+.msg-row.other .msg-bubble::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 12px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 6px solid #fff;
+}
+
+.msg-row.me .msg-bubble::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 12px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 6px solid #95ec69;
+}
+
+.msg-image {
+  max-width: 170px;
+  border-radius: 6px;
+  display: block;
+}
+
+.chat-input-bar {
+  min-height: 58px;
+  background: #f7f7f7;
+  border-top: 1px solid #dcdcdc;
+  display: flex;
+  align-items: center;
+  padding: 8px 10px 22px;
+  gap: 8px;
+}
+
+.msg-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 240px;
+}
+
+.msg-sender-name {
+  font-size: 12px;
+  color: #888;
+  margin-top: -6px;
+  margin-bottom: 3px;
+  margin-left: 2px;
+}
+
+.input-icon {
+  font-size: 21px;
+  color: #333;
+}
+
+.fake-input {
+  flex: 1;
+  height: 34px;
+  background: #fff;
+  border-radius: 5px;
+}
+
+.voice-box {
+  min-width: 95px;
+  max-width: 190px;
+  height: 38px;
+  border-radius: 5px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  position: relative;
+}
+
+.msg-row.me .voice-box {
+  background: #95ec69;
+  justify-content: flex-end;
+}
+
+.msg-row.other .voice-box {
+  background: #fff;
+  justify-content: flex-start;
+}
+
+.voice-wave {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  display: inline-block;
+}
+
+.voice-wave span {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  border: 2px solid #111;
+  border-left: none;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.voice-wave span:nth-child(1) {
+  width: 6px;
+  height: 6px;
+}
+
+.voice-wave span:nth-child(2) {
+  width: 11px;
+  height: 11px;
+}
+
+.voice-wave span:nth-child(3) {
+  width: 16px;
+  height: 16px;
+}
+
+.msg-row.me .voice-wave {
+  transform: scaleX(-1);
+}
+
+.voice-seconds {
+  font-size: 14px;
+  color: #111;
+}
+
+.voice-transcript {
+  margin-top: 5px;
+  background: #fff;
+  color: #111;
+  font-size: 14px;
+  line-height: 1.45;
+  padding: 8px 10px;
+  border-radius: 5px;
+  max-width: 230px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.04);
+}
+
+.msg-row.me .msg-content {
+  align-items: flex-end;
+}
+
+.msg-row.other .msg-content {
+  align-items: flex-start;
+}
+
+.msg-system {
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  margin: 10px 0 14px;
+}
+
+.moments-page {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  color: #111;
+}
+
+.moments-header {
+  height: 88px;
+  padding-top: 42px;
+  background: rgba(237, 237, 237, 0.96);
+  border-bottom: 1px solid #ddd;
+  position: relative;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.moments-back {
+  position: absolute;
+  left: 14px;
+  top: 34px;
+  font-size: 40px;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.moments-camera {
+  position: absolute;
+  right: 18px;
+  top: 45px;
+  font-size: 20px;
+}
+
+.moments-scroll {
+  flex: 1;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.moments-cover {
+  height: 220px;
+  position: relative;
+  background: #ddd;
+}
+
+.moments-cover-img {
+  width: 100%;
+  height: 220px;
+  background-image: url('陈思罕背景.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.moments-my-info {
+  position: absolute;
+  right: 16px;
+  bottom: 5px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.moments-my-text {
+  text-align: right;
+  margin-right: 12px;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.moments-my-name {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.moments-my-sign {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.moments-my-avatar {
+  width: 66px;
+  height: 66px;
+  border-radius: 6px;
+  background-color: #ccc;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #fff;
+}
+
+.moment-item {
+  display: flex;
+  padding: 14px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.moment-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 5px;
+  background-color: #ccc;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.moment-body {
+  flex: 1;
+}
+
+.moment-name {
+  color: #576b95;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.moment-text {
+  font-size: 15px;
+  line-height: 1.45;
+  color: #111;
+  margin-bottom: 8px;
+  white-space: pre-line;
+}
+
+.moment-images {
+  display: grid;
+  grid-template-columns: repeat(3, 76px);
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.moment-images.one {
+  display: block;
+}
+
+.moment-img {
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.moment-images.one .moment-img {
+  width: 150px;
+  height: auto;
+  max-height: 190px;
+  object-fit: cover;
+}
+
+.moment-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #888;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.moment-actions {
+  background: #f3f3f3;
+  color: #576b95;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+.moment-social {
+  background: #f3f3f3;
+  margin-top: 8px;
+  padding: 6px 8px;
+  font-size: 13px;
+  color: #111;
+  border-radius: 2px;
+}
+
+.moment-likes {
+  color: #576b95;
+  margin-bottom: 4px;
+}
+
+.moment-comment {
+  line-height: 1.5;
+}
+
+.moment-comment-name {
+  color: #576b95;
+}
+
+.moment-reply-text {
+  color: #111;
+}
+
+.image-viewer {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0,0,0,0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-viewer-content {
+  max-width: 96%;
+  max-height: 96%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image-viewer img {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+.photo-caption {
+  margin-top: 14px;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+  max-width: 320px;
+  opacity: 0.9;
+}
+
+.ios-app-screen {
+  z-index: 14;
+  background: #f8f8f8;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.ios-status-spacer {
+  height: 44px;
+  background: #f8f8f8;
+}
+
+.ios-nav {
+  height: 46px;
+  background: #f8f8f8;
+  border-bottom: 1px solid #dcdcdc;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ios-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.ios-back {
+  position: absolute;
+  left: 14px;
+  top: -2px;
+  font-size: 40px;
+  font-weight: 300;
+  cursor: pointer;
+  color: #007aff;
+}
+
+.album-list {
+  flex: 1;
+  background: #fff;
+  padding-top: 8px;
+}
+
+.album-item {
+  height: 86px;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.album-cover {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  background: #ddd;
+  background-size: cover;
+  background-position: center;
+  margin-right: 14px;
+  overflow: hidden;
+}
+
+.private-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  background: #e5e5e5;
+}
+
+.album-info {
+  flex: 1;
+}
+
+.album-name {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.album-count {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.album-arrow {
+  color: #c7c7cc;
+  font-size: 26px;
+}
+
+.photo-grid {
+  flex: 1;
+  overflow-y: auto;
+  background: #fff;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  align-content: start;
+}
+
+.photo-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.private-password-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.private-password-box {
+  width: 280px;
+  background: rgba(248,248,248,0.96);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  color: #111;
+}
+
+.private-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.private-hint {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 14px;
+}
+
+.private-input {
+  width: 120px;
+  height: 36px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+
+.private-actions {
+  display: flex;
+  border-top: 1px solid #ddd;
+  margin: 0 -18px -18px;
+}
+
+.private-actions button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  height: 44px;
+  font-size: 16px;
+  color: #007aff;
+  cursor: pointer;
+}
+
+.private-actions button:first-child {
+  border-right: 1px solid #ddd;
+}
+
+.notes-list {
+  flex: 1;
+  background: #f2f2f7;
+  padding: 16px;
+}
+
+.note-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.note-title {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.note-preview {
+  font-size: 14px;
+  color: #888;
+}
+
+.notes-screen {
+  z-index: 14;
+  background: #f2f2f7;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.notes-status-spacer {
+  height: 44px;
+  background: #f2f2f7;
+}
+
+.notes-header {
+  position: relative;
+  padding: 0 18px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+}
+
+.notes-title {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-left: 20px;
+}
+
+.notes-back {
+  position: absolute;
+  left: 12px;
+  top: -6px;
+  font-size: 40px;
+  font-weight: 300;
+  color: #f0a500;
+  cursor: pointer;
+}
+
+.notes-header .notes-back {
+  display: block;
+}
+
+.notes-search-box {
+  padding: 0 16px 14px;
+}
+
+.notes-search-input {
+  width: 100%;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: #e3e3e8;
+  padding: 0 14px;
+  font-size: 15px;
+  outline: none;
+  color: #111;
+}
+
+.notes-search-input::placeholder {
+  color: #888;
+}
+
+.notes-section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0 18px 8px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.notes-count {
+  font-size: 13px;
+  color: #888;
+  font-weight: 400;
+}
+
+.notes-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 14px 20px;
+  background: #f2f2f7;
+}
+
+.note-row {
+  background: #fff;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.note-row:first-child {
+  border-radius: 12px 12px 0 0;
+}
+
+.note-row:last-child {
+  border-radius: 0 0 12px 12px;
+  border-bottom: none;
+}
+
+.note-row-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-row-preview {
+  font-size: 13px;
+  color: #777;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notes-detail-screen {
+  z-index: 16;
+  background: #fff;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+}
+
+.notes-detail-nav {
+  height: 46px;
+  position: relative;
+  border-bottom: 1px solid #eee;
+}
+
+.notes-detail-nav .notes-back {
+  display: block;
+  top: -6px;
+}
+
+.notes-done {
+  position: absolute;
+  right: 18px;
+  top: 13px;
+  color: #f0a500;
+  font-size: 16px;
+}
+
+.note-detail-content {
+  flex: 1;
+  padding: 18px 20px;
+  overflow-y: auto;
+}
+
+.note-detail-date {
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  margin-bottom: 18px;
+}
+
+.note-detail-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.note-detail-text {
+  font-size: 16px;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+
+.pinned-note {
+  margin: 0 14px 18px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 13px 14px;
+  cursor: pointer;
+}
+
+.pinned-label {
+  font-size: 13px;
+  color: #f0a500;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.pinned-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #111;
+}
+
+.note-detail-image {
+  width: 100%;
+  border-radius: 10px;
+  margin: 12px 0;
+  display: block;
+}
+
+.note-detail-paragraph {
+  font-size: 16px;
+  line-height: 1.65;
+  white-space: pre-line;
+  margin-bottom: 10px;
+}
+
+.phone {
+  transform-origin: center center;
+}
+
+  .hidden { display: none !important; }
+
+@media (max-width: 600px) {
+  .phone {
+    width: min(390px, calc(100vw - 12px));
+    max-height: calc(100dvh - 12px);
+    border-radius: 42px;
+    padding: 8px;
+  }
+
+  .screen {
+    border-radius: 35px;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="screen">
+
+    <div class="layer passcode-screen" id="passcodeScreen">
+      <div class="wallpaper blur"></div>
+
+      <div class="status-bar">
+        <div class="status-left">中国移动</div>
+        <div class="status-right">
+          <div class="signal">
+            <span style="height:5px"></span>
+            <span style="height:8px"></span>
+            <span style="height:11px"></span>
+            <span style="height:14px"></span>
+          </div>
+          <div class="battery"><div class="battery-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="passcode-content">
+        <div class="passcode-title">输入密码</div>
+        <div class="dots" id="dots"></div>
+        <div class="passcode-hint">密码提示：我的生日</div>
+      </div>
+
+      <div class="keypad">
+        <button class="key" onclick="press('1')">1</button>
+        <button class="key" onclick="press('2')">2<small>A B C</small></button>
+        <button class="key" onclick="press('3')">3<small>D E F</small></button>
+        <button class="key" onclick="press('4')">4<small>G H I</small></button>
+        <button class="key" onclick="press('5')">5<small>J K L</small></button>
+        <button class="key" onclick="press('6')">6<small>M N O</small></button>
+        <button class="key" onclick="press('7')">7<small>P Q R S</small></button>
+        <button class="key" onclick="press('8')">8<small>T U V</small></button>
+        <button class="key" onclick="press('9')">9<small>W X Y Z</small></button>
+        <button class="key"></button>
+        <button class="key" onclick="press('0')">0</button>
+        <button class="key" onclick="backspace()">⌫</button>
+      </div>
+
+      <div class="bottom-actions">
+        <span>紧急情况</span>
+        <span>取消</span>
+      </div>
+    </div>
+
+    <div class="layer lock-screen" id="lockScreen">
+      <div class="wallpaper"></div>
+
+      <div class="status-bar">
+        <div class="status-left">中国移动</div>
+        <div class="status-right">
+          <div class="signal">
+            <span style="height:5px"></span>
+            <span style="height:8px"></span>
+            <span style="height:11px"></span>
+            <span style="height:14px"></span>
+          </div>
+          <div class="battery"><div class="battery-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="lock-content">
+        <div class="date">9月17日 周四</div>
+        <div class="time">22:07</div>
+      </div>
+
+      <div class="swipe-hint">向上轻扫解锁</div>
+    </div>
+
+    <div class="layer home-screen" id="homeScreen">
+      <div class="wallpaper blur"></div>
+
+      <div class="status-bar">
+        <div class="status-left">中国移动</div>
+        <div class="status-right">
+          <div class="signal">
+            <span style="height:5px"></span>
+            <span style="height:8px"></span>
+            <span style="height:11px"></span>
+            <span style="height:14px"></span>
+          </div>
+          <div class="battery"><div class="battery-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="app-grid">
+  <div class="app" onclick="openWechat()">
+    <img class="app-icon-img" src="微信图标.jpg" alt="微信">
+    <span>微信</span>
+  </div>
+
+  <div class="progress-panel">
+  <div id="mainProgressText">主线进度0/10</div>
+  <div id="eggProgressText">发现彩蛋0/3</div>
+</div>
+
+
+  <div class="app" onclick="openPhotos()">
+    <img class="app-icon-img" src="相册图标.jpg" alt="相册">
+    <span>相册</span>
+  </div>
+
+  <div class="app" onclick="openNotes()">
+    <img class="app-icon-img" src="备忘录图标.jpg" alt="备忘录">
+    <span>备忘录</span>
+  </div>
+</div>
+    </div>
+
+<div class="layer ios-app-screen hidden" id="photosScreen">
+
+  <div class="ios-status-spacer"></div>
+
+  <div class="ios-nav">
+    <span class="ios-back" onclick="backToHomeFromApp()">‹</span>
+    <span class="ios-title">相簿</span>
+  </div>
+
+  <div class="album-list">
+    <div class="album-item" onclick="openAlbum('recent')">
+      <div class="album-cover" id="recentCover"></div>
+      <div class="album-info">
+        <div class="album-name">最近项目</div>
+        <div class="album-count" id="recentCount">0 张照片</div>
+      </div>
+      <div class="album-arrow">›</div>
+    </div>
+
+    <div class="album-item" onclick="showPrivatePassword()">
+      <div class="album-cover private-cover">🔒</div>
+      <div class="album-info">
+        <div class="album-name">私密相册</div>
+        <div class="album-count" id="privateCount">需要密码</div>
+      </div>
+      <div class="album-arrow">›</div>
+    </div>
+  </div>
+</div>
+
+<div class="layer ios-app-screen hidden" id="albumDetailScreen">
+  <div class="ios-status-spacer"></div>
+
+  <div class="ios-nav">
+    <span class="ios-back" onclick="backToAlbums()">‹</span>
+    <span class="ios-title" id="albumTitle">最近项目</span>
+  </div>
+
+  <div class="photo-grid" id="photoGrid"></div>
+</div>
+
+<div class="private-password-modal hidden" id="privatePasswordModal">
+  <div class="private-password-box">
+    <div class="private-title">输入密码</div>
+    <div class="private-hint">密码提示：重要的日期（四个数字）</div>
+    <input id="privatePasswordInput" class="private-input" maxlength="4" type="password" inputmode="numeric" placeholder="••••">
+    <div class="private-actions">
+      <button onclick="closePrivatePassword()">取消</button>
+      <button onclick="checkPrivatePassword()">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="image-viewer hidden" id="photoViewer" onclick="closePhotoViewer()">
+  <div class="photo-viewer-content">
+    <img id="photoViewerImage" src="">
+    <div class="photo-caption" id="photoCaption"></div>
+  </div>
+</div>
+
+<div class="layer notes-screen hidden" id="notesScreen">
+  <div class="notes-status-spacer"></div>
+
+  <div class="notes-header">
+    <span class="notes-back" onclick="backToHomeFromApp()">‹</span>
+    <div class="notes-title">备忘录</div>
+  </div>
+
+  <div class="notes-search-box">
+    <input
+      id="notesSearchInput"
+      class="notes-search-input"
+      type="text"
+      placeholder="搜索"
+      oninput="renderNotesList()"
+    >
+  </div>
+
+  <div class="pinned-note" onclick="openNoteDetail('pinned')">
+  <div class="pinned-label">置顶</div>
+  <div class="pinned-title">2024.08.11</div>
+</div>
+
+  <div class="notes-section-title">
+    <span>过去 7 天</span>
+    <span class="notes-count">共五条</span>
+  </div>
+
+  <div class="notes-list" id="notesList"></div>
+</div>
+
+<div class="private-password-modal hidden" id="mondayPasswordModal">
+  <div class="private-password-box">
+    <div class="private-title">输入密码</div>
+    <div class="private-hint">这次行动的代号是？（五个字）</div>
+    <div class="private-hint">密码提示：在第三个手机的网盘里。</div>
+    <input id="mondayPasswordInput" class="private-input" type="text" placeholder="输入答案">
+    <div class="private-actions">
+      <button onclick="closeMondayPassword()">取消</button>
+      <button onclick="checkMondayPassword()">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="layer notes-detail-screen hidden" id="noteDetailScreen">
+  <div class="notes-status-spacer"></div>
+
+  <div class="notes-detail-nav">
+    <span class="notes-back" onclick="backToNotesList()">‹</span>
+    <span class="notes-done">完成</span>
+  </div>
+
+  <div class="note-detail-content">
+    <div class="note-detail-date" id="noteDetailDate"></div>
+    <div class="note-detail-title" id="noteDetailTitle"></div>
+    <div class="note-detail-text" id="noteDetailText"></div>
+  </div>
+</div>
+
+    <div class="layer wechat-screen hidden" id="wechatScreen">
+
+      <div class="status-bar dark">
+        <div class="status-left">中国移动</div>
+        <div class="status-right">
+          <div class="signal">
+            <span style="height:5px"></span>
+            <span style="height:8px"></span>
+            <span style="height:11px"></span>
+            <span style="height:14px"></span>
+          </div>
+          <div class="battery"><div class="battery-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="wechat-header">
+        <span class="back-btn" onclick="backToHome()">‹</span>
+        <span id="wechatTitle">微信</span>
+        <span class="plus" id="wechatPlus">＋</span>
+      </div>
+
+      <div class="wechat-search" id="wechatSearch">搜索</div>
+
+      <div class="wechat-panel" id="wechatPanel">
+        <div class="chat-item" onclick="openChat('group1')">
+          <div class="chat-avatar" data-avatar="group1"></div>
+          <div class="chat-info">
+            <div class="chat-name">今天也在当童工</div>
+            <div class="chat-preview">陈浚铭：我是第一名好吗！不要……</div>
+          </div>
+          <div class="chat-time">周四</div>
+        </div>
+
+        <div class="chat-item" onclick="openChat('group2')">
+          <div class="chat-avatar" data-avatar="group2"></div>
+          <div class="chat-info">
+            <div class="chat-name">不打篮球的是给</div>
+            <div class="chat-preview">张桂源：靠，你们这么会，我都……</div>
+          </div>
+          <div class="chat-time">周四</div>
+        </div>
+
+        <div class="chat-item" onclick="openChat('ming')">
+          <div class="chat-avatar" data-avatar="ming"></div>
+          <div class="chat-info">
+            <div class="chat-name">陈浚铭</div>
+            <div class="chat-preview">跟你学的</div>
+          </div>
+          <div class="chat-time">周四</div>
+        </div>
+
+        <div class="chat-item" onclick="openChat('wang')">
+          <div class="chat-avatar" data-avatar="wang"></div>
+          <div class="chat-info">
+            <div class="chat-name">王橹杰</div>
+            <div class="chat-preview">yes sir!</div>
+          </div>
+          <div class="chat-time">周四</div>
+        </div>
+
+        <div class="chat-item" onclick="openChat('zuo')">
+          <div class="chat-avatar" data-avatar="zuo"></div>
+          <div class="chat-info">
+            <div class="chat-name">左奇函</div>
+            <div class="chat-preview">比格大王嗷嗷嗷！</div>
+          </div>
+          <div class="chat-time">周四</div>
+        </div>
+      </div>
+
+      <div class="wechat-panel hidden" id="contactsPanel">
+        <div class="panel-title">通讯录</div>
+        <div class="panel-desc">暂无查看权限</div>
+      </div>
+
+      <div class="wechat-panel hidden" id="discoverPanel">
+        <div class="discover-list">
+
+          <div class="discover-group">
+            <div class="discover-item" onclick="openMoments()">
+              <span class="discover-icon">🖼️</span>
+              <span class="discover-text">朋友圈</span>
+              <span class="discover-arrow">›</span>
+            </div>
+          </div>
+
+          <div class="discover-group">
+            <div class="discover-item">
+              <span class="discover-icon">▶️</span>
+              <span class="discover-text">视频号</span>
+              <span class="discover-arrow">›</span>
+            </div>
+            <div class="discover-item">
+              <span class="discover-icon">📺</span>
+              <span class="discover-text">直播</span>
+              <span class="discover-arrow">›</span>
+            </div>
+          </div>
+
+          <div class="discover-group">
+            <div class="discover-item">
+              <span class="discover-icon">🔍</span>
+              <span class="discover-text">扫一扫</span>
+              <span class="discover-arrow">›</span>
+            </div>
+            <div class="discover-item">
+              <span class="discover-icon">🎧</span>
+              <span class="discover-text">听一听</span>
+              <span class="discover-arrow">›</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="wechat-panel hidden" id="mePanel">
+        <div class="me-page">
+
+          <div class="me-card">
+            <div class="me-avatar" data-avatar="me"></div>
+            <div class="me-main">
+              <div class="me-name">比格大王</div>
+              <div class="me-id">微信号：csh1108</div>
+              <div class="me-status">＋ 状态</div>
+            </div>
+            <div class="me-arrow">›</div>
+          </div>
+
+          <div class="me-list">
+            <div class="me-item">服务 <span>›</span></div>
+          </div>
+
+          <div class="me-list">
+            <div class="me-item">收藏 <span>›</span></div>
+            <div class="me-item">朋友圈 <span>›</span></div>
+            <div class="me-item">作品 <span>›</span></div>
+            <div class="me-item">卡包 <span>›</span></div>
+            <div class="me-item">表情 <span>›</span></div>
+          </div>
+
+          <div class="me-list">
+            <div class="me-item">设置 <span>›</span></div>
+          </div>
+
+        </div>
+      </div>
+
+<div class="moments-page hidden" id="momentsPage">
+
+  <div class="moments-header">
+    <span class="moments-back" onclick="closeMoments()">‹</span>
+    <span class="moments-title">朋友圈</span>
+    <span class="moments-camera">📷</span>
+  </div>
+
+  <div class="moments-scroll">
+
+    <div class="moments-cover">
+      <div class="moments-cover-img" id="momentsCover"></div>
+
+      <div class="moments-my-info">
+        <div class="moments-my-text">
+          <div class="moments-my-name">比格大王</div>
+          <div class="moments-my-sign">嗷呜</div>
+        </div>
+        <div class="moments-my-avatar" data-avatar="me"></div>
+      </div>
+    </div>
+
+    <div class="moments-list" id="momentsList"></div>
+
+  </div>
+
+</div>
+
+<div class="image-viewer hidden" id="imageViewer" onclick="closeImageViewer()">
+  <img id="viewerImage" src="">
+</div>
+
+<div class="chat-detail hidden" id="chatDetail">
+
+  <div class="chat-status-placeholder"></div>
+
+  <div class="chat-detail-header">
+    <span class="chat-back" onclick="closeChat()">‹</span>
+    <span id="chatTitle">聊天</span>
+    <span class="chat-more">···</span>
+  </div>
+
+  <div class="chat-messages" id="chatMessages"></div>
+
+  <div class="chat-input-bar">
+    <span class="input-icon">🎙</span>
+    <div class="fake-input"></div>
+    <span class="input-icon">😊</span>
+    <span class="input-icon">＋</span>
+  </div>
+
+</div>
+
+      <div class="wechat-tab-bar">
+        <div class="tab-item active" data-tab="wechat" onclick="switchTab('wechat')">
+          <div class="tab-icon">💬</div>
+          微信
+        </div>
+        <div class="tab-item disabled-tab" data-tab="contacts">
+          <div class="tab-icon">👥</div>
+          通讯录
+        </div>
+        <div class="tab-item" data-tab="discover" onclick="switchTab('discover')">
+          <div class="tab-icon">🧭</div>
+          发现
+        </div>
+        <div class="tab-item" data-tab="me" onclick="switchTab('me')">
+          <div class="tab-icon">👤</div>
+          我
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<audio id="easterEggBgm" src="彩蛋1.mp3" preload="auto" loop></audio>
+<audio id="finalEasterEggBgm" src="梦灯笼.mp3" preload="auto" loop></audio>
+
+
+<script>
+  const AVATARS = {
+    me:    '陈思罕头像.jpg',   
+    group1: '大群头像.jpg',  
+    group2: '小群头像.jpg',   
+    zuo:   '左奇函头像.jpg',   
+    ming:  '陈浚铭头像.jpg',   
+    wang:  '王橹杰头像.jpg',    
+    rui:  '张函瑞头像.jpg',   
+    gui:  '张桂源头像.jpg',    
+    wen:  '杨博文头像.jpg',   
+    heng:  '陈奕恒头像.jpg'   
+  };
+
+  const CHATS = {
+  group1: {
+    name: '今天也在当童工(8)',
+    avatar: 'group1',
+    messages: [
+      { type: 'time', text: '周四 17:34' },
+
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', type: 'voice', seconds: 8, transcript: '陈思罕，昨天约你打篮球不出来，我只能和张桂源1v1斗牛，你和陈浚铭，你们两个原来在一起啊' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '干嘛去了，出去玩儿不喊我们？' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '我服了，你们两个看清楚点行不行，这是大群' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '😮' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: 'sry sry 这波我的，我的' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', type: 'voice', seconds: 13, transcript: '我穿着这个玩偶服，好重好热啊，打字都不方便，就点错群了，不过还是挺好玩的，你们要来游乐园吗' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '哇什么情况兄弟' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '朋友圈看着怪肉麻的，正太组双人约会啊？' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '怎么就约会了，只许你们出去玩，我和陈思罕不行吗' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '而且你怎么不说左奇函和陈奕恒更肉麻' },
+      { from: 'wen', avatar: 'wen', name: '杨博文', text: '因为大家都习惯了啊。' },
+      { from: 'rui', avatar: 'rui', name: '张函瑞', text: '🤭' },
+      { from: 'rui', avatar: 'rui', name: '张函瑞', text: '早知道你俩昨天也在观音桥，我们四个一起吃饭呀' },
+      { from: 'zuo', avatar: 'zuo', name: '左奇函', text: '也？' },
+      { from: 'zuo', avatar: 'zuo', name: '左奇函', text: '张函瑞，你和谁出去了啊' },
+      { from: 'rui', avatar: 'rui', name: '张函瑞', text: '🤫他不许我跟你说' },
+      { from: 'zuo', avatar: 'zuo', name: '左奇函', text: '。。那我知道是谁了' },
+      { from: 'me', text: '……' },
+      { from: 'me', text: '你们别这么八卦好不好😓' },
+      { from: 'wen', avatar: 'wen', name: '杨博文', text: '害羞了？' },
+      { from: 'zuo', avatar: 'zuo', name: '左奇函', text: '唉，孩子长大了' },
+      { from: 'rui', avatar: 'rui', name: '张函瑞', text: '保护宝宝们的隐私' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '不是宝宝！' },
+      { from: 'me', text: '你是，我不是' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '你你你你，我不跟你扯这些' },
+      { from: 'zuo', avatar: 'zuo', name: '左奇函', text: '小明已经圆满完成任务了，大家继续加油啊' },
+      { from: 'rui', avatar: 'rui', name: '张函瑞', text: '是啊，放在恋综节目里，小明这时候都已经下车了' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '我是第一名好吗！不要搞得我好像最先被淘汰了一样！' }
+    ]
+  },
+
+  group2: {
+    name: '不打篮球的是给(4)',
+    avatar: 'group2',
+    messages: [
+      { type: 'time', text: '周四 17:50' },
+
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '呃，大哥们别搞啊' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '我很无辜好吧，你们都知道啊' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '@陈思罕 说话！' },
+      { from: 'me', text: '说什么' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '你今天不是和王哥在一起吗？还我清白啊！' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', type: 'voice', seconds: 5, transcript: '陈浚铭你别，你别在这儿此地无银三百两了' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '我靠，陈奕恒，你补习语文了？' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '我想那个文盲了' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '主要是想找点优越感了主要是' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '杨博文都不在这个群你别aba了大哥' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', type: 'voice', seconds: 16, transcript: '张桂源好在意好喜欢杨博文啊张桂源，哈哈，哈哈哈哈哈哈！哎呀，左奇函，你干嘛打我' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '陈奕恒你要死啊，你敢让左奇函看这个群的聊天记录我不会原谅你' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '奇文99' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '奇文99' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '奇文99' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '奇文99' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '奇文99' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '奇文99' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', type: 'voice', seconds: 22, transcript: '你有病吧张桂源，谁稀罕看你们群聊？闭着眼都能猜到你天天会在小群里说什么，不就是吐槽我和张函瑞吗，桂恒99好吧，霸总攻顾晨阳奶糖受林清源可以找舅舅，哎呀真是嗑~死~我~了~' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '没想到一个平a奇文99能让左奇函直接狂暴开大，呼，谁问心有愧了我不说' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', text: '我不要桂恒啊，我要恒桂' },
+      { from: 'me', text: '兄弟你认真争攻受的样子有点恶心了' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '在我们这个直男含量百分之四百的群里可以不要出现攻受这种敏感词吗' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '我怎么感觉只有我一个直男百分百呢' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '你俩昨天干嘛去了，不会是去……？' },
+      { from: 'me', text: '都懂的事就别问了OK？' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '……嗯' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: 'ok ok兄弟理解，小明你真是速战速决👍' },
+      { from: 'ming', avatar: 'ming', name: '陈浚铭', text: '还好吧，周二一直在玩游戏，倒也不累' },
+      { from: 'heng', avatar: 'heng', name: '陈奕恒', type: 'voice', seconds: 14, transcript: '对啊，我和陈浚铭建了个很漂亮的房子，嗯……宫殿！陈浚铭说现实里不能实现的话，那就在游戏里有一个家' },
+      { from: 'gui', avatar: 'gui', name: '张桂源', text: '靠，你们这么会，我都有点危机感了' }
+    ]
+  },
+
+  ming: {
+    name: '陈浚铭',
+    avatar: 'ming',
+    messages: [
+      { type: 'time', text: '周四 17:55' },
+
+      { from: 'ming', text: '你快去群里说几句啊' },
+      { from: 'ming', text: '他们都在看热闹' },
+      { from: 'me', text: '没什么好说的啊，我们也确实一起出去了' },
+      { from: 'ming', text: '唉我真是，唉我真的' },
+      { from: 'ming', text: '就我一个人急了呗' },
+      { from: 'me', text: '你急什么' },
+      { from: 'me', text: '难道不是约会？' },
+      { from: 'ming', text: '你说得这么坦荡显得我很不坦荡一样' },
+      { from: 'me', text: '难道你很坦荡？' },
+      { from: 'ming', text: '法律禁止陈思罕对陈浚铭使用反问句' },
+      { from: 'me', text: '小明老师，我申请举手提问' },
+      { from: 'ming', text: '说' },
+      { from: 'me', text: '这条法律是哪里的规定啊，好像有点儿不太人道，陈思罕要投诉' },
+      { from: 'ming', text: '陈浚铭使用一票否决权，陈思罕投诉无效' },
+      { from: 'me', type: 'voice', seconds: 6, transcript: '唉，也行吧，反正你就仗着我' },
+      { from: 'ming', text: '说话不要说半截啊！' },
+      { from: 'me', text: '这也是法律禁止？' },
+      { from: 'ming', type: 'voice', seconds: 6, transcript: '陈思罕你等着吧，我迟早要' },
+      { from: 'me', text: '学坏了啊' },
+      { from: 'ming', text: '跟你学的' }
+    ]
+  },
+
+  wang: {
+    name: '王橹杰',
+    avatar: 'wang',
+    messages: [
+      { type: 'time', text: '周四 18:02' },
+
+      { from: 'me', text: '1' },
+      { from: 'me', text: '竟然没有红色感叹号了，不生气了呀' },
+      { from: 'wang', text: '和你很熟？' },
+      { from: 'me', text: '我也不知道某人和我熟不熟' },
+
+      { type: 'time', text: '周四 18:11' },
+
+      { from: 'me', text: '喂，不说话是不是又把我拉黑了？' },
+      { from: 'me', text: '哦哦，没拉黑啊' },
+      { from: 'wang', text: '你好吵⦁֊⦁꧞' },
+      { from: 'me', text: '明明是群聊那群人很吵好吧' },
+      { from: 'wang', text: '。。你们都很吵' },
+      { from: 'me', text: '那怎么办，今天不出来了吗？' },
+      { from: 'me', text: '你不负责啊王橹杰，还是你先约的我呢' },
+      { from: 'wang', text: '那还不是因为那时候我选不了其他人(⇀‸↼‶)' },
+      { from: 'me', text: '怎么选不了，你还可以约左奇函啊' },
+      { from: 'wang', text: '。。' },
+      { from: 'me', text: '只不过陈奕恒可能会发神经罢了😄' },
+      { from: 'wang', text: '我看你就是在发神经' },
+      { from: 'me', text: '对啊对啊，我被爽约了好伤心好伤心好伤心好伤心好伤心好伤心好伤心' },
+      { from: 'wang', text: '你和陈浚铭昨天玩得很高兴吧' },
+      { from: 'me', text: '你和张函瑞昨天玩得也很高兴吧' },
+      { from: 'me', text: '张函瑞还说我们四个人一起吃饭呢，下次怎么样，这算不算double date啊😄😄😄' },
+      { from: 'wang', text: '神经病。。。' },
+      { from: 'wang', text: '等会儿南滨路见( ⩌ - ⩌ )' },
+      { from: 'me', text: '回公司吗？公司都已经搬走了啊' },
+      { from: 'wang', text: '去江边，骑自行车✧₍^˶- ˕ -˵^₎✧' },
+      { from: 'wang', text: '不许在你今天的日记里吐槽我' },
+      { from: 'me', text: '哎呀，你竟然还记得啊' },
+      { from: 'wang', text: '当然记得了，你住我家那段时间不是每天晚上九点都要写日记吗' },
+      { from: 'me', text: 'yes sir!' },
+
+    ]
+  },
+
+  zuo: {
+    name: '左奇函',
+    avatar: 'zuo',
+    messages: [
+      { type: 'time', text: '周四 18:20' },
+
+      { from: 'zuo', text: '最近小心点，公司好像在查' },
+      { from: 'zuo', text: '估计是有人动静太大，被盯上了' },
+      { from: 'me', text: '我反正问心无愧咯' },
+      { from: 'me', text: '其他人怎么样我就不知道了' },
+      { from: 'zuo', text: '说话这么狂啊' },
+      { from: 'me', text: '嘿嘿' },
+      { from: 'me', text: '你不会挨个叮嘱吧' },
+      { from: 'me', text: '少操点心啊，左奇函' },
+      { from: 'zuo', text: '啧，都不喊哥了' },
+      { from: 'zuo', text: '我发现你最近说话真有点装起来了' },
+      { from: 'me', text: '那是因为我长大了啊' },
+      { from: 'zuo', text: '反正，你俩干的那些事儿，老老实实保密哈' },
+      { from: 'me', text: '我跟谁俩你说清楚啊' },
+      { from: 'zuo', text: '说你装你还来劲儿了是吧' },
+      { from: 'zuo', text: '我不跟小屁孩聊天' },
+      { from: 'me', text: '别别别我错了' },
+      { from: 'me', text: '我们真没干什么，纯逛街啊，你不用这么紧张' },
+      { from: 'zuo', text: '是没干什么还是没来得及干什么' },
+      { from: 'me', text: '嘿嘿' },
+      { from: 'me', text: '不过我觉得呢，你得重点观察一下张桂源' },
+      { from: 'me', text: '他和张函瑞要是一起出去也太明显了，肯定会被逮住' },
+      { from: 'me', text: '不会是你安排的吧，你要给张桂源开大院啊？' },
+      { from: 'zuo', text: '我早就不管他了，鬼知道他俩怎么想的' },
+      { from: 'zuo', text: '有些人一上头就什么都顾不上了' },
+      { type: 'system', text: '陈思罕撤回了一条消息' },
+      { from: 'zuo', text: '我看到了' },
+      { from: 'zuo', text: '陈奕恒知道你这么说他要闹了' },
+      { from: 'me', text: '🥺' },
+      { from: 'me', text: '不要告诉他嘛，奇函哥哥' },
+      { from: 'me', text: '我难道不是你最疼爱的弟弟了吗？' },
+      { from: 'zuo', text: '你是，这么会撒娇你当然是了' },
+      { from: 'zuo', text: '唉，我也是疯了，才愿意大热天穿着玩偶服在这儿发气球' },
+      { from: 'me', text: '浪漫疯子左奇函' },
+      { from: 'me', text: '我现在要去见你家橹橹了，需不需要帮你说点好话' },
+      { from: 'zuo', text: '宝宝，我很欣赏你这种主动找死的比格精神' },
+      { from: 'me', text: '比格大王嗷嗷嗷！' }
+    ]
+  }
+};
+
+  const MOMENTS = [
+  {
+    name: '王橹杰',
+    avatar: 'wang',
+    time: '周四',
+    text: '夏天真的结束了啊•o•ᐝ',
+    images: ['王橹杰朋友圈.jpg'],
+    likes: ['张函瑞', '杨博文', '陈思罕', '张桂源', '陈浚铭', '陈奕恒'],
+    comments: [
+      { name: '张函瑞', text: '今天是忧郁橹橹哦' },
+      { name: '杨博文', text: '没有结束，在我们身上有一个不可战胜的夏天。' }
+    ]
+  },
+
+  {
+    name: '陈奕恒',
+    avatar: 'heng',
+    time: '周四',
+    text: '好热！好累！但是好开心！',
+    images: ['陈奕恒朋友圈.jpg'],
+    likes: ['左奇函', '杨博文', '陈思罕', '张桂源', '陈浚铭', '张函瑞'],
+    comments: [
+      { name: '左奇函', text: '结果气球还没发完就都飞走了' },
+      { name: '陈奕恒', replyTo: '左奇函', text: '它们自由啦，free for free！' }
+    ]
+  },
+
+  {
+    name: '张函瑞',
+    avatar: 'rui',
+    time: '周三',
+    text: '奋战了一下午的成果🥰有人在我旁边手抖得超级夸张哦~😼',
+    images: ['张函瑞朋友圈.jpg'],
+    likes: ['王橹杰', '陈思罕', '张桂源', '陈浚铭'],
+    comments: [
+      { name: '陈思罕', text: '👍厉害厉害' },
+      { name: '张桂源', text: '你喜欢的那个男团不是有七个人吗' },
+      { name: '张函瑞', replyTo: '张桂源', text: '😊闭嘴吧你' }
+    ]
+  },
+
+  {
+    name: '陈思罕',
+    avatar: 'me',
+    time: '周三',
+    text: '在吗有空吗可以和我一起逛kkv吗，我们一起选零食，一起挑日用品，一起买很多没用但是有意思的玩具。',
+    images: ['陈思罕朋友圈.jpg'],
+    likes: ['张函瑞', '陈浚铭', '杨博文', '张桂源', '陈奕恒'],
+    comments: [
+      { name: '陈浚铭', text: '模仿我的文案！' },
+      { name: '陈思罕', replyTo: '陈浚铭', text: '这叫智取，宝贝~' },
+      { name: '陈浚铭', replyTo: '陈思罕', text: '😠😤😤😤' }
+    ]
+  },
+
+  {
+    name: '陈浚铭',
+    avatar: 'ming',
+    time: '周二',
+    text: '如果生活像Minecraft一样就好了，我们一起搭房子，一起挖矿，一起打怪，一起看下雨天。',
+    images: ['陈浚铭朋友圈.jpg'],
+    likes: ['陈奕恒', '陈思罕', '左奇函', '张函瑞', '张桂源'],
+    comments: [
+      { name: '陈奕恒', text: '太好看了，不愧是我们😎' },
+      { name: '陈浚铭', replyTo: '陈奕恒', text: '是吧是吧，亲手搭建的家就是最好看的！' }
+    ]
+  }
+];
+
+const PHOTO_ALBUMS = {
+  recent: {
+    title: '最近项目',
+    photos: [
+      '最近项目1.jpg',
+      '最近项目2.jpg',
+      '最近项目3.jpg',
+      '最近项目4.jpg',
+      '最近项目5.jpg'
+    ]
+  },
+
+  private: {
+  title: '私密相册',
+  password: '0811',
+  photos: [
+    {
+      src: '私密相册1.jpg',
+      note: '图片备注：哈哈哈偷拍成功！'
+    },
+    {
+      src: '私密相册2.jpg',
+      note: '图片备注：。还是比我高啊'
+    },
+    {
+      src: '私密相册3.jpg',
+      note: '图片备注：小狗耍赖可以不长大吗'
+    },
+    {
+      src: '私密相册4.jpg',
+      note: '图片备注：老姐也不带我兜风，就馋我'
+    }
+  ]
+}
+};
+
+const NOTES = [
+  {
+    id: 'pinned',
+    day: '置顶',
+    title: '0811',
+    date: '2024.8.11',
+    preview: '陈思罕，加油！让大家看到你！',
+    content: `陈思罕，加油！让大家看到你！`,
+    pinned: true,
+    hidden: false
+  },
+
+  {
+    id: 'sunday',
+    day: '周日',
+    title: '周日日记',
+    date: '周日 21:03',
+    preview: '今日练习✅️',
+    content: `今日练习✅️
+
+终于把地板动作捋顺了，膝盖上好像青了一块，但重心就是需要再往下沉一点嘛，不能怕摔，怕了就会卡动作。
+
+最近真的好无聊啊……每天练舞上课休息练舞上课休息，三点一线，感觉快要发霉了，除了练舞上课都没有什么有趣的事情发生，唯一的娱乐活动就是和张桂源他们出去打球。本来想说我也一起打游戏吧，结果陈奕恒和左奇函又在和平精英，无语，这么爱枪战那为什么不来玩暗区突围嘛！想约无畏契约也只有陈浚铭陪我，服了，对那两个人的小学生游戏审美无话可说，我怀疑他俩不换游戏绝对是因为已经买了太多丑不拉几的皮肤时装，那个词怎么说的来着，沉没成本太大，呵呵。
+
+不过！今天左奇函突然在群里说明天开个会，问大家能不能到齐。我私聊问什么事他也不说，就发表情包敷衍我，神秘兮兮的。他现在很难搞哦，和老姐一样，感觉已经对我的撒娇免疫了。唉，陈思罕啊陈思罕，卖萌是门学问，学无止境啊。
+
+不过我还挺好奇的，左奇函已经很久没搞事了，这次肯定有什么好玩的东西。不想再继续无聊下去了啊啊啊啊啊啊啊啊啊！！！
+
+期待明天，嗷呜嗷呜！
+
+
+`,
+    hidden: false
+  },
+
+  {
+    id: 'monday',
+    day: '周一',
+    title: '周一日记',
+    date: '周一 21:10',
+    preview: '已上锁',
+    content: `“约会大作战！”
+
+“约会大作战！”
+
+左奇函这么说。
+
+“他说什么？”我问陈浚铭。
+
+于是陈浚铭又和我重复了一遍本次行动的冠名。
+
+“那我们需要干什么？”谢天谢地，张函瑞帮我问出口。
+
+“做大家想和粉丝一起做的事啊，”左奇函笑着说，“什么事都可以。”
+
+“哇。左奇函。”张桂源感叹了一句，他想感叹什么，却没继续说。
+
+左奇函说，因为很久没见到粉丝了，所以想设计一点惊喜，假装成约会的样子去做一些想和粉丝一起做的事啊。
+
+“粉丝可能会说好会卖啊大哥哥们。”张函瑞吐槽。
+
+“张函瑞你不要太应激好不好，”王橹杰很镇定地说，“不知道是谁准备拿今年的业绩冠军了。”
+
+张函瑞掐他腰，王橹杰想摁住，力气太小了摁不住，我看左奇函笑着脸却快气黑的样子，顺其自然地接话，“那该怎么分组呢？”
+
+杨博文说：“两两分组吧，这样，最有益粉丝身心健康，嗯。”
+
+陈奕恒不乐意了，“杨博文，你，你说话怎么这么，那个，针对我啊？”
+
+张桂源说：“陈奕恒，我相信杨博文绝无其他用意，他肯定是在针对你！”
+
+王橹杰轻轻和张函瑞说张桂源就是在脑子最不灵光的时候会显得灵光一点。
+
+一片鸡飞狗跳中我看得津津有味，大家争论一番后，嗯，用最原始、最古老的抓阄方式，决定选择的先后顺序。
+
+陈浚铭悄悄和我说：“陈思罕，陈思罕，等会儿你选我呗。”
+
+嗯？我看着他，刚刚简易定下来的三条规则：
+
+1、每个人只有一次选择权；
+2、不能选同一个人；
+3、不能互选。
+
+我觉得很有意思，如果小明让我选他，那他是准备选谁呢？我笑眯眯地说好，无所谓啊，我觉得和谁都行，小明希望我选他，那我就选他咯。王橹杰知道我俩在聊什么，对我挑了下眉，这位大神，这位大仙，这座大佛，每一个看着我的微表情都透露着即将把我拉黑的讯息，我礼貌地对他回了个笑。
+
+按照抽中的顺序，果然很没新意啊大家，唉！连抽签顺序都是第一名的杨博文选了张桂源，张桂源选了张函瑞，张函瑞当然选王橹杰啦，可惜可惜，险些凑成臭名远扬——哦不，是流芳百世的麻将桌！
+
+王橹杰慢吞吞地说：“嗯，我选陈思罕。”
+
+我手指指着鼻子，我？王橹杰迅速地不爽，不行？
+
+啊，行行行，您选，您说了算啊。
+
+陈浚铭紧张地看我一眼，我对他比了个OK，安心啦安心，忙内的要求，肯定满足啦！
+
+他对我笑一笑，陈奕恒凑到他旁边，他俩开始嘀嘀咕咕，讲的游戏里的东西，我根本听不懂。
+
+王橹杰用手拐我，“想玩儿什么，赶紧提意见。”
+
+我摊手，“都行啊，看你。”
+
+王橹杰煞有介事地说：“都行的意思就是一点都不期待，一点都不在意。”
+
+这都什么有的没的啊，老师老师，这里有人听歌用的是网抑云，ban一下行不行，我说：“真的，王橹杰，我听你的，我都行。”
+
+王橹杰说：“不准说无聊。”
+
+我说：“当然。”
+
+王橹杰又说，“也不准说没意思。”
+
+嗯？这次疑惑了，和上一句不是一个意思嘛？
+
+张函瑞打断了我俩聊天，“思罕罕~你准备选谁呢？”
+
+“我？”我假装举棋不定，扫了一眼剩下的人，哈哈，看上去真是危险危险，怎么感觉全是雷区啊。我犹豫的时间要久一点，陈浚铭装帅耍酷，捏着运动服边边角角，回陈奕恒的话都回复得不够用心，但是犟着脖子，绝对不看我。
+
+有种小狗叫比格，但也有一款小狗是犟种小柴，大家懂吧。
+
+“我选小明哦，陈浚铭，没问题吧？”我活泼、元气地这么问，作为哥哥，肯定得照顾弟弟，满足弟弟的需求吧，对吧？
+
+陈浚铭羞涩腼腆地对我笑起来，180+的个子明明，稚气滚出来，让人想摸一下他脑袋。
+
+接下来自然就是小明了。
+
+左奇函举手，毛遂自荐，“走啊，小明，我俩去玩跳楼机。”
+
+杨博文看左奇函一眼，笑一声，我们家大学霸推销自己时给出的建议好像更实际啊，“陈浚铭，去KTV唱歌怎么样？”
+
+“那个，”小明把纸条团了团，放自己口袋里，心不在焉地看着活动教室后方的海报——上面贴了一些以前公演的海报，“陈奕恒，你想不想玩我的世界啊，我们在我的世界里面给粉丝建个房子吧。”
+
+“好耶，”陈奕恒捏拳，高兴地蹦起来，“玩游戏很好啊，嘿嘿，陈浚铭你想造什么样的房子啊？”
+
+随着大家的去向逐渐变得尘埃落定，活动教室一下变得很热闹，在这样喜气洋洋的氛围里，陈奕恒指定了左奇函，嗯，没错，意料之中的意料之中的意料之中，他们两个完全没办法分开哇。所以呢……
+
+只剩下左奇函需要选人，也只剩下杨博文需要被选了哦，好像。
+
+杨博文耸了耸肩，问左奇函：“你要选我吗？”顿了顿，“也只能选我了吧。”
+
+左奇函笑着回复：“嗯，选你啊。”
+
+哇。什么情况？！真是不敢想啊！
+
+那么，大家请期待吧，我们约会大作战，就要正式开始啦！
+
+
+
+`,
+    hidden: false
+  },
+
+  {
+    id: 'tuesday',
+    day: '周二',
+    title: '周二日记',
+    date: '周二 20:59',
+    preview: '今日练习✅️　约会准备✅️',
+    content: `今日练习✅️
+约会准备✅️
+
+说实话还是有点不真实，我们居然真的要偷偷做这种事，好刺激啊。
+
+如果被负责人发现了，她肯定会很生气吧。毕竟这种事情，站在他们的角度确实不太好，管理上估计也不允许。我们现在还是练习生，没有任性的资格，被发现大概率要挨骂，公司不会允许我们自作主张。
+
+可是想到……还是很心动啊！
+
+今天陈浚铭发消息跟我说他已经在做了，问我想好了没有。我当然想好了啊，其实昨天开会的时候我就想到了。
+
+有些事情吧，一直一直放在心里，说不出口，这次终于有机会说出来。
+
+我约他明天出来逛街，他还抱怨太突然了。嘿嘿，要的就是惊喜嘛。
+
+希望一切顺利🤞
+
+
+`,
+    hidden: false
+  },
+
+  {
+    id: 'wednesday',
+    day: '周三',
+    title: '周三日记',
+    date: '周三 21:07',
+    preview: '今天和小明一起去了观音桥！！',
+    content: `今天和小明一起去了观音桥！！
+
+那家kkv的店超级大啊，有点儿理解老姐老妈为什么这么喜欢逛街了。一进去我们就直奔零食区，拎着篮子就开始往里面扔，我给陈浚铭安利了我最喜欢的碳酸软糖。挑零食的时候左奇函打电话问我在干嘛，我说在逛街，他本来也想来，一听到我们在逛kkv就很嫌弃，还嘲笑我和陈浚铭是小学鸡。我和陈浚铭一致商议，不给他买那个巨好吃的印尼小鸡面了！换成了一个据说巨难吃的辣味薯片。
+
+后来我们去了玩具那边，有一整面墙的解压玩具。小明捏那个尖叫鸡搞得一群人在看，吓死我了还以为会被认出来，赶紧把他拉走，他还在那边笑，真的很幼稚。他到底哪里灵丸了，魔丸程度和我不相上下好吧！
+
+我还挑了一对很好看的手链，两条不一样但是一套的。一条给自己留着，另一条嘛……嘿嘿。
+
+不过挑的时候真的想了很久，一直在想收到的人会不会喜欢。应该会喜欢吧？我审美还是很可以的嘛！
+
+散步回去的时候，陈浚铭说今天挺开心的，以后有机会再一起出来。我说好。
+
+虽然他应该只是随口一说，但我觉得这种平平淡淡的感觉真的很好。和一个人走在路上，叽叽喳喳聊天，什么烦恼都不想，活得很践踏实地，只是一起看看有什么好玩的东西。
+
+我想把这种感觉也分享出去。
+
+……写到这里突然有点矫情了，算了不写了！今天很开心，记录完毕！✌️
+
+
+`,
+    hidden: false
+  },
+
+  {
+    id: 'thursday',
+    day: '周四',
+    title: '周四日记',
+    date: '周四 21:11',
+    preview: '私密备忘录',
+    content: [
+      {
+        type: 'text',
+        value: `早上原本想问一下王橹杰今天的安排，结果发现不知道什么时候他又把我拉黑了。我最近也没干啥坏事啊，怎么又惹到他了？
+
+算了，干脆记录一下我今年惨痛的被拉黑经历。
+
+1月的时候吵架了，我觉得吧这事儿我们俩都有错，但是王橹杰太喜欢冷战，都不给我沟通的余地，晚上试了一下果然被拉黑了。`
+      },
+      {
+        type: 'image',
+        src: '拉黑1.jpg'
+      },
+      {
+        type: 'text',
+        value: `荣耀之战前给他发消息，还不理我。`
+      },
+      {
+        type: 'image',
+        src: '拉黑2.jpg'
+      },
+      {
+        type: 'text',
+        value: `能被王橹杰拉黑这么久，我也是真厉害。到这种程度我都顾不上难受了，就好奇他啥时候能消气。`
+      },
+      {
+        type: 'image',
+        src: '拉黑3.jpg'
+      },
+      {
+        type: 'text',
+        value: `四月的时候终于把我放出来了，结果转瞬即逝啊，又被关小黑屋，哥们人都麻了。。`
+      },
+      {
+        type: 'image',
+        src: '拉黑4.jpg'
+      },
+      {
+        type: 'text',
+        value: `但要不说哥们是行动派呢，被拉黑后立刻堵门去了，喜提无罪释放！`
+      },
+      {
+        type: 'image',
+        src: '拉黑5.jpg'
+      },
+      {
+        type: 'text',
+        value: `无奖竞彩这次会被拉黑多久，最多两三天吧？毕竟这周日就是ddl了。
+
+
+
+
+
+
+哇我王哥真是大发善心，竟然下午就把我放出来了。
+
+
+
+
+
+
+傍晚景色很好，江边有风，不过让王橹杰这个体弱带我果然还是太勉强他了，骑了几百米就开始气喘吁吁，我说让我来骑他还不乐意，非说这是他想好要做的事。好吧，然后我在后座为了鼓舞士气就给他讲笑话，他笑得更加气喘吁吁，彻底骑不下去了，结果还生气，让我不许坐他的自行车了，哇，干哥我真是冤枉啊！
+
+休息的时候，我们坐在江边吹风，夕阳把水面照得一片一片亮。王橹杰竟然不会打水漂！我本来想教他，没想到一开始也失误了，尴尬尴尬，又给了他一个可以笑我的素材。
+
+说实话，有点意外王橹杰会选我。毕竟轮到他选人的时候，只有张桂源张函瑞已经被选走了，剩下的人里他选谁都可以，我以为他会像突围那样选小明，或者选杨博文。陈奕恒嘛他肯定不会选，能选我可能还是觉得我比左奇函顺眼吧！不过对于王橹杰而言，也可能因为左奇函比我更重要，所以他更不会轻易原谅左奇函。这么一想，不知道该高兴还是该忧郁了。
+
+忙内啊小孩子啊，被当作弟弟，被当作小狗，被当作安全牌，这样的定位。虽然我并没有觉得不乐意，但人就是很贪心的，什么都想要。
+
+不过今天还是很开心！我有点明白为什么他会选在江边了，想要浪漫，果然就应该带上重要的人一起看江景啊。
+
+他的心情和我昨天应该差不多吧？想要把这种平静分享出去的心情。
+
+
+`
+      }
+    ],
+    hidden: true
+  }
+];
+
+function updateProgressPanel() {
+  const mainKeys = [
+    'phone1Unlocked',
+    'phone1PrivateAlbumUnlocked',
+    'mondayNoteUnlocked',
+    'phone2Unlocked',
+    'phone2PrivateVoiceUnlocked',
+    'phone2AnniversaryUnlocked',
+    'phone3Unlocked',
+    'phone3AppUnlocked_wechat',
+    'phone3AppUnlocked_music',
+    'phone3AppUnlocked_pan'
+  ];
+
+  const eggKeys = [
+    'thursdayEasterEggFound',
+    'secondEasterEggFound',
+    'thirdEasterEggFound'
+  ];
+
+  const mainCount = mainKeys.filter(key => localStorage.getItem(key) === 'yes').length;
+  const eggCount = eggKeys.filter(key => localStorage.getItem(key) === 'yes').length;
+
+  const mainText = document.getElementById('mainProgressText');
+  const eggText = document.getElementById('eggProgressText');
+
+  if (mainText) {
+    mainText.innerText = `主线进度${mainCount}/10`;
+  }
+
+  if (eggText) {
+    eggText.innerText = `发现彩蛋${eggCount}/3`;
+  }
+}
+
+  function setupAvatars() {
+    document.querySelectorAll('[data-avatar]').forEach(el => {
+      const key = el.dataset.avatar;
+      if (AVATARS[key]) {
+        el.style.backgroundImage = `url('${AVATARS[key]}')`;
+      }
+    });
+  }
+
+  const CORRECT_PASSCODE = '1108';
+  const PASSCODE_LENGTH = 4;
+  let input = '';
+
+  function buildDots() {
+    const box = document.getElementById('dots');
+    box.innerHTML = '';
+    for (let i = 0; i < PASSCODE_LENGTH; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot';
+      box.appendChild(d);
+    }
+  }
+
+  function updateDots() {
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach((d, i) => {
+      d.classList.toggle('filled', i < input.length);
+    });
+  }
+
+  function press(n) {
+    if (input.length >= PASSCODE_LENGTH) return;
+    input += n;
+    updateDots();
+    if (input.length === PASSCODE_LENGTH) {
+      setTimeout(check, 160);
+    }
+  }
+
+  function backspace() {
+    input = input.slice(0, -1);
+    updateDots();
+  }
+
+  function check() {
+    if (input === CORRECT_PASSCODE) {
+      unlock();
+    } else {
+      document.getElementById('passcodeScreen').classList.add('shake');
+      setTimeout(() => {
+        document.getElementById('passcodeScreen').classList.remove('shake');
+      }, 500);
+      input = '';
+      updateDots();
+    }
+  }
+
+  function unlock() {
+  localStorage.setItem('phone1Unlocked', 'yes');
+  document.getElementById('lockScreen').classList.add('hidden');
+  document.getElementById('passcodeScreen').classList.add('hidden');
+  document.getElementById('homeScreen').classList.add('show');
+  updateProgressPanel();
+}
+
+  const lock = document.getElementById('lockScreen');
+  let startY = null;
+  let moved = false;
+
+  lock.addEventListener('pointerdown', (e) => {
+    startY = e.clientY;
+    moved = false;
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (startY === null) return;
+    const dy = startY - e.clientY;
+    if (dy > 0) {
+      moved = true;
+     lock.style.transform = `translateY(-${Math.min(dy, lock.clientHeight)}px)`;
+    }
+  });
+
+  window.addEventListener('pointerup', (e) => {
+    if (startY === null) return;
+    const dy = startY - e.clientY;
+    if (dy > 100 || !moved) {
+      openPasscode();
+    } else {
+      lock.style.transform = 'translateY(0)';
+    }
+    startY = null;
+  });
+
+  function openPasscode() {
+  lock.style.transform = 'translateY(-100%)';
+  lock.style.opacity = '0';
+
+  setTimeout(() => {
+    lock.classList.add('hidden');
+
+    if (localStorage.getItem('phone1Unlocked') === 'yes') {
+      document.getElementById('passcodeScreen').classList.add('hidden');
+      document.getElementById('homeScreen').classList.add('show');
+      updateProgressPanel();
+    }
+
+  }, 350);
+}
+
+  function openPhotos() {
+  document.getElementById('homeScreen').classList.remove('show');
+  document.getElementById('photosScreen').classList.remove('hidden');
+
+  setupAlbumCovers();
+}
+
+function openNotes() {
+  document.getElementById('homeScreen').classList.remove('show');
+  document.getElementById('notesScreen').classList.remove('hidden');
+  document.getElementById('noteDetailScreen').classList.add('hidden');
+  document.getElementById('notesSearchInput').value = '';
+  renderNotesList();
+}
+
+function renderNotesList() {
+  const keyword = document.getElementById('notesSearchInput').value.trim();
+  const list = document.getElementById('notesList');
+
+  list.innerHTML = '';
+
+  let visibleNotes = NOTES.filter(note => {
+    if (note.pinned) return false;
+
+    if (note.hidden && keyword !== '周四') {
+      return false;
+    }
+
+    if (!keyword) {
+      return !note.hidden;
+    }
+
+    return (
+      note.title.includes(keyword) ||
+      note.date.includes(keyword) ||
+      note.preview.includes(keyword) ||
+      note.content.includes(keyword)
+    );
+  });
+
+  if (visibleNotes.length === 0) {
+    list.innerHTML = `
+      <div class="note-row">
+        <div class="note-row-title">无结果</div>
+        <div class="note-row-preview">没有找到相关备忘录</div>
+      </div>
+    `;
+    return;
+  }
+
+  visibleNotes.forEach(note => {
+    list.innerHTML += `
+      <div class="note-row" onclick="openNoteDetail('${note.id}')">
+        <div class="note-row-title">${note.title}</div>
+        <div class="note-row-preview">${note.date}　${note.preview}</div>
+      </div>
+    `;
+  });
+}
+
+function openNoteDetail(noteId) {
+  const note = NOTES.find(n => n.id === noteId);
+  if (!note) return;
+
+  if (noteId === 'monday' && localStorage.getItem('mondayNoteUnlocked') !== 'yes') {
+    document.getElementById('mondayPasswordModal').classList.remove('hidden');
+    document.getElementById('mondayPasswordInput').value = '';
+    return;
+  }
+
+  if (noteId === 'thursday') {
+    triggerThursdayEasterEgg();
+  }
+
+  showNoteDetail(note);
+}
+
+
+function triggerThursdayEasterEgg() {
+  const audio = document.getElementById('easterEggBgm');
+
+  if (audio) {
+    audio.currentTime = 0;
+    audio.volume = 0.6;
+
+    audio.play().catch(err => {
+      console.log('音频播放失败：', err);
+    });
+  }
+
+  if (localStorage.getItem('thursdayEasterEggFound') !== 'yes') {
+    showEasterEggMessage('恭喜你发现了第一个彩蛋！');
+    localStorage.setItem('thursdayEasterEggFound', 'yes');
+  }
+}
+
+function triggerFinalEasterEgg() {
+  const audio = document.getElementById('finalEasterEggBgm');
+
+  if (audio) {
+    audio.currentTime = 0;
+    audio.volume = 0.6;
+
+    audio.play().catch(err => {
+      console.log('音频播放失败：', err);
+    });
+  }
+
+  showEasterEggMessage('谢谢你玩到了最后！');
+}
+
+function showNoteDetail(note) {
+  document.getElementById('notesScreen').classList.add('hidden');
+  document.getElementById('noteDetailScreen').classList.remove('hidden');
+
+  document.getElementById('noteDetailDate').innerText = note.date;
+  document.getElementById('noteDetailTitle').innerText = note.title;
+
+  const contentBox = document.getElementById('noteDetailText');
+  contentBox.innerHTML = '';
+
+  if (note.id === 'monday') {
+    triggerFinalEasterEgg();
+  }
+
+  if (typeof note.content === 'string') {
+    contentBox.innerText = note.content;
+    return;
+  }
+
+  note.content.forEach(block => {
+    if (block.type === 'text') {
+      contentBox.innerHTML += `
+        <div class="note-detail-paragraph">${block.value}</div>
+      `;
+    }
+
+    if (block.type === 'image') {
+      contentBox.innerHTML += `
+        <img class="note-detail-image" src="${block.src}">
+      `;
+    }
+  });
+}
+
+function closeMondayPassword() {
+  document.getElementById('mondayPasswordModal').classList.add('hidden');
+  document.getElementById('mondayPasswordInput').value = '';
+}
+
+function checkMondayPassword() {
+  const input = document.getElementById('mondayPasswordInput').value.trim();
+
+  if (input === '约会大作战') {
+    localStorage.setItem('mondayNoteUnlocked', 'yes');
+    updateProgressPanel();
+    closeMondayPassword();
+
+    const note = NOTES.find(n => n.id === 'monday');
+    if (note) {
+      showNoteDetail(note);
+    }
+  } else {
+    alert('密码错误');
+    document.getElementById('mondayPasswordInput').value = '';
+  }
+}
+
+function backToNotesList() {
+  document.getElementById('noteDetailScreen').classList.add('hidden');
+  document.getElementById('notesScreen').classList.remove('hidden');
+}
+
+function backToHomeFromApp() {
+  document.getElementById('photosScreen').classList.add('hidden');
+  document.getElementById('albumDetailScreen').classList.add('hidden');
+  document.getElementById('notesScreen').classList.add('hidden');
+  document.getElementById('noteDetailScreen').classList.add('hidden');
+  document.getElementById('homeScreen').classList.add('show');
+  updateProgressPanel();
+}
+
+function setupAlbumCovers() {
+  const recentPhotos = PHOTO_ALBUMS.recent.photos;
+  const privatePhotos = PHOTO_ALBUMS.private.photos;
+
+  document.getElementById('recentCount').innerText = `${recentPhotos.length} 张照片`;
+  document.getElementById('privateCount').innerText = `${privatePhotos.length} 张照片`;
+
+  if (recentPhotos.length > 0) {
+    document.getElementById('recentCover').style.backgroundImage = `url('${recentPhotos[0]}')`;
+  }
+}
+
+function openAlbum(albumId) {
+  const album = PHOTO_ALBUMS[albumId];
+  if (!album) return;
+
+  document.getElementById('photosScreen').classList.add('hidden');
+  document.getElementById('albumDetailScreen').classList.remove('hidden');
+  document.getElementById('albumTitle').innerText = album.title;
+
+  const grid = document.getElementById('photoGrid');
+  grid.innerHTML = '';
+
+  album.photos.forEach(photo => {
+    const src = typeof photo === 'string' ? photo : photo.src;
+    const note = typeof photo === 'string' ? '' : photo.note;
+
+    grid.innerHTML += `
+      <img class="photo-thumb" src="${src}" onclick="openPhotoViewer('${src}', '${note || ''}')">
+    `;
+  });
+}
+
+function backToAlbums() {
+  document.getElementById('albumDetailScreen').classList.add('hidden');
+  document.getElementById('photosScreen').classList.remove('hidden');
+}
+
+function showPrivatePassword() {
+  if (localStorage.getItem('phone1PrivateAlbumUnlocked') === 'yes') {
+    openAlbum('private');
+    return;
+  }
+
+  document.getElementById('privatePasswordModal').classList.remove('hidden');
+  document.getElementById('privatePasswordInput').value = '';
+}
+
+function closePrivatePassword() {
+  document.getElementById('privatePasswordModal').classList.add('hidden');
+}
+
+function checkPrivatePassword() {
+  const input = document.getElementById('privatePasswordInput').value;
+
+  if (input === PHOTO_ALBUMS.private.password) {
+    localStorage.setItem('phone1PrivateAlbumUnlocked', 'yes');
+    updateProgressPanel();
+    closePrivatePassword();
+    openAlbum('private');
+  } else {
+    alert('密码错误');
+    document.getElementById('privatePasswordInput').value = '';
+  }
+}
+
+function openPhotoViewer(src, note = '') {
+  document.getElementById('photoViewerImage').src = src;
+  document.getElementById('photoCaption').innerText = note;
+  document.getElementById('photoViewer').classList.remove('hidden');
+}
+
+function closePhotoViewer() {
+  document.getElementById('photoViewer').classList.add('hidden');
+  document.getElementById('photoViewerImage').src = '';
+  document.getElementById('photoCaption').innerText = '';
+}
+
+  function openWechat() {
+    document.getElementById('homeScreen').classList.remove('show');
+    document.getElementById('wechatScreen').classList.remove('hidden');
+  }
+
+  function backToHome() {
+    document.getElementById('wechatScreen').classList.add('hidden');
+    document.getElementById('homeScreen').classList.add('show');
+    updateProgressPanel();
+  }
+
+  function openMoments() {
+  const page = document.getElementById('momentsPage');
+  const list = document.getElementById('momentsList');
+
+  list.innerHTML = '';
+
+  MOMENTS.forEach(moment => {
+    const avatarUrl = AVATARS[moment.avatar] || '';
+
+    let imagesHTML = '';
+    if (moment.images && moment.images.length > 0) {
+      const oneClass = moment.images.length === 1 ? 'one' : '';
+      imagesHTML = `
+        <div class="moment-images ${oneClass}">
+          ${moment.images.map(src => `
+            <img class="moment-img" src="${src}" onclick="openImageViewer('${src}')">
+          `).join('')}
+        </div>
+      `;
+    }
+
+    let likesHTML = '';
+    if (moment.likes && moment.likes.length > 0) {
+      likesHTML = `
+        <div class="moment-likes">♡ ${moment.likes.join('，')}</div>
+      `;
+    }
+
+    let commentsHTML = '';
+if (moment.comments && moment.comments.length > 0) {
+  commentsHTML = moment.comments.map(c => {
+    if (c.replyTo) {
+      return `
+        <div class="moment-comment">
+          <span class="moment-comment-name">${c.name}</span>
+          <span class="moment-reply-text"> 回复 </span>
+          <span class="moment-comment-name">${c.replyTo}</span>
+          <span>：${c.text}</span>
+        </div>
+      `;
+    } else {
+      return `
+        <div class="moment-comment">
+          <span class="moment-comment-name">${c.name}</span>
+          <span>：${c.text}</span>
+        </div>
+      `;
+    }
+  }).join('');
+}
+
+    const socialHTML = (likesHTML || commentsHTML) ? `
+      <div class="moment-social">
+        ${likesHTML}
+        ${commentsHTML}
+      </div>
+    ` : '';
+
+    list.innerHTML += `
+      <div class="moment-item">
+        <div class="moment-avatar" style="background-image:url('${avatarUrl}')"></div>
+        <div class="moment-body">
+          <div class="moment-name">${moment.name}</div>
+          <div class="moment-text">${moment.text}</div>
+          ${imagesHTML}
+          <div class="moment-footer">
+            <span>${moment.time}</span>
+            <span class="moment-actions">··</span>
+          </div>
+          ${socialHTML}
+        </div>
+      </div>
+    `;
+  });
+
+  page.classList.remove('hidden');
+}
+
+function closeMoments() {
+  document.getElementById('momentsPage').classList.add('hidden');
+}
+
+function openImageViewer(src) {
+  document.getElementById('viewerImage').src = src;
+  document.getElementById('imageViewer').classList.remove('hidden');
+}
+
+function closeImageViewer() {
+  document.getElementById('imageViewer').classList.add('hidden');
+  document.getElementById('viewerImage').src = '';
+}
+
+  function openChat(chatId) {
+    const chat = CHATS[chatId];
+    if (!chat) return;
+
+    const chatDetail = document.getElementById('chatDetail');
+    const chatTitle = document.getElementById('chatTitle');
+    const chatMessages = document.getElementById('chatMessages');
+
+    chatTitle.innerText = chat.name;
+    chatMessages.innerHTML = '';
+
+    chat.messages.forEach(msg => {
+      if (msg.type === 'time') {
+        chatMessages.innerHTML += `
+          <div class="msg-time">${msg.text}</div>
+        `;
+        return;
+      }
+
+      if (msg.type === 'system') {
+        chatMessages.innerHTML += `
+          <div class="msg-system">${msg.text}</div>
+        `;
+        return;
+      }
+
+
+      const isMe = msg.from === 'me';
+
+      let avatarKey;
+      if (isMe) {
+        avatarKey = 'me';
+      } else if (msg.avatar) {
+        avatarKey = msg.avatar;
+      } else {
+        avatarKey = chat.avatar;
+      }
+
+      const avatarUrl = AVATARS[avatarKey] || '';
+
+      let messageHTML = '';
+
+      if (msg.type === 'voice') {
+  const waveIcon = `
+    <span class="voice-wave">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  `;
+
+  messageHTML = `
+    <div class="voice-box">
+      ${isMe 
+        ? `<span class="voice-seconds">${msg.seconds}"</span>${waveIcon}`
+        : `${waveIcon}<span class="voice-seconds">${msg.seconds}"</span>`
+      }
+    </div>
+    <div class="voice-transcript">${msg.transcript}</div>
+  `;
+}
+ else {
+        messageHTML = `
+          <div class="msg-bubble">${msg.text}</div>
+        `;
+      }
+
+      chatMessages.innerHTML += `
+        <div class="msg-row ${isMe ? 'me' : 'other'}">
+          ${isMe ? '' : `<div class="msg-avatar" style="background-image:url('${avatarUrl}')"></div>`}
+
+          <div class="msg-content">
+            ${!isMe && msg.name ? `<div class="msg-sender-name">${msg.name}</div>` : ''}
+            ${messageHTML}
+          </div>
+
+          ${isMe ? `<div class="msg-avatar" style="background-image:url('${avatarUrl}')"></div>` : ''}
+        </div>
+      `;
+    });
+      
+
+    chatDetail.classList.remove('hidden');
+
+    setTimeout(() => {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 0);
+  }
+
+  function closeChat() {
+    document.getElementById('chatDetail').classList.add('hidden');
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.wechat-panel').forEach(p => p.classList.add('hidden'));
+
+    document.getElementById(tab + 'Panel').classList.remove('hidden');
+
+    document.querySelectorAll('.wechat-tab-bar .tab-item').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.wechat-tab-bar .tab-item[data-tab="${tab}"]`).classList.add('active');
+
+    const title = document.getElementById('wechatTitle');
+    const search = document.getElementById('wechatSearch');
+    const plus = document.getElementById('wechatPlus');
+
+    if (tab === 'wechat') {
+      title.innerText = '微信';
+      search.classList.remove('hidden');
+      plus.classList.remove('hidden');
+    } else if (tab === 'contacts') {
+      title.innerText = '通讯录';
+      search.classList.remove('hidden');
+      plus.classList.add('hidden');
+    } else if (tab === 'discover') {
+      title.innerText = '发现';
+      search.classList.add('hidden');
+      plus.classList.add('hidden');
+    } else if (tab === 'me') {
+      title.innerText = '';
+      search.classList.add('hidden');
+      plus.classList.add('hidden');
+    }
+  }
+
+  buildDots();
+  setupAvatars();
+  updateProgressPanel();
+
+
+  function showEasterEggMessage(text) {
+  const message = document.createElement('div');
+  message.className = 'easter-egg-message';
+  message.innerText = text;
+
+  document.body.appendChild(message);
+
+  setTimeout(() => {
+    message.remove();
+  }, 2500);
+}
+
+</script>
+</body>
+</html>

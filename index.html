@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>到底谁在谈恋爱</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    height: 100svh;
+  min-height: 100svh;
+    background: #202124;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: #fff;
+    overflow: hidden;
+  }
+
+  .desktop {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #3b3b3b 0%, #1f1f1f 70%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 50px;
+    letter-spacing: 2px;
+  }
+
+  .phone-select {
+    display: flex;
+    gap: 46px;
+  }
+
+  .phone-card {
+    width: 150px;
+    height: 260px;
+    border-radius: 28px;
+    background: #111;
+    border: 3px solid #555;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+  }
+
+  .phone-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+  }
+
+  .phone-card.locked {
+    opacity: 0.35;
+    cursor: not-allowed;
+    filter: grayscale(1);
+  }
+
+  .phone-card.locked:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .phone-icon {
+    width: 70px;
+    height: 120px;
+    border-radius: 16px;
+    border: 2px solid #aaa;
+    background: linear-gradient(180deg, #333, #111);
+    position: relative;
+  }
+
+  .phone-icon::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    border-radius: 3px;
+    background: #777;
+  }
+
+  .phone-label {
+    font-size: 17px;
+  }
+
+  .lock-text {
+    font-size: 12px;
+    color: #aaa;
+  }
+
+  .reset {
+    margin-top: 40px;
+    font-size: 13px;
+    color: #aaa;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .phone-modal {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100svh;
+  min-height: 100svh;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: rgba(0,0,0,0.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+  }
+
+  .phone-modal.show {
+    display: flex;
+  }
+
+  .close-btn {
+    position: absolute;
+    right: 28px;
+    top: 24px;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 30;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+@media (max-width: 600px) {
+  html,
+  body {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-height: 100dvh;
+    height: auto;
+  }
+
+  .desktop {
+    width: 100%;
+    min-height: 100dvh;
+    padding: 24px 10px;
+    justify-content: center;
+  }
+
+  .title {
+    font-size: 21px;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  .phone-select {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .phone-card {
+    flex: 1 1 0;
+    width: auto;
+    max-width: 116px;
+    height: 210px;
+    border-radius: 22px;
+    border-width: 2px;
+    gap: 12px;
+  }
+
+  .phone-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .phone-icon {
+    width: 48px;
+    height: 86px;
+    border-radius: 12px;
+  }
+
+  .phone-label {
+    font-size: 12px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .lock-text {
+    font-size: 10px;
+    line-height: 1.4;
+    text-align: center;
+    padding: 0 4px;
+  }
+
+  .reset {
+    margin-top: 28px;
+    font-size: 12px;
+  }
+
+  .phone-modal {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100svh;
+  min-height: 100svh;
+  padding: 0;
+}
+
+  .phone-modal iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .close-btn {
+    top: 12px;
+    right: 14px;
+    font-size: 14px;
+    z-index: 30;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div class="desktop">
+  <div class="title">请选择一部手机</div>
+
+  <div class="phone-select">
+    <div class="phone-card" id="phone1Card" onclick="openPhone(1)">
+      <div class="phone-icon"></div>
+      <div class="phone-label">第一个手机</div>
+      <div class="lock-text">可查看</div>
+    </div>
+
+    <div class="phone-card locked" id="phone2Card" onclick="openPhone(2)">
+      <div class="phone-icon"></div>
+      <div class="phone-label">第二个手机</div>
+      <div class="lock-text" id="phone2Text">需解锁相册</div>
+    </div>
+
+    <div class="phone-card locked" id="phone3Card" onclick="openPhone(3)">
+      <div class="phone-icon"></div>
+      <div class="phone-label">第三个手机</div>
+      <div class="lock-text" id="phone3Text">需解锁私密录音</div>
+    </div>
+  </div>
+
+  <div class="reset" onclick="resetProgress()">重置进度</div>
+</div>
+
+<div class="phone-modal" id="phoneModal">
+  <div class="close-btn" onclick="closePhone()">关闭手机</div>
+  <iframe id="phoneFrame"></iframe>
+</div>
+
+<script>
+  function refreshLocks() {
+  const phone1PrivateAlbumUnlocked = localStorage.getItem('phone1PrivateAlbumUnlocked') === 'yes';
+  const phone2PrivateVoiceUnlocked = localStorage.getItem('phone2PrivateVoiceUnlocked') === 'yes';
+
+  const phone2Card = document.getElementById('phone2Card');
+  const phone3Card = document.getElementById('phone3Card');
+  const phone2Text = document.getElementById('phone2Text');
+  const phone3Text = document.getElementById('phone3Text');
+
+  if (phone1PrivateAlbumUnlocked) {
+    phone2Card.classList.remove('locked');
+    phone2Text.innerText = '可查看';
+  } else {
+    phone2Card.classList.add('locked');
+    phone2Text.innerText = '需解锁相册';
+  }
+
+  if (phone2PrivateVoiceUnlocked) {
+    phone3Card.classList.remove('locked');
+    phone3Text.innerText = '可查看';
+  } else {
+    phone3Card.classList.add('locked');
+    phone3Text.innerText = '需解锁私密录音';
+  }
+}
+
+  function openPhone(num) {
+  const phone1PrivateAlbumUnlocked = localStorage.getItem('phone1PrivateAlbumUnlocked') === 'yes';
+  const phone2PrivateVoiceUnlocked = localStorage.getItem('phone2PrivateVoiceUnlocked') === 'yes';
+
+  if (num === 2 && !phone1PrivateAlbumUnlocked) {
+    alert('请先解锁第一个手机的相册。');
+    return;
+  }
+
+  if (num === 3 && !phone2PrivateVoiceUnlocked) {
+    alert('请先解锁第二个手机的私密录音。');
+    return;
+  }
+
+  document.getElementById('phoneFrame').src = `phone${num}/phone${num}.html`;
+  document.getElementById('phoneModal').classList.add('show');
+}
+
+  function closePhone() {
+    document.getElementById('phoneModal').classList.remove('show');
+    document.getElementById('phoneFrame').src = '';
+    refreshLocks();
+  }
+
+  function resetProgress() {
+  if (!confirm('确定要重置所有手机解锁进度和密码记录吗？')) return;
+
+  localStorage.clear();
+
+  refreshLocks();
+}
+
+  refreshLocks();
+</script>
+
+</body>
+</html>
